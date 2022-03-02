@@ -54,11 +54,12 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               // 2
               ),
           IconButton(
-              icon: const Icon(Icons.clear),
-              color: secondaryColor,
-              onPressed: () => Navigator.pop(context)
-              // 2
-              ),
+            icon: const Icon(Icons.clear),
+            color: secondaryColor,
+            onPressed: () => Navigator.pop(context),
+
+            // 2
+          ),
         ],
         actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
       ),
@@ -70,11 +71,17 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               SizedBox(
                 width: 250,
                 child: TextField(
+                  style: TextStyle(color: secondaryColor),
                   controller: _exerciceNameController,
                   decoration: InputDecoration(
                     hintText: 'Planche',
                     helperText: 'Enter exercice name',
-                    border: OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: secondaryColor,
+                          width: 1.0,
+                        ),
+                        borderRadius: BorderRadius.circular(10.0)),
                   ),
                 ),
               ),

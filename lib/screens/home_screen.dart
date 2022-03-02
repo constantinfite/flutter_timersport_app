@@ -62,9 +62,11 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   ListTile(
                     leading: IconButton(
-                        onPressed: () {},
-                        icon: Icon(Icons.timer_sharp),
-                        color: primaryColor),
+                      onPressed: () {},
+                      icon: Icon(Icons.timer_sharp),
+                      color: primaryColor,
+                      iconSize: 35,
+                    ),
                     title: Row(
                       children: <Widget>[
                         Text(_exerciceList[index].name!),
@@ -75,13 +77,17 @@ class _HomeScreenState extends State<HomeScreen> {
                       spacing: 8,
                       children: <Widget>[
                         IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.play_circle),
-                            color: primaryColor),
+                          onPressed: () {},
+                          icon: Icon(Icons.play_circle_outline_rounded),
+                          color: primaryColor,
+                          iconSize: 40,
+                        ),
                         IconButton(
-                            onPressed: () {},
-                            icon: Icon(Icons.edit),
-                            color: primaryColor)
+                          onPressed: () {},
+                          icon: Icon(Icons.mode_edit_outline_outlined),
+                          color: primaryColor,
+                          iconSize: 35,
+                        )
                       ],
                     ),
                   )
@@ -91,13 +97,18 @@ class _HomeScreenState extends State<HomeScreen> {
               shape: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(40),
                   borderSide: BorderSide(color: Colors.white)),
+              elevation: 2,
             );
           }),
       //drawer: const DrawerNavigation(),
       floatingActionButton: FloatingActionButton(
           onPressed: () => Navigator.of(context).push(
               MaterialPageRoute(builder: (context) => ExerciceTimeScreen())),
-          child: const Icon(Icons.add),
+          child: Icon(
+            Icons.add,
+            size: 35,
+            color: backgroundColor,
+          ),
           backgroundColor: primaryColor),
     );
   }
