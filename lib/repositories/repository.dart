@@ -36,7 +36,6 @@ class Repository {
 
   updateData(table, data) async {
     var connection = await database;
-    print([data['id']]);
     return await connection
         .update(table, data, where: 'id=?', whereArgs: [data['id']]);
   }
@@ -46,5 +45,4 @@ class Repository {
     var connection = await database;
     return await connection.rawDelete("DELETE FROM $table WHERE id = $itemId");
   }
-
 }

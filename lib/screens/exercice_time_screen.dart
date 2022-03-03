@@ -4,7 +4,7 @@ import 'package:sport_timer/services/exercice_service.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key}): super(key: key);
+  const ExerciceTimeScreen({Key? key}) : super(key: key);
 
   @override
   State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
@@ -52,8 +52,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 _exercice.serie = _serieNumber;
                 _exercice.resttime = _restTime;
 
-                var result = await _exerciceService.saveExercice(_exercice);
-                print(result);
+                await _exerciceService.saveExercice(_exercice);
                 Navigator.pop(context);
               }
               // 2

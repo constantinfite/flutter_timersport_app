@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:sport_timer/screens/exercice_time_screen.dart';
 import 'package:sport_timer/models/exercice.dart';
@@ -22,28 +24,33 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    getAllExercice();
+    getAllExercices();
   }
 
   late var _exercice = Exercice();
 
   var exercice;
 
-  getAllExercice() async {
+  getAllExercices() async {
     _exerciceList = <Exercice>[];
     var exercices = await _exerciceService.readExercices();
     exercices.forEach((exercice) {
       setState(() {
         var exerciceModel = Exercice();
+        print("empty");
         exerciceModel.name = exercice['name'];
         exerciceModel.id = exercice['id'];
         exerciceModel.repetition = exercice['repetition'];
         exerciceModel.resttime = exercice['resttime'];
         exerciceModel.serie = exercice['serie'];
-
         _exerciceList.add(exerciceModel);
       });
     });
+    if (exercices.isEmpty) {
+      setState(() {
+        print("nothing");
+      });
+    }
   }
 
   editExercice(BuildContext context, exerciceId) async {
@@ -55,10 +62,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _exercice.serie = exercice[0]['serie'] ?? 0;
       _exercice.resttime = exercice[0]['resttime'] ?? 0;
     });
-  }
-
-  deleteExercice(BuildContext context, exerciceId) async {
-    await _exerciceService.deleteExercice(exerciceId);
   }
 
   @override
@@ -104,9 +107,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       spacing: 8,
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {
-                            deleteExercice(context, _exerciceList[index].id);
-                            getAllExercice();
+                          onPressed: () async {
+                            var result = await _exerciceService
+                                .deleteExercice(_exerciceList[index].id);
+
+                            if (result > 0) {
+                              //await Future.delayed(Duration(seconds: 1));
+                              getAllExercices();
+                            }
                           },
                           //Icons.play_circle_outline_rounded
                           icon: Icon(Icons.delete_outline),
@@ -122,7 +130,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                         ExerciceTimeScreenUpdate(
                                             exercice: _exercice)))
                                 .then((_) {
-                              getAllExercice();
+                              getAllExercices();
                             });
                           },
                           icon: Icon(Icons.mode_edit_outline_outlined),
@@ -154,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     .push(MaterialPageRoute(
                         builder: (context) => ExerciceTimeScreen()))
                     .then((_) {
-                  getAllExercice();
+                  getAllExercices();
                 })
               },
           child: Icon(

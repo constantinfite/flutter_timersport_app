@@ -75,7 +75,6 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
                 _exercice.repetition = _repNumber;
                 _exercice.serie = _serieNumber;
                 _exercice.resttime = _restTime;
-                print(_exercice.id);
                 var result = await _exerciceService.updateExercice(_exercice);
                 Navigator.pop(context);
               }
