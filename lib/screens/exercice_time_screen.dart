@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
+import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key}) : super(key: key);
-
+  const ExerciceTimeScreen({Key? key, required this.mode}) : super(key: key);
+  final String mode;
   @override
   State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
 }
@@ -15,6 +16,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   double _serieNumber = 0;
   double _repNumber = 0;
   double _restTime = 0;
+  double _exerciceTime = 0;
 
   final primaryColor = Color.fromARGB(255, 255, 95, 77);
   final secondaryColor = Color.fromARGB(255, 60, 60, 60);
@@ -51,7 +53,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 _exercice.repetition = _repNumber;
                 _exercice.serie = _serieNumber;
                 _exercice.resttime = _restTime;
-
+                _exercice.exercicetime = _exerciceTime;
+                _exercice.mode = widget.mode;
+                
                 await _exerciceService.saveExercice(_exercice);
                 Navigator.pop(context);
               }
@@ -121,35 +125,80 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       ],
                     )),
                 SizedBox(height: 50),
-                Text("Number of repetition"),
-                SizedBox(height: 10),
-                Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SfSlider(
-                            min: 0,
-                            max: 20,
-                            value: _repNumber,
-                            interval: 4,
-                            showTicks: true,
-                            showLabels: true,
-                            activeColor: primaryColor,
-                            inactiveColor: secondaryColor,
-                            enableTooltip: true,
-                            stepSize: 1,
-                            showDividers: true,
-                            tooltipShape: SfPaddleTooltipShape(),
-                            onChanged: (value) {
-                              setState(() {
-                                _repNumber = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    )),
+                Conditional.single(
+                    context: context,
+                    conditionBuilder: (BuildContext context) =>
+                        widget.mode == "rep",
+                    widgetBuilder: (BuildContext context) {
+                      return Column(
+                        children: <Widget>[
+                          Text("Number of repetition"),
+                          SizedBox(height: 10),
+                          Container(
+                              margin: EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SfSlider(
+                                      min: 0,
+                                      max: 20,
+                                      value: _repNumber,
+                                      interval: 4,
+                                      showTicks: true,
+                                      showLabels: true,
+                                      activeColor: primaryColor,
+                                      inactiveColor: secondaryColor,
+                                      enableTooltip: true,
+                                      stepSize: 1,
+                                      showDividers: true,
+                                      tooltipShape: SfPaddleTooltipShape(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _repNumber = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ],
+                      );
+                    },
+                    fallbackBuilder: (BuildContext context) {
+                      return Column(
+                        children: <Widget>[
+                          Text("Time of Exercice"),
+                          SizedBox(height: 10),
+                          Container(
+                              margin: EdgeInsets.symmetric(horizontal: 16),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: SfSlider(
+                                      min: 0,
+                                      max: 120,
+                                      value: _exerciceTime,
+                                      interval: 30,
+                                      showTicks: true,
+                                      showLabels: true,
+                                      activeColor: primaryColor,
+                                      inactiveColor: secondaryColor,
+                                      enableTooltip: true,
+                                      stepSize: 10,
+                                      showDividers: true,
+                                      tooltipShape: SfPaddleTooltipShape(),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _exerciceTime = value;
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ],
+                              )),
+                        ],
+                      );
+                    }),
                 SizedBox(height: 50),
                 Text("Rest time"),
                 SizedBox(height: 10),

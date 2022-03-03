@@ -13,6 +13,6 @@ class DataBaseConnection {
 
   _onCreatingDatabase(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE exercices(id INTEGER PRIMARY KEY, name TEXT, serie DOUBLE, repetition DOUBLE, resttime DOUBLE)");
+        "CREATE TABLE exercices(id INTEGER PRIMARY KEY, name TEXT, serie DOUBLE, repetition DOUBLE, resttime DOUBLE, exercicetime DOUBLE, mode TEXT)");
   }
 }

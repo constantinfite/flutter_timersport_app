@@ -4,6 +4,8 @@ class Exercice {
   double? serie;
   double? repetition;
   double? resttime;
+  double? exercicetime;
+  String? mode;
 
   exerciceMap() {
     var mapping = Map<String, dynamic>();
@@ -12,7 +14,8 @@ class Exercice {
     mapping['serie'] = serie;
     mapping['repetition'] = repetition;
     mapping['resttime'] = resttime;
-
+    mapping['exercicetime'] = exercicetime;
+    mapping['mode'] = mode;
 
     return mapping;
   }
