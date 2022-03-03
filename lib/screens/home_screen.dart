@@ -24,6 +24,10 @@ class _HomeScreenState extends State<HomeScreen> {
     getAllExercice();
   }
 
+  var _exercice = Exercice();
+
+  var exercice;
+
   getAllExercice() async {
     _exerciceList = <Exercice>[];
     var exercices = await _exerciceService.readExercices();
@@ -32,8 +36,22 @@ class _HomeScreenState extends State<HomeScreen> {
         var exerciceModel = Exercice();
         exerciceModel.name = exercice['name'];
         exerciceModel.id = exercice['id'];
+        exerciceModel.repetition = exercice['repetition'];
+        exerciceModel.resttime = exercice['resttime'];
+        exerciceModel.serie = exercice['serie'];
+
         _exerciceList.add(exerciceModel);
       });
+    });
+  }
+
+  editExercice(BuildContext context, exerciceId) async {
+    exercice = await _exerciceService.readExerciceById(exerciceId);
+    setState(() {
+      _exercice.name = exercice[0]['name'] ?? 'No name';
+      _exercice.repetition = exercice[0]['repetition'] ?? 0;
+      _exercice.serie = exercice[0]['serie'] ?? 0;
+      _exercice.resttime = exercice[0]['resttime'] ?? 0;
     });
   }
 
@@ -72,7 +90,10 @@ class _HomeScreenState extends State<HomeScreen> {
                         Text(_exerciceList[index].name!),
                       ],
                     ),
-                    subtitle: Text('2*10 Rest 01:30'),
+                    subtitle: Text(_exerciceList[index].repetition.toString() +
+                        " rep * " +
+                        _exerciceList[index].serie.toString() +
+                        " series "),
                     trailing: Wrap(
                       spacing: 8,
                       children: <Widget>[
@@ -83,11 +104,16 @@ class _HomeScreenState extends State<HomeScreen> {
                           iconSize: 40,
                         ),
                         IconButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            editExercice(context, _exerciceList[index].id);
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) =>
+                                    ExerciceTimeScreen(exercice: _exercice)));
+                          },
                           icon: Icon(Icons.mode_edit_outline_outlined),
                           color: primaryColor,
                           iconSize: 35,
-                        )
+                        ),
                       ],
                     ),
                   )
@@ -102,8 +128,10 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
       //drawer: const DrawerNavigation(),
       floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.of(context).push(
-              MaterialPageRoute(builder: (context) => ExerciceTimeScreen())),
+          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
+              builder: (context) => ExerciceTimeScreen(
+                    exercice: _exercice,
+                  ))),
           child: Icon(
             Icons.add,
             size: 35,

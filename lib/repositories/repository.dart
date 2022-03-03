@@ -27,4 +27,10 @@ class Repository {
     var connection = await database;
     return await connection.query(table);
   }
+
+  //Read data from Table by Id
+  readDataById(table, itemId) async {
+    var connection = await database;
+    return await connection.query(table, where: 'id=?', whereArgs: [itemId]);
+  }
 }
