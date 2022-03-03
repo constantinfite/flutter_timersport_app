@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/screens/exercice_time_screen.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
+import 'package:sport_timer/screens/exercice_time_screen_update.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,7 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
     getAllExercice();
   }
 
-  var _exercice = Exercice();
+  late var _exercice = Exercice();
 
   var exercice;
 
@@ -48,11 +49,16 @@ class _HomeScreenState extends State<HomeScreen> {
   editExercice(BuildContext context, exerciceId) async {
     exercice = await _exerciceService.readExerciceById(exerciceId);
     setState(() {
+      _exercice.id = exercice[0]['id'];
       _exercice.name = exercice[0]['name'] ?? 'No name';
       _exercice.repetition = exercice[0]['repetition'] ?? 0;
       _exercice.serie = exercice[0]['serie'] ?? 0;
       _exercice.resttime = exercice[0]['resttime'] ?? 0;
     });
+  }
+
+  deleteExercice(BuildContext context, exerciceId) async {
+    await _exerciceService.deleteExercice(exerciceId);
   }
 
   @override
@@ -98,21 +104,30 @@ class _HomeScreenState extends State<HomeScreen> {
                       spacing: 8,
                       children: <Widget>[
                         IconButton(
-                          onPressed: () {},
-                          icon: Icon(Icons.play_circle_outline_rounded),
+                          onPressed: () {
+                            deleteExercice(context, _exerciceList[index].id);
+                            getAllExercice();
+                          },
+                          //Icons.play_circle_outline_rounded
+                          icon: Icon(Icons.delete_outline),
                           color: primaryColor,
-                          iconSize: 40,
+                          iconSize: 30,
                         ),
                         IconButton(
                           onPressed: () {
                             editExercice(context, _exerciceList[index].id);
-                            Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) =>
-                                    ExerciceTimeScreen(exercice: _exercice)));
+                            Navigator.of(context)
+                                .push(MaterialPageRoute(
+                                    builder: (context) =>
+                                        ExerciceTimeScreenUpdate(
+                                            exercice: _exercice)))
+                                .then((_) {
+                              getAllExercice();
+                            });
                           },
                           icon: Icon(Icons.mode_edit_outline_outlined),
                           color: primaryColor,
-                          iconSize: 35,
+                          iconSize: 30,
                         ),
                       ],
                     ),
@@ -128,10 +143,20 @@ class _HomeScreenState extends State<HomeScreen> {
           }),
       //drawer: const DrawerNavigation(),
       floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => ExerciceTimeScreen(
-                    exercice: _exercice,
-                  ))),
+          onPressed: () => {
+                setState(() {
+                  _exercice.name = "";
+                  _exercice.repetition = 0;
+                  _exercice.serie = 0;
+                  _exercice.resttime = 0;
+                }),
+                Navigator.of(context)
+                    .push(MaterialPageRoute(
+                        builder: (context) => ExerciceTimeScreen()))
+                    .then((_) {
+                  getAllExercice();
+                })
+              },
           child: Icon(
             Icons.add,
             size: 35,

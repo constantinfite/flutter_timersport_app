@@ -3,18 +3,24 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:syncfusion_flutter_sliders/sliders.dart';
 
-class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key}): super(key: key);
+class ExerciceTimeScreenUpdate extends StatefulWidget {
+  const ExerciceTimeScreenUpdate({Key? key, required this.exercice})
+      : super(key: key);
+
+  // Declare a field that holds the Todo.
+  final Exercice exercice;
 
   @override
-  State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
+  State<ExerciceTimeScreenUpdate> createState() =>
+      ExerciceTimeScreenUpdateState();
 }
 
-class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
+class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   final _exerciceNameController = TextEditingController();
   double _serieNumber = 0;
   double _repNumber = 0;
   double _restTime = 0;
+  int id = 0;
 
   final primaryColor = Color.fromARGB(255, 255, 95, 77);
   final secondaryColor = Color.fromARGB(255, 60, 60, 60);
@@ -22,6 +28,23 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
+
+  @override
+  void initState() {
+    super.initState();
+    editValue();
+  }
+
+  editValue() async {
+    
+    setState(() {
+      id = widget.exercice.id!;
+      _exerciceNameController.text = widget.exercice.name!;
+      _serieNumber = widget.exercice.serie!;
+      _repNumber = widget.exercice.repetition!;
+      _restTime = widget.exercice.resttime!;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +60,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             ),
         backgroundColor: Colors.transparent,
         title: Text(
-          'Add exercice',
+          'Edit exercice',
           style: TextStyle(color: secondaryColor),
         ),
         centerTitle: true,
@@ -47,13 +70,13 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               color: primaryColor,
               onPressed: () async {
                 final _exercice = Exercice();
+                _exercice.id = id;
                 _exercice.name = _exerciceNameController.text;
                 _exercice.repetition = _repNumber;
                 _exercice.serie = _serieNumber;
                 _exercice.resttime = _restTime;
-
-                var result = await _exerciceService.saveExercice(_exercice);
-                print(result);
+                print(_exercice.id);
+                var result = await _exerciceService.updateExercice(_exercice);
                 Navigator.pop(context);
               }
               // 2

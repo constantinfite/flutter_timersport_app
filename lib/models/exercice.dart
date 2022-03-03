@@ -1,9 +1,9 @@
 class Exercice {
   int? id;
   String? name;
-  int? serie;
-  int? repetition;
-  int? resttime;
+  double? serie;
+  double? repetition;
+  double? resttime;
 
   exerciceMap() {
     var mapping = Map<String, dynamic>();
