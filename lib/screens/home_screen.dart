@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/icons.dart';
-import 'package:sport_timer/screens/exercice_time_screen.dart';
+import 'package:sport_timer/screens/exercice_screen.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:sport_timer/screens/exercice_time_screen_update.dart';
+import 'package:sport_timer/screens/exercice_screen_update.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
+import 'package:sport_timer/screens/serie_workout_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -94,12 +95,16 @@ class _HomeScreenState extends State<HomeScreen> {
                     Conditional.single(
                         context: context,
                         conditionBuilder: (BuildContext context) =>
-                            _exerciceList[index].repetition == 0,
+                            _exerciceList[index].mode == "timer",
                         widgetBuilder: (BuildContext context) {
                           return Column(children: <Widget>[
                             ListTile(
                               leading: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SerieWorkoutScreen(
+                                          id: _exerciceList[index].id!)));
+                                },
                                 icon: Icon(Icons.timer_sharp),
                                 color: primaryColor,
                                 iconSize: 35,
@@ -110,11 +115,15 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ],
                               ),
                               subtitle: Text(_exerciceList[index]
-                                      .repetition
+                                      .serie!
+                                      .round()
                                       .toString() +
-                                  " rep * " +
-                                  _exerciceList[index].exercicetime.toString() +
-                                  " time "),
+                                  " serie * " +
+                                  _exerciceList[index]
+                                      .exercicetime!
+                                      .round()
+                                      .toString() +
+                                  " s "),
                               trailing: Wrap(
                                 spacing: 8,
                                 children: <Widget>[
@@ -161,7 +170,11 @@ class _HomeScreenState extends State<HomeScreen> {
                           return Column(children: <Widget>[
                             ListTile(
                               leading: IconButton(
-                                onPressed: () {},
+                                onPressed: () {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SerieWorkoutScreen(
+                                          id: _exerciceList[index].id!)));
+                                },
                                 icon: Icon(MyFlutterApp.repeat),
                                 color: primaryColor,
                                 iconSize: 35,
@@ -171,11 +184,16 @@ class _HomeScreenState extends State<HomeScreen> {
                                   Text(_exerciceList[index].name!),
                                 ],
                               ),
-                              subtitle: Text(
-                                  _exerciceList[index].repetition.toString() +
-                                      " rep * " +
-                                      _exerciceList[index].serie.toString() +
-                                      " series "),
+                              subtitle: Text(_exerciceList[index]
+                                      .repetition!
+                                      .round()
+                                      .toString() +
+                                  " rep * " +
+                                  _exerciceList[index]
+                                      .serie!
+                                      .round()
+                                      .toString() +
+                                  " series "),
                               trailing: Wrap(
                                 spacing: 8,
                                 children: <Widget>[
@@ -260,29 +278,6 @@ class _HomeScreenState extends State<HomeScreen> {
               }),
             )
           ],
-        )
-
-        /*FloatingActionButton(
-          onPressed: () => {
-                setState(() {
-                  _exercice.name = "";
-                  _exercice.repetition = 0;
-                  _exercice.serie = 0;
-                  _exercice.resttime = 0;
-                }),
-                Navigator.of(context)
-                    .push(MaterialPageRoute(
-                        builder: (context) => ExerciceTimeScreen()))
-                    .then((_) {
-                  getAllExercices();
-                })
-              },
-          child: Icon(
-            Icons.add,
-            size: 35,
-            color: backgroundColor,
-          ),
-          backgroundColor: primaryColor),*/
-        );
+        ));
   }
 }
