@@ -181,7 +181,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                               title: Row(
                                 children: <Widget>[
-                                  Text(_exerciceList[index].name!),
+                                  Flexible(
+                                    child: Text(
+                                      _exerciceList[index].name!,
+                                      style: TextStyle(
+                                          overflow: TextOverflow.ellipsis),
+                                    ),
+                                  ),
                                 ],
                               ),
                               subtitle: Text(_exerciceList[index]

@@ -150,12 +150,21 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         size: 50,
                       ),
                       SizedBox(width: 15),
-                      Text(
-                        _exercice.name.toString(),
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: secondaryColor,
-                            fontWeight: FontWeight.bold),
+                      SizedBox(
+                        width: 70,
+                        child: Column(
+                          children: [
+                            Text(
+                              _exercice.name.toString(),
+                              style: TextStyle(
+                                fontSize: 20,
+                                color: secondaryColor,
+                                fontWeight: FontWeight.bold,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
                       )
                     ],
                   ),
@@ -206,16 +215,20 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               context: context,
               conditionBuilder: (BuildContext context) => _round % 2 == 1,
               widgetBuilder: (BuildContext context) => Text(
-                "${f.format(_minutes)} : ${f.format(_seconds)}",
+                "${f.format(_minutes)}:${f.format(_seconds)}",
                 style: TextStyle(
                     color: secondaryColor,
                     fontSize: 100,
+                    fontWeight: FontWeight.bold,
                     letterSpacing: 1,
                     wordSpacing: 1),
               ),
               fallbackBuilder: (BuildContext context) => Text(
                   _exercice.repetition?.toInt().toString() ?? "",
-                  style: TextStyle(color: secondaryColor, fontSize: 130)),
+                  style: TextStyle(
+                      color: secondaryColor,
+                      fontSize: 100,
+                      fontWeight: FontWeight.bold)),
             ),
             SizedBox(height: 50),
             Row(
@@ -229,10 +242,12 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     onPressed: () => previousRound()
                     // 2
                     ),
-                Conditional.single(
-                  context: context,
-                  conditionBuilder: (BuildContext context) => _round % 2 == 1,
-                  widgetBuilder: (BuildContext context) => IconButton(
+                Visibility(
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _round % 2 == 1,
+                  child: IconButton(
                       icon: Icon(_timer.isActive
                           ? MyFlutterApp.noun_pause
                           : Icons.play_arrow_outlined),
@@ -251,7 +266,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         });
                         // 2
                       }),
-                  fallbackBuilder: (BuildContext context) => Text(''),
                 ),
                 IconButton(
                     icon: Icon(Icons.arrow_forward_ios_rounded),
