@@ -4,6 +4,8 @@ import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:intl/intl.dart';
+import 'package:sport_timer/presentation/icons.dart';
+import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -24,12 +26,14 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   var f = NumberFormat("00");
   int _seconds = 5;
   int _minutes = 1;
-  var round = 0;
+  int _round = 0;
+  double _sliderRound = 0;
   Timer _timer = Timer(Duration(milliseconds: 1), () {});
 
   void initState() {
     super.initState();
     _exercice.resttime = 0;
+    _exercice.serie = 1;
     getExercice();
   }
 
@@ -50,19 +54,34 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   }
 
   nextRound() {
+    if (_round % 2 == 0) {
+      _sliderRound += 1 / _exercice.serie!.toInt();
+    }
     _timer.cancel();
     getExercice();
     setState(() {
-      round++;
+      _round++;
     });
   }
 
   previousRound() {
-    _timer.cancel();
-    getExercice();
-    setState(() {
-      round--;
-    });
+    if (_round % 2 == 0) {
+      _sliderRound -= 1 / _exercice.serie!.toInt();
+    }
+    var _timeSecond = _minutes * 60 + _seconds;
+    if (_exercice.resttime! > _timeSecond) {
+      _timer.cancel();
+      setState(() {
+        _minutes = _exercice.resttime! ~/ 60;
+        _seconds = _exercice.resttime!.toInt() % 60;
+      });
+    } else {
+      _timer.cancel();
+      getExercice();
+      setState(() {
+        _round--;
+      });
+    }
   }
 
   void _startTimer() {
@@ -95,6 +114,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
 
   Widget build(BuildContext context) {
     return Scaffold(
+        backgroundColor: backgroundColor,
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
@@ -111,34 +131,80 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Card(
-              elevation: 2,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: <Widget>[
-                  ListTile(
-                    title: Text(
-                      _exercice.name.toString(),
-                      style: TextStyle(fontSize: 20),
-                    ),
-                    subtitle: Text(_exercice.serie?.toInt().toString() ?? " "),
-                  ),
-                ],
-              ),
-              margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
-              shape: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(40),
-                  borderSide: BorderSide(color: Colors.white)),
-            ),
             SizedBox(height: 20),
-            Icon(
-              Icons.sports_sharp,
-              color: secondaryColor,
-              size: 100,
-            ),
+            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
+              Card(
+                color: Colors.white,
+                elevation: 2.0,
+                shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white)),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                  child: Row(
+                    children: [
+                      Icon(
+                        MyFlutterApp.noun_repetition,
+                        color: primaryColor,
+                        size: 50,
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        _exercice.name.toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: secondaryColor,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+              SizedBox(width: 20),
+              Card(
+                color: Colors.white,
+                elevation: 2.0,
+                shape: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide(color: Colors.white)),
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
+                  child: Row(
+                    children: [
+                      Conditional.single(
+                        context: context,
+                        conditionBuilder: (BuildContext context) =>
+                            _round % 2 == 1,
+                        widgetBuilder: (BuildContext context) => Icon(
+                          MyFlutterApp.noun_the_rest,
+                          color: primaryColor,
+                          size: 50,
+                        ),
+                        fallbackBuilder: (BuildContext context) => Icon(
+                          MyFlutterApp.noun_bicep_workout,
+                          color: primaryColor,
+                          size: 50,
+                        ),
+                      ),
+                      SizedBox(width: 15),
+                      Text(
+                        "Mode",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: secondaryColor,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
+                ),
+              ),
+            ]),
+            SizedBox(height: 50),
             Conditional.single(
               context: context,
-              conditionBuilder: (BuildContext context) => round % 2 == 1,
+              conditionBuilder: (BuildContext context) => _round % 2 == 1,
               widgetBuilder: (BuildContext context) => Text(
                 "${f.format(_minutes)} : ${f.format(_seconds)}",
                 style: TextStyle(
@@ -151,7 +217,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   _exercice.repetition?.toInt().toString() ?? "",
                   style: TextStyle(color: secondaryColor, fontSize: 130)),
             ),
-            SizedBox(height: 100),
+            SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -159,16 +225,17 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 IconButton(
                     icon: Icon(Icons.arrow_back_ios_rounded),
                     color: primaryColor,
-                    iconSize: 70,
+                    iconSize: 50,
                     onPressed: () => previousRound()
                     // 2
                     ),
                 Conditional.single(
                   context: context,
-                  conditionBuilder: (BuildContext context) => round % 2 == 1,
+                  conditionBuilder: (BuildContext context) => _round % 2 == 1,
                   widgetBuilder: (BuildContext context) => IconButton(
-                      icon: Icon(
-                          _timer.isActive ? Icons.pause : Icons.play_arrow),
+                      icon: Icon(_timer.isActive
+                          ? MyFlutterApp.noun_pause
+                          : Icons.play_arrow_outlined),
                       color: primaryColor,
                       iconSize: 70,
                       onPressed: () {
@@ -189,13 +256,21 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 IconButton(
                     icon: Icon(Icons.arrow_forward_ios_rounded),
                     color: primaryColor,
-                    iconSize: 70,
+                    iconSize: 50,
                     onPressed: () => nextRound()
                     // 2
                     ),
                 const SizedBox(width: 50.0)
               ],
-            )
+            ),
+            SizedBox(height: 100),
+            FractionallySizedBox(
+                widthFactor: 0.7,
+                child: LinearProgressIndicator(
+                  backgroundColor: secondaryColor,
+                  color: primaryColor,
+                  value: _sliderRound,
+                ))
           ],
         ));
   }

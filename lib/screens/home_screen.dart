@@ -175,7 +175,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                       builder: (context) => SerieWorkoutScreen(
                                           id: _exerciceList[index].id!)));
                                 },
-                                icon: Icon(MyFlutterApp.repeat),
+                                icon: Icon(MyFlutterApp.noun_repetition),
                                 color: primaryColor,
                                 iconSize: 35,
                               ),
@@ -240,7 +240,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
                 shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(40),
+                    borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(color: Colors.white)),
                 elevation: 2,
               );
@@ -254,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
           spaceBetweenChildren: 10,
           children: [
             SpeedDialChild(
-              child: Icon(MyFlutterApp.repeat),
+              child: Icon(MyFlutterApp.noun_repetition),
               backgroundColor: primaryColor,
               label: 'Repetition',
               foregroundColor: Colors.white,
