@@ -54,20 +54,23 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   }
 
   nextRound() {
-    if (_round % 2 == 0) {
-      _sliderRound += 1 / _exercice.serie!.toInt();
-    }
     _timer.cancel();
     getExercice();
     setState(() {
       _round++;
     });
+    print("round" + _round.toString());
+    if (_round % 2 == 0) {
+      _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
+      print(_sliderRound);
+    }
+    if (_round / 2 == _exercice.serie) {
+      Navigator.pop(context);
+    }
+    print("   ");
   }
 
   previousRound() {
-    if (_round % 2 == 0) {
-      _sliderRound -= 1 / _exercice.serie!.toInt();
-    }
     var _timeSecond = _minutes * 60 + _seconds;
     if (_exercice.resttime! > _timeSecond) {
       _timer.cancel();
@@ -81,6 +84,13 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       setState(() {
         _round--;
       });
+      print("round" + _round.toString());
+      if (_round % 2 == 0) {
+        _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
+        print(_sliderRound);
+      }
+
+      print("   ");
     }
   }
 
@@ -235,13 +245,19 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 SizedBox(width: 50.0),
-                IconButton(
-                    icon: Icon(Icons.arrow_back_ios_rounded),
-                    color: primaryColor,
-                    iconSize: 50,
-                    onPressed: () => previousRound()
-                    // 2
-                    ),
+                Visibility(
+                  maintainSize: true,
+                  maintainAnimation: true,
+                  maintainState: true,
+                  visible: _round > 0,
+                  child: IconButton(
+                      icon: Icon(Icons.arrow_back_ios_rounded),
+                      color: primaryColor,
+                      iconSize: 50,
+                      onPressed: () => previousRound()
+                      // 2
+                      ),
+                ),
                 Visibility(
                   maintainSize: true,
                   maintainAnimation: true,
@@ -278,14 +294,27 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               ],
             ),
             SizedBox(height: 100),
-            FractionallySizedBox(
-                widthFactor: 0.7,
-                child: LinearProgressIndicator(
+            Container(
+              margin: EdgeInsets.symmetric(horizontal: 30),
+              child: Row(children: [
+                buildSideLabel(0),
+                SizedBox(width: 30),
+                Expanded(
+                    child: LinearProgressIndicator(
                   backgroundColor: secondaryColor,
                   color: primaryColor,
                   value: _sliderRound,
-                ))
+                )),
+                SizedBox(width: 30),
+                buildSideLabel(_exercice.serie!),
+              ]),
+            )
           ],
         ));
   }
+
+  Widget buildSideLabel(double value) => Text(
+        value.round().toString(),
+        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+      );
 }

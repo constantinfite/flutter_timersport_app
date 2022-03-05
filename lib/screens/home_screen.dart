@@ -77,7 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           title: Text(
-            "Exercice's list",
+            "Exercice's List",
             style: TextStyle(color: secondaryColor),
           ),
           centerTitle: true,
