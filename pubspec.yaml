@@ -38,6 +38,7 @@ dependencies:
   syncfusion_flutter_sliders: ^19.4.54
   flutter_conditional_rendering: ^2.0.0
   flutter_speed_dial: ^5.0.0+1
+  expansion_card: ^0.1.0
 
 dev_dependencies:
   flutter_test:
@@ -81,6 +82,15 @@ flutter:
     - family: MyFlutterApp
       fonts:
         - asset: assets/fonts/MyFlutterApp.ttf
+    - family: BalooThambi2
+      fonts:
+        - asset: assets/fonts/BalooThambi2-VariableFont_wght.ttf
+    - family: BalooBhai2
+      fonts:
+        - asset: assets/fonts/BalooBhai2-VariableFont_wght.ttf
+    - family: BalooBhai
+      fonts:
+        - asset: assets/fonts/BalooBhai-Regular.ttf
 
   # fonts:
   #   - family: Schyler

@@ -7,6 +7,7 @@ import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/screens/exercice_screen_update.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:sport_timer/screens/serie_workout_screen.dart';
+import 'package:expansion_card/expansion_card.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -77,14 +78,18 @@ class _HomeScreenState extends State<HomeScreen> {
           elevation: 0,
           backgroundColor: Colors.transparent,
           title: Text(
-            "Exercice's List",
-            style: TextStyle(color: secondaryColor),
+            "EXERCICES",
+            style: TextStyle(
+                color: secondaryColor,
+                fontSize: 30,
+                fontFamily: 'BalooBhai',
+                fontWeight: FontWeight.bold),
           ),
           centerTitle: true,
           actions: [
             Icon(Icons.more_vert),
           ],
-          actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
+          actionsIconTheme: IconThemeData(color: secondaryColor, size: 36),
         ),
         body: ListView.builder(
             itemCount: _exerciceList.length,

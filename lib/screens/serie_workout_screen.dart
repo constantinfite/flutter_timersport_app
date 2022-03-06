@@ -16,7 +16,6 @@ class SerieWorkoutScreen extends StatefulWidget {
 }
 
 class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
-  @override
   final _exerciceService = ExerciceService();
   final _exercice = Exercice();
 
@@ -30,6 +29,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   double _sliderRound = 0;
   Timer _timer = Timer(Duration(milliseconds: 1), () {});
 
+  @override
   void initState() {
     super.initState();
     _exercice.resttime = 0;
@@ -59,15 +59,13 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     setState(() {
       _round++;
     });
-    print("round" + _round.toString());
+
     if (_round % 2 == 0) {
       _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
-      print(_sliderRound);
     }
     if (_round / 2 == _exercice.serie) {
       Navigator.pop(context);
     }
-    print("   ");
   }
 
   previousRound() {
@@ -84,13 +82,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       setState(() {
         _round--;
       });
-      print("round" + _round.toString());
       if (_round % 2 == 0) {
         _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
-        print(_sliderRound);
       }
-
-      print("   ");
     }
   }
 
@@ -122,6 +116,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     _timer.cancel();
   }
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
         backgroundColor: backgroundColor,
@@ -197,12 +192,12 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         conditionBuilder: (BuildContext context) =>
                             _round % 2 == 1,
                         widgetBuilder: (BuildContext context) => Icon(
-                          MyFlutterApp.noun_the_rest,
+                          MyFlutterApp.noun_number,
                           color: primaryColor,
                           size: 50,
                         ),
                         fallbackBuilder: (BuildContext context) => Icon(
-                          MyFlutterApp.noun_bicep_workout,
+                          MyFlutterApp.noun_time,
                           color: primaryColor,
                           size: 50,
                         ),
@@ -265,7 +260,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   visible: _round % 2 == 1,
                   child: IconButton(
                       icon: Icon(_timer.isActive
-                          ? MyFlutterApp.noun_pause
+                          ? Icons.abc
                           : Icons.play_arrow_outlined),
                       color: primaryColor,
                       iconSize: 70,
