@@ -21,6 +21,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   Color _color = Colors.blue;
 
   Duration duration_resttime = Duration(minutes: 0, seconds: 0);
+  Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
 
   final primaryColor = Color.fromARGB(255, 255, 95, 77);
   final secondaryColor = Color.fromARGB(255, 60, 60, 60);
@@ -34,17 +35,27 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   final _exerciceService = ExerciceService();
 
   String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigits(int n) => n.toString().padLeft(1, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
 
     return "$twoDigitMinutes min $twoDigitSeconds s";
   }
 
-  convert_duration_time(Duration duration) {
-    var minute = duration.inMinutes.remainder(60);
-    var second = duration.inSeconds.remainder(60);
-    _restTime = minute * 60 + second;
+  convert_duration_time(Duration durationRest, Duration durationExercice) {
+    var minuteRest = durationRest.inMinutes.remainder(60);
+    var secondRest = durationRest.inSeconds.remainder(60);
+    var minuteExercice = durationExercice.inMinutes.remainder(60);
+    var secondExercice = durationExercice.inSeconds.remainder(60);
+
+    _exerciceTime = minuteExercice * 60 + secondExercice;
+    _restTime = minuteRest * 60 + secondRest;
+  }
+
+  choiceAction(String choice) async {
+    if (choice == "delete") {
+      await _exerciceService.deleteExercice(exercice.id);
+    }
   }
 
   @override
@@ -79,7 +90,8 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               color: primaryColor,
               iconSize: 50,
               onPressed: () async {
-                convert_duration_time(duration_resttime);
+                convert_duration_time(duration_resttime, duration_exercicetime);
+
                 final _exercice = Exercice();
                 _exercice.name = _exerciceNameController.text;
                 _exercice.repetition = _repNumber;
@@ -94,13 +106,12 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               }
               // 2
               ),
-          IconButton(
-            icon: const Icon(Icons.more_vert),
-            color: secondaryColor,
-            onPressed: () => Navigator.pop(context),
-
-            // 2
-          ),
+          /* PopupMenuButton(
+              itemBuilder: (_) => const <PopupMenuItem<String>>[
+                    PopupMenuItem<String>(
+                        child: Text('Delete'), value: 'delete'),
+                  ],
+              onSelected: choiceAction)*/
         ],
         actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
       ),
@@ -197,7 +208,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        "Number of repetition",
+                        widget.mode == "rep"
+                            ? "Number of repetition"
+                            : "Exercice time",
                         style: TextStyle(
                           color: secondaryColor,
                           fontSize: 20,
@@ -205,7 +218,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         ),
                       ),
                       Text(
-                        _repNumber.toString(),
+                        widget.mode == "rep"
+                            ? _repNumber.toString()
+                            : _printDuration(duration_exercicetime),
                         style: TextStyle(
                             color: redColor,
                             fontSize: 25,
@@ -216,21 +231,30 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                   ),
                   children: [
                     SizedBox(
-                      height: 70,
+                      height: 200,
                       child: ListTile(
-                        title: NumberPicker(
-                          selectedTextStyle: TextStyle(
-                              color: redColor,
-                              fontSize: 30,
-                              fontFamily: "BalooBhai2",
-                              fontWeight: FontWeight.w600),
-                          axis: Axis.horizontal,
-                          value: _repNumber,
-                          minValue: 0,
-                          maxValue: 20,
-                          onChanged: (value) =>
-                              setState(() => _repNumber = value),
-                        ),
+                        title: widget.mode == "rep"
+                            ? NumberPicker(
+                                selectedTextStyle: TextStyle(
+                                    color: redColor,
+                                    fontSize: 30,
+                                    fontFamily: "BalooBhai2",
+                                    fontWeight: FontWeight.w600),
+                                axis: Axis.horizontal,
+                                value: _repNumber,
+                                minValue: 0,
+                                maxValue: 20,
+                                onChanged: (value) =>
+                                    setState(() => _repNumber = value),
+                              )
+                            : CupertinoTimerPicker(
+                                initialTimerDuration: duration_exercicetime,
+                                mode: CupertinoTimerPickerMode.ms,
+                                onTimerDurationChanged: (duration) =>
+                                    setState(() {
+                                  duration_exercicetime = duration;
+                                }),
+                              ),
                       ),
                     ),
                   ],

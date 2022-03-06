@@ -83,6 +83,16 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  String formatDuration(int totalSeconds) {
+    final duration = Duration(seconds: totalSeconds);
+    final minutes = duration.inMinutes;
+    final seconds = totalSeconds % 60;
+
+    final minutesString = '$minutes'.padLeft(1, '0');
+    final secondsString = '$seconds'.padLeft(2, '0');
+    return '$minutesString min $secondsString s';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -162,10 +172,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         child: ListTile(
                           trailing: Text(
                             _exerciceList[index].mode == "timer"
-                                ? _exerciceList[index]
-                                    .exercicetime!
-                                    .toInt()
-                                    .toString()
+                                ? formatDuration(
+                                    _exerciceList[index].exercicetime!)
                                 : _exerciceList[index]
                                     .repetition!
                                     .toInt()
@@ -190,7 +198,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         height: 30,
                         child: ListTile(
                           trailing: Text(
-                            _exerciceList[index].resttime!.toInt().toString(),
+                            formatDuration(_exerciceList[index].resttime!),
                             style: TextStyle(
                                 color: Colors.white,
                                 fontFamily: "BalooBhai2",

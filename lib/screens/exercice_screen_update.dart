@@ -22,6 +22,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   int _repNumber = 0;
   int _restTime = 0;
   int _exerciceTime = 0;
+  Color _color = Colors.blue;
+
   int id = 0;
 
   final primaryColor = Color.fromARGB(255, 255, 95, 77);
@@ -44,6 +46,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
       _exerciceNameController.text = widget.exercice.name!;
       _serieNumber = widget.exercice.serie!;
       _repNumber = widget.exercice.repetition!;
+      _restTime = widget.exercice.resttime!;
+      _exerciceTime = widget.exercice.exercicetime!;
       _restTime = widget.exercice.resttime!;
       _exerciceTime = widget.exercice.exercicetime!;
     });
