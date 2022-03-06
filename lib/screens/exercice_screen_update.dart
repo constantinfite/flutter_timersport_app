@@ -37,7 +37,7 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   void initState() {
     super.initState();
     editValue();
-    print(widget.exercice.mode);
+    
   }
 
   editValue() async {
