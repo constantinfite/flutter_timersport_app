@@ -1,10 +1,10 @@
 class Exercice {
   int? id;
   String? name;
-  double? serie;
-  double? repetition;
-  double? resttime;
-  double? exercicetime;
+  int? serie;
+  int? repetition;
+  int? resttime;
+  int? exercicetime;
   String? mode;
 
   exerciceMap() {

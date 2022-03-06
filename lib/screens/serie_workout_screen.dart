@@ -301,7 +301,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   value: _sliderRound,
                 )),
                 SizedBox(width: 30),
-                buildSideLabel(_exercice.serie!),
+                buildSideLabel(0),
               ]),
             )
           ],

@@ -18,10 +18,10 @@ class ExerciceTimeScreenUpdate extends StatefulWidget {
 
 class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   final _exerciceNameController = TextEditingController();
-  double _serieNumber = 0;
-  double _repNumber = 0;
-  double _restTime = 0;
-  double _exerciceTime = 0;
+  int _serieNumber = 0;
+  int _repNumber = 0;
+  int _restTime = 0;
+  int _exerciceTime = 0;
   int id = 0;
 
   final primaryColor = Color.fromARGB(255, 255, 95, 77);
