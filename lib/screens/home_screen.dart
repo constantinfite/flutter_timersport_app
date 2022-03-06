@@ -52,6 +52,7 @@ class _HomeScreenState extends State<HomeScreen> {
         exerciceModel.serie = exercice['serie'];
         exerciceModel.exercicetime = exercice['exercicetime'];
         exerciceModel.mode = exercice['mode'];
+        exerciceModel.color = exercice['color'];
         _exerciceList.add(exerciceModel);
       });
     });
@@ -72,6 +73,7 @@ class _HomeScreenState extends State<HomeScreen> {
       _exercice.resttime = exercice[0]['resttime'] ?? 0;
       _exercice.exercicetime = exercice[0]['exercicetime'] ?? 0;
       _exercice.mode = exercice[0]['mode'] ?? "";
+      _exercice.color = exercice[0]['color'] ?? 0;
     });
   }
 
@@ -93,7 +95,7 @@ class _HomeScreenState extends State<HomeScreen> {
           "EXERCICES",
           style: TextStyle(
             color: secondaryColor,
-            fontSize: 40,
+            fontSize: 35,
             fontFamily: 'BalooBhai',
           ),
         ),
@@ -116,7 +118,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 colorScheme: ColorScheme.fromSwatch()
                     .copyWith(secondary: secondaryColor));
             return Card(
-              color: blueColor,
+              color: Color(_exerciceList[index].color!),
               child: Column(children: [
                 Theme(
                   data: theme,
@@ -126,7 +128,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: "BalooBhai",
-                          fontSize: 30),
+                          fontSize: 25),
                     ),
                     leading: Icon(
                       _exerciceList[index].mode == "timer"

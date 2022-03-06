@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:numberpicker/numberpicker.dart';
+import 'package:sport_timer/widget/my_color_picker.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
   const ExerciceTimeScreen({Key? key, required this.mode}) : super(key: key);
@@ -17,6 +18,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   int _repNumber = 0;
   int _restTime = 0;
   int _exerciceTime = 0;
+  Color _color = Colors.blue;
 
   Duration duration_resttime = Duration(minutes: 0, seconds: 0);
 
@@ -30,6 +32,20 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return "$twoDigitMinutes min $twoDigitSeconds s";
+  }
+
+  convert_duration_time(Duration duration) {
+    var minute = duration.inMinutes.remainder(60);
+    var second = duration.inSeconds.remainder(60);
+    _restTime = minute * 60 + second;
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +77,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
           IconButton(
               icon: const Icon(Icons.check),
               color: primaryColor,
+              iconSize: 50,
               onPressed: () async {
+                convert_duration_time(duration_resttime);
                 final _exercice = Exercice();
                 _exercice.name = _exerciceNameController.text;
                 _exercice.repetition = _repNumber;
@@ -69,6 +87,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 _exercice.resttime = _restTime;
                 _exercice.exercicetime = _exerciceTime;
                 _exercice.mode = widget.mode;
+                _exercice.color = _color.value;
 
                 await _exerciceService.saveExercice(_exercice);
                 Navigator.pop(context);
@@ -118,9 +137,10 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             Card(
               color: Colors.white,
               child: Column(children: [
-                ListTile(
+                ExpansionTile(
                   title: Row(
-                    children: <Widget>[
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
                         "Number of serie",
                         style: TextStyle(
@@ -129,35 +149,36 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                           fontFamily: 'BalooBhai',
                         ),
                       ),
+                      Text(
+                        _serieNumber.toString(),
+                        style: TextStyle(
+                            color: cyanColor,
+                            fontSize: 25,
+                            fontFamily: 'BalooBhai2',
+                            fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
-                  /*
-                  trailing: Text(
-                    _serieNumber.toString(),
-                    style: TextStyle(
-                        color: cyanColor,
-                        fontSize: 25,
-                        fontFamily: 'BalooBhai2',
-                        fontWeight: FontWeight.bold),
-                  ),*/
-                ),
-                SizedBox(
-                  height: 70,
-                  child: ListTile(
-                    title: NumberPicker(
-                      selectedTextStyle: TextStyle(
-                          color: cyanColor,
-                          fontSize: 30,
-                          fontFamily: "BalooBhai2",
-                          fontWeight: FontWeight.w600),
-                      axis: Axis.horizontal,
-                      value: _serieNumber,
-                      minValue: 0,
-                      maxValue: 20,
-                      onChanged: (value) =>
-                          setState(() => _serieNumber = value),
+                  children: [
+                    SizedBox(
+                      height: 70,
+                      child: ListTile(
+                        title: NumberPicker(
+                          selectedTextStyle: TextStyle(
+                              color: cyanColor,
+                              fontSize: 30,
+                              fontFamily: "BalooBhai2",
+                              fontWeight: FontWeight.w600),
+                          axis: Axis.horizontal,
+                          value: _serieNumber,
+                          minValue: 0,
+                          maxValue: 20,
+                          onChanged: (value) =>
+                              setState(() => _serieNumber = value),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ]),
               shape: OutlineInputBorder(
@@ -171,9 +192,10 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             Card(
               color: Colors.white,
               child: Column(children: [
-                ListTile(
+                ExpansionTile(
                   title: Row(
-                    children: <Widget>[
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
                         "Number of repetition",
                         style: TextStyle(
@@ -182,25 +204,36 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                           fontFamily: 'BalooBhai',
                         ),
                       ),
+                      Text(
+                        _repNumber.toString(),
+                        style: TextStyle(
+                            color: redColor,
+                            fontSize: 25,
+                            fontFamily: 'BalooBhai2',
+                            fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 70,
-                  child: ListTile(
-                    title: NumberPicker(
-                      selectedTextStyle: TextStyle(
-                          color: redColor,
-                          fontSize: 30,
-                          fontFamily: "BalooBhai2",
-                          fontWeight: FontWeight.w600),
-                      axis: Axis.horizontal,
-                      value: _repNumber,
-                      minValue: 0,
-                      maxValue: 20,
-                      onChanged: (value) => setState(() => _repNumber = value),
+                  children: [
+                    SizedBox(
+                      height: 70,
+                      child: ListTile(
+                        title: NumberPicker(
+                          selectedTextStyle: TextStyle(
+                              color: redColor,
+                              fontSize: 30,
+                              fontFamily: "BalooBhai2",
+                              fontWeight: FontWeight.w600),
+                          axis: Axis.horizontal,
+                          value: _repNumber,
+                          minValue: 0,
+                          maxValue: 20,
+                          onChanged: (value) =>
+                              setState(() => _repNumber = value),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
               ]),
               shape: OutlineInputBorder(
@@ -214,9 +247,10 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             Card(
               color: Colors.white,
               child: Column(children: [
-                ListTile(
+                ExpansionTile(
                   title: Row(
-                    children: <Widget>[
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
                       Text(
                         "Rest time",
                         style: TextStyle(
@@ -225,31 +259,30 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                           fontFamily: 'BalooBhai',
                         ),
                       ),
+                      Text(
+                        _printDuration(duration_resttime),
+                        style: TextStyle(
+                            color: orangeColor,
+                            fontSize: 25,
+                            fontFamily: 'BalooBhai2',
+                            fontWeight: FontWeight.bold),
+                      )
                     ],
                   ),
-                ),
-                SizedBox(
-                  height: 200,
-                  child: ListTile(
-                    title: CupertinoTheme(
-                      data: CupertinoThemeData(
-                        textTheme: CupertinoTextThemeData(
-                          dateTimePickerTextStyle: TextStyle(
-                              fontFamily: 'BalooBhai',
-                              fontSize: 16,
-                              color: redColor,
-                              decorationColor: redColor),
+                  children: [
+                    SizedBox(
+                      height: 200,
+                      child: ListTile(
+                        title: CupertinoTimerPicker(
+                          initialTimerDuration: duration_resttime,
+                          mode: CupertinoTimerPickerMode.ms,
+                          onTimerDurationChanged: (duration) => setState(() {
+                            duration_resttime = duration;
+                          }),
                         ),
                       ),
-                      child: CupertinoTimerPicker(
-                        initialTimerDuration: duration_resttime,
-                        mode: CupertinoTimerPickerMode.ms,
-                        onTimerDurationChanged: (duration) => setState(() {
-                          duration_resttime = duration;
-                        }),
-                      ),
                     ),
-                  ),
+                  ],
                 ),
               ]),
               shape: OutlineInputBorder(
@@ -257,143 +290,58 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                   borderSide: BorderSide(color: Colors.transparent)),
               elevation: 2,
             ),
-
-            /*
-                Text("Number of serie"),
-                SizedBox(height: 10),
-                Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SfSlider(
-                            min: 0,
-                            max: 10,
-                            value: _serieNumber,
-                            interval: 2,
-                            showTicks: true,
-                            showLabels: true,
-                            activeColor: primaryColor,
-                            inactiveColor: secondaryColor,
-                            enableTooltip: true,
-                            stepSize: 1,
-                            showDividers: true,
-                            tooltipShape: SfPaddleTooltipShape(),
-                            onChanged: (value) {
-                              setState(() {
-                                _serieNumber = value;
-                              });
-                            },
-                          ),
+            SizedBox(
+              height: 20,
+            ),
+            Card(
+              color: Colors.white,
+              child: Column(children: [
+                ExpansionTile(
+                  title: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        "Select color",
+                        style: TextStyle(
+                          color: secondaryColor,
+                          fontSize: 20,
+                          fontFamily: 'BalooBhai',
                         ),
-                      ],
-                    )),
-                SizedBox(height: 50),
-                Conditional.single(
-                    context: context,
-                    conditionBuilder: (BuildContext context) =>
-                        widget.mode == "rep",
-                    widgetBuilder: (BuildContext context) {
-                      return Column(
-                        children: <Widget>[
-                          Text("Number of repetition"),
-                          SizedBox(height: 10),
-                          Container(
-                              margin: EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: SfSlider(
-                                      min: 0,
-                                      max: 20,
-                                      value: _repNumber,
-                                      interval: 4,
-                                      showTicks: true,
-                                      showLabels: true,
-                                      activeColor: primaryColor,
-                                      inactiveColor: secondaryColor,
-                                      enableTooltip: true,
-                                      stepSize: 1,
-                                      showDividers: true,
-                                      tooltipShape: SfPaddleTooltipShape(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _repNumber = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ],
-                      );
-                    },
-                    fallbackBuilder: (BuildContext context) {
-                      return Column(
-                        children: <Widget>[
-                          Text("Time of Exercice"),
-                          SizedBox(height: 10),
-                          Container(
-                              margin: EdgeInsets.symmetric(horizontal: 16),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: SfSlider(
-                                      min: 0,
-                                      max: 120,
-                                      value: _exerciceTime,
-                                      interval: 30,
-                                      showTicks: true,
-                                      showLabels: true,
-                                      activeColor: primaryColor,
-                                      inactiveColor: secondaryColor,
-                                      enableTooltip: true,
-                                      stepSize: 10,
-                                      showDividers: true,
-                                      tooltipShape: SfPaddleTooltipShape(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _exerciceTime = value;
-                                        });
-                                      },
-                                    ),
-                                  ),
-                                ],
-                              )),
-                        ],
-                      );
-                    }),
-                SizedBox(height: 50),
-                Text("Rest time"),
-                SizedBox(height: 10),
-                Container(
-                    margin: EdgeInsets.symmetric(horizontal: 16),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: SfSlider(
-                            min: 0,
-                            max: 120,
-                            value: _restTime,
-                            interval: 30,
-                            showTicks: true,
-                            showLabels: true,
-                            activeColor: primaryColor,
-                            inactiveColor: secondaryColor,
-                            enableTooltip: true,
-                            stepSize: 10,
-                            showDividers: true,
-                            tooltipShape: SfPaddleTooltipShape(),
-                            onChanged: (value) {
-                              setState(() {
-                                _restTime = value;
-                              });
-                            },
-                          ),
-                        ),
-                      ],
-                    )),
-                    */
+                      ),
+                      Container(
+                        width: 30,
+                        height: 30,
+                        decoration: BoxDecoration(
+                            shape: BoxShape.circle, color: _color),
+                      )
+                    ],
+                  ),
+                  children: [
+                    SizedBox(
+                      height: 80,
+                      child: ListTile(
+                          title: MyColorPicker(
+                              onSelectColor: (value) {
+                                setState(() {
+                                  _color = value;
+                                });
+                              },
+                              availableColors: [
+                                redColor,
+                                cyanColor,
+                                orangeColor,
+                                blueColor
+                              ],
+                              initialColor: Colors.blue)),
+                    ),
+                  ],
+                ),
+              ]),
+              shape: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(20),
+                  borderSide: BorderSide(color: Colors.transparent)),
+              elevation: 2,
+            ),
           ]),
         ),
       ),
