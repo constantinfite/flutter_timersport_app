@@ -31,16 +31,24 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       backgroundColor: backgroundColor,
       appBar: AppBar(
         elevation: 0,
+        toolbarHeight: 100,
         leading: IconButton(
-            icon: const Icon(Icons.arrow_back_ios_rounded),
-            color: primaryColor,
+            icon: Icon(
+              Icons.arrow_back_ios_rounded,
+            ),
+            color: secondaryColor,
+            iconSize: 40,
             onPressed: () => Navigator.pop(context)
             // 2
             ),
         backgroundColor: Colors.transparent,
         title: Text(
           'Add exercice',
-          style: TextStyle(color: secondaryColor),
+          style: TextStyle(
+            color: secondaryColor,
+            fontSize: 30,
+            fontFamily: 'BalooBhai',
+          ),
         ),
         centerTitle: true,
         actions: [
@@ -55,14 +63,14 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 _exercice.resttime = _restTime;
                 _exercice.exercicetime = _exerciceTime;
                 _exercice.mode = widget.mode;
-                
+
                 await _exerciceService.saveExercice(_exercice);
                 Navigator.pop(context);
               }
               // 2
               ),
           IconButton(
-            icon: const Icon(Icons.clear),
+            icon: const Icon(Icons.more_vert),
             color: secondaryColor,
             onPressed: () => Navigator.pop(context),
 
@@ -78,19 +86,29 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 SizedBox(
-                  width: 250,
+                  width: 300,
                   child: TextField(
-                    style: TextStyle(color: secondaryColor),
+                    style: TextStyle(
+                      color: secondaryColor,
+                      fontSize: 2,
+                      fontFamily: 'BalooBhai',
+                    ),
                     controller: _exerciceNameController,
                     decoration: InputDecoration(
                       hintText: 'Planche',
+                      filled: true,
+                      fillColor: Colors.white,
                       helperText: 'Enter exercice name',
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: Colors.transparent),
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
                       enabledBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                            color: secondaryColor,
-                            width: 1.0,
+                            color: Colors.transparent,
+                            width: 0.0,
                           ),
-                          borderRadius: BorderRadius.circular(10.0)),
+                          borderRadius: BorderRadius.circular(20.0)),
                     ),
                   ),
                 ),
