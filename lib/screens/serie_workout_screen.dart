@@ -33,7 +33,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   @override
   void initState() {
     super.initState();
-    _exercice.resttime = 0;
+    _exercice.resttime = 10;
     _exercice.serie = 1;
     _exercice.color = 0;
     getExercice();
@@ -68,23 +68,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     }
   }
 
-  previousRound() {
-    var _timeSecond = _minutes * 60 + _seconds;
-    if (_exercice.resttime! > _timeSecond) {
-      _timer.cancel();
-      setState(() {
-        _minutes = _exercice.resttime! ~/ 60;
-        _seconds = _exercice.resttime!.toInt() % 60;
-      });
-    } else {
-      _timer.cancel();
-      getExercice();
-      setState(() {
-        _round--;
-      });
-    }
-  }
-
   void _startTimer() {
     if (_minutes > 0) {
       _seconds = _seconds + _minutes * 60;
@@ -103,14 +86,21 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             _minutes--;
           } else {
             _timer.cancel();
+            nextRound();
           }
         }
       });
     });
   }
 
-  void _pauseTimer() {
-    _timer.cancel();
+  String formatDuration(int totalSeconds) {
+    final duration = Duration(seconds: totalSeconds);
+    final minutes = duration.inMinutes;
+    final seconds = totalSeconds % 60;
+
+    final minutesString = '$minutes'.padLeft(1, '0');
+    final secondsString = '$seconds'.padLeft(2, '0');
+    return '$minutesString m $secondsString s';
   }
 
   @override
@@ -120,20 +110,20 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
-            icon: const Icon(Icons.clear),
-            color: secondaryColor,
-            iconSize: 40,
-            onPressed: () => Navigator.pop(context),
+              icon: const Icon(Icons.clear),
+              color: secondaryColor,
+              iconSize: 40,
+              onPressed: () => {Navigator.pop(context), _timer.cancel()}
 
-            // 2
-          ),
+              // 2
+              ),
           backgroundColor: Colors.transparent,
           actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            SizedBox(height: 20),
+            SizedBox(height: 10),
             Row(mainAxisAlignment: MainAxisAlignment.center, children: [
               Card(
                 color: Colors.white,
@@ -143,7 +133,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     borderSide: BorderSide(color: Colors.white)),
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
+                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -154,7 +144,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                               Icon(
                                 MyFlutterApp.noun_workout,
                                 color: Color(_exercice.color!),
-                                size: 40,
+                                size: 35,
                               ),
                               SizedBox(
                                 width: 10,
@@ -162,7 +152,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                               Text(
                                 _exercice.name.toString(),
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   fontFamily: 'BalooBhai',
                                   color: secondaryColor,
                                 ),
@@ -172,7 +162,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                           Text(
                             "Exercice",
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 color: secondaryColor,
                                 fontFamily: 'Roboto',
                                 fontStyle: FontStyle.italic,
@@ -190,7 +180,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                               Icon(
                                 MyFlutterApp.noun_repetition,
                                 color: Color(_exercice.color!),
-                                size: 40,
+                                size: 30,
                               ),
                               SizedBox(
                                 width: 10,
@@ -200,7 +190,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                                     "/" +
                                     _exercice.serie.toString(),
                                 style: TextStyle(
-                                  fontSize: 30,
+                                  fontSize: 25,
                                   fontFamily: 'BalooBhai',
                                   color: secondaryColor,
                                 ),
@@ -210,7 +200,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                           Text(
                             "Serie",
                             style: TextStyle(
-                                fontSize: 20,
+                                fontSize: 15,
                                 color: secondaryColor,
                                 fontFamily: 'Roboto',
                                 fontStyle: FontStyle.italic,
@@ -249,17 +239,23 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 GestureDetector(
                   onTap: () => {
                     if (_round % 2 == 0)
-                      {print("rep"), nextRound()}
+                      {nextRound()}
                     else
-                      {print("time")}
+                      {
+                        if (!_timer.isActive)
+                          {_startTimer()}
+                        else
+                          {_timer.cancel()}
+                      }
                   },
                   child: SizedBox(
-                    width: 250,
-                    height: 250,
+                    width: 280,
+                    height: 280,
                     child: CircularProgressIndicator(
                       color: Color(_exercice.color!),
-                      value: progress,
+                      value: (_seconds + _minutes * 60) / _exercice.resttime!,
                       strokeWidth: 10,
+                      backgroundColor: Colors.white,
                     ),
                   ),
                 ),
@@ -291,7 +287,13 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         child: SizedBox(
           width: 140,
           child: GestureDetector(
-            onTap: () {},
+            onTap: () {
+              setState(() {
+                _timer.cancel();
+                getExercice();
+                _round = index;
+              });
+            },
             child: Card(
               margin: EdgeInsets.zero,
               color: _round == index ? Color(_exercice.color!) : Colors.white,
@@ -310,7 +312,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     Text(
                         index % 2 == 0
                             ? _exercice.repetition.toString() + " rep"
-                            : _exercice.resttime.toString(),
+                            : formatDuration(_exercice.resttime!),
                         style: TextStyle(
                           fontSize: 27,
                           color: _round == index
