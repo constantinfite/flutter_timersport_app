@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
@@ -26,6 +25,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _seconds = 5;
   int _minutes = 1;
   int _round = 0;
+  // index start at 0 [0,1  2,3  4,5]
+
+  final commentControler = TextEditingController();
 
   Timer _timer = Timer(Duration(milliseconds: 1), () {});
   double progress = 1.0;
@@ -63,9 +65,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       _round++;
     });
 
-    if (_round / 2 == _exercice.serie) {
+    /*if (_round / 2 == _exercice.serie) {
       Navigator.pop(context);
-    }
+    }*/
   }
 
   void _startTimer() {
@@ -103,6 +105,50 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     return '$minutesString m $secondsString s';
   }
 
+  String actualSerie(int round) {
+    if (round > _exercice.serie!) {
+      return _exercice.serie.toString() + "/" + _exercice.serie.toString();
+    } else {
+      return ((_round + 2) ~/ 2).toString() + "/" + _exercice.serie.toString();
+    }
+  }
+
+  showAlertDialog(BuildContext context) {
+    // set up the buttons
+    Widget cancelButton = TextButton(
+      child: Text("Cancel"),
+      onPressed: () {
+        Navigator.pop(context);
+      },
+    );
+    Widget continueButton = TextButton(
+      child: Text("Continue"),
+      onPressed: () {
+        Navigator.pop(context);
+        _timer.cancel();
+        Navigator.pop(context);
+      },
+    );
+
+    // set up the AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Exit workout before finishing"),
+      content: Text("You will lose all the progress"),
+      actions: [
+        cancelButton,
+        continueButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,7 +159,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               icon: const Icon(Icons.clear),
               color: secondaryColor,
               iconSize: 40,
-              onPressed: () => {Navigator.pop(context), _timer.cancel()}
+              onPressed: () => {showAlertDialog(context)}
 
               // 2
               ),
@@ -186,9 +232,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                                 width: 10,
                               ),
                               Text(
-                                ((_round + 2) ~/ 2).toString() +
-                                    "/" +
-                                    _exercice.serie.toString(),
+                                actualSerie(_round),
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai',
@@ -217,29 +261,24 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             Stack(
               alignment: Alignment.center,
               children: [
-                Conditional.single(
-                  context: context,
-                  conditionBuilder: (BuildContext context) => _round % 2 == 1,
-                  widgetBuilder: (BuildContext context) => Text(
-                    "${f.format(_minutes)}:${f.format(_seconds)}",
-                    style: TextStyle(
-                        fontSize: 80,
-                        fontFamily: 'BalooBhai',
-                        color: secondaryColor,
-                        letterSpacing: 1,
-                        wordSpacing: 1),
-                  ),
-                  fallbackBuilder: (BuildContext context) => Text(
-                      _exercice.repetition?.toInt().toString() ?? "",
-                      style: TextStyle(
-                          fontSize: 100,
-                          fontFamily: 'BalooBhai',
-                          color: secondaryColor)),
-                ),
+                textCercle(),
                 GestureDetector(
                   onTap: () => {
-                    if (_round % 2 == 0)
-                      {nextRound()}
+                    if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
+                      {nextRound()},
+                    if (_round == (_exercice.serie! * 2))
+                      {
+                        showModalBottomSheet(
+                          context: context,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(30))),
+                          constraints: BoxConstraints(),
+                          builder: (BuildContext context) {
+                            return bottomSheet();
+                          },
+                        )
+                      }
                     else
                       {
                         if (!_timer.isActive)
@@ -269,9 +308,11 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   color: secondaryColor,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
-                      itemCount: _exercice.serie! * 2,
+                      itemCount: (_exercice.serie! * 2) + 1,
                       itemBuilder: (context, index) {
-                        return buildCard(index: index);
+                        return buildCard(
+                            index: index,
+                            numberElement: (_exercice.serie! * 2) + 1);
                       }),
                 ),
               ),
@@ -280,7 +321,44 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         ));
   }
 
-  Widget buildCard({required index}) => Padding(
+  Widget buildCard({required index, numberElement}) {
+    if (index + 1 == numberElement) {
+      return Padding(
+        padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
+        child: SizedBox(
+          width: 140,
+          child: GestureDetector(
+            onTap: () {
+              setState(() {
+                _timer.cancel();
+                getExercice();
+                _round = index;
+              });
+            },
+            child: Card(
+              margin: EdgeInsets.zero,
+              color: _round == index ? Color(_exercice.color!) : Colors.white,
+              shape:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text("Finish",
+                        style: TextStyle(
+                          fontSize: 27,
+                          color: _round == index
+                              ? Colors.white
+                              : Color(_exercice.color!),
+                          fontFamily: 'BalooBhai',
+                        )),
+                  ]),
+            ),
+          ),
+        ),
+      );
+    } else {
+      return Padding(
         padding: index % 2 == 0
             ? EdgeInsets.fromLTRB(15, 10, 1, 10)
             : EdgeInsets.fromLTRB(2, 10, 5, 10),
@@ -332,9 +410,169 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           ),
         ),
       );
+    }
+  }
+
+  Widget textCercle() {
+    if (_round == (_exercice.serie! * 2)) {
+      return Text(
+        "Finish",
+        style: TextStyle(
+            fontSize: 80,
+            fontFamily: 'BalooBhai',
+            color: secondaryColor,
+            letterSpacing: 1,
+            wordSpacing: 1),
+      );
+    }
+    if (_round % 2 == 1) {
+      return Text(
+        "${f.format(_minutes)}:${f.format(_seconds)}",
+        style: TextStyle(
+            fontSize: 80,
+            fontFamily: 'BalooBhai',
+            color: secondaryColor,
+            letterSpacing: 1,
+            wordSpacing: 1),
+      );
+    } else {
+      return Text(_exercice.repetition?.toInt().toString() ?? "",
+          style: TextStyle(
+              fontSize: 100, fontFamily: 'BalooBhai', color: secondaryColor));
+    }
+  }
 
   Widget buildSideLabel(double value) => Text(
         value.round().toString(),
         style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
       );
+  Widget bottomSheet() {
+    return Container(
+      height: 500,
+      padding: EdgeInsets.all(20),
+      width: MediaQuery.of(context).size.width * 0.90,
+      child: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Text(
+              _exercice.name.toString(),
+              style: TextStyle(
+                fontSize: 40,
+                fontFamily: 'BalooBhai',
+                color: secondaryColor,
+              ),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "Number of repetition",
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'BalooBhai2',
+                          color: secondaryColor,
+                          fontWeight: FontWeight.w700),
+                    ),
+                    Text("Number of serie",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700)),
+                    Text("Rest time",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700)),
+                    Text("Total time",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700))
+                  ],
+                ),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  children: [
+                    Text(_exercice.serie.toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700)),
+                    Text(_exercice.repetition.toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700)),
+                    Text(_exercice.resttime.toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700)),
+                    Text("Total time",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: secondaryColor,
+                            fontWeight: FontWeight.w700))
+                  ],
+                )
+              ],
+            ),
+            SizedBox(
+              width: 300,
+              child: TextField(
+                style: TextStyle(
+                  color: secondaryColor,
+                  fontSize: 20,
+                  fontFamily: 'BalooBhai',
+                ),
+                controller: commentControler,
+                decoration: InputDecoration(
+                  hintText: 'Comments of your workout',
+                  filled: true,
+                  fillColor: Colors.white,
+                  focusedBorder: OutlineInputBorder(
+                    borderSide: BorderSide(color: Color(_exercice.color!)),
+                    borderRadius: BorderRadius.circular(20.0),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                      borderSide: BorderSide(
+                        color: Color(_exercice.color!),
+                        width: 2.0,
+                      ),
+                      borderRadius: BorderRadius.circular(20.0)),
+                ),
+              ),
+            ),
+            ElevatedButton(
+              child: Text('Save workout'),
+              style: ElevatedButton.styleFrom(
+                elevation: 2,
+                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                primary: Color(_exercice.color!),
+                textStyle: TextStyle(fontFamily: "BalooBhai", fontSize: 20),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20),
+                ),
+              ),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }

@@ -6,7 +6,6 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/screens/exercice_screen_update.dart';
 import 'package:sport_timer/screens/serie_workout_screen.dart';
-//import 'package:flutter_slidable/flutter_slidable.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
