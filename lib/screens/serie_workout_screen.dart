@@ -46,6 +46,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       _exercice.resttime = exercice[0]['resttime'] ?? 0;
       _exercice.exercicetime = exercice[0]['exercicetime'] ?? 0;
       _exercice.mode = exercice[0]['mode'] ?? "";
+      _exercice.color = exercice[0]['color'] ?? 0;
       //set minute and second for timer
       _minutes = _exercice.resttime! ~/ 60;
       _seconds = _exercice.resttime!.toInt() % 60;
@@ -145,70 +146,81 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     borderSide: BorderSide(color: Colors.white)),
                 child: Container(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 16, horizontal: 16),
+                      const EdgeInsets.symmetric(vertical: 25, horizontal: 25),
                   child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Icon(
-                        MyFlutterApp.noun_repetition,
-                        color: primaryColor,
-                        size: 50,
-                      ),
-                      SizedBox(width: 15),
-                      SizedBox(
-                        width: 70,
-                        child: Column(
-                          children: [
-                            Text(
-                              _exercice.name.toString(),
-                              style: TextStyle(
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                MyFlutterApp.noun_workout,
+                                color: Color(_exercice.color!),
+                                size: 40,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                _exercice.name.toString(),
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'BalooBhai',
+                                  color: secondaryColor,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "Exercice",
+                            style: TextStyle(
                                 fontSize: 20,
                                 color: secondaryColor,
-                                fontWeight: FontWeight.bold,
-                                overflow: TextOverflow.ellipsis,
-                              ),
-                            ),
-                          ],
-                        ),
-                      )
-                    ],
-                  ),
-                ),
-              ),
-              SizedBox(width: 20),
-              Card(
-                color: Colors.white,
-                elevation: 2.0,
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.white)),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 14),
-                  child: Row(
-                    children: [
-                      Conditional.single(
-                        context: context,
-                        conditionBuilder: (BuildContext context) =>
-                            _round % 2 == 1,
-                        widgetBuilder: (BuildContext context) => Icon(
-                          MyFlutterApp.noun_number,
-                          color: primaryColor,
-                          size: 50,
-                        ),
-                        fallbackBuilder: (BuildContext context) => Icon(
-                          MyFlutterApp.noun_time,
-                          color: primaryColor,
-                          size: 50,
-                        ),
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
                       ),
-                      SizedBox(width: 15),
-                      Text(
-                        "Mode",
-                        style: TextStyle(
-                            fontSize: 20,
-                            color: secondaryColor,
-                            fontWeight: FontWeight.bold),
-                      )
+                      SizedBox(
+                        width: 30,
+                      ),
+                      Column(
+                        children: [
+                          Row(
+                            children: [
+                              Icon(
+                                MyFlutterApp.noun_repetition,
+                                color: Color(_exercice.color!),
+                                size: 40,
+                              ),
+                              SizedBox(
+                                width: 10,
+                              ),
+                              Text(
+                                _round.toString() +
+                                    "/" +
+                                    _exercice.serie.toString(),
+                                style: TextStyle(
+                                  fontSize: 30,
+                                  fontFamily: 'BalooBhai',
+                                  color: secondaryColor,
+                                ),
+                              )
+                            ],
+                          ),
+                          Text(
+                            "Serie",
+                            style: TextStyle(
+                                fontSize: 20,
+                                color: secondaryColor,
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
                     ],
                   ),
                 ),
@@ -221,18 +233,18 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               widgetBuilder: (BuildContext context) => Text(
                 "${f.format(_minutes)}:${f.format(_seconds)}",
                 style: TextStyle(
-                    color: secondaryColor,
                     fontSize: 100,
-                    fontWeight: FontWeight.bold,
+                    fontFamily: 'BalooBhai',
+                    color: secondaryColor,
                     letterSpacing: 1,
                     wordSpacing: 1),
               ),
               fallbackBuilder: (BuildContext context) => Text(
                   _exercice.repetition?.toInt().toString() ?? "",
                   style: TextStyle(
-                      color: secondaryColor,
                       fontSize: 100,
-                      fontWeight: FontWeight.bold)),
+                      fontFamily: 'BalooBhai',
+                      color: secondaryColor)),
             ),
             SizedBox(height: 50),
             Row(

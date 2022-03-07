@@ -117,10 +117,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScopeNode currentFocus = FocusScope.of(context);
-          if (!currentFocus.hasPrimaryFocus) {
-            currentFocus.unfocus();
-          }
+          FocusScope.of(context).unfocus();
         },
         child: SingleChildScrollView(
           child: Padding(

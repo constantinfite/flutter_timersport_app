@@ -246,12 +246,10 @@ class _HomeScreenState extends State<HomeScreen> {
                               child: Text('Edit'),
                               style: ElevatedButton.styleFrom(
                                 elevation: 2,
-                                onPrimary: blueColor,
+                                onPrimary: Color(_exerciceList[index].color!),
                                 primary: Colors.white,
                                 textStyle: TextStyle(
-                                    color: blueColor,
-                                    fontFamily: "BalooBhai",
-                                    fontSize: 30),
+                                    fontFamily: "BalooBhai", fontSize: 30),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(20),
                                     side:
