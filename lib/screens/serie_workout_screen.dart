@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
@@ -25,14 +26,16 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _seconds = 5;
   int _minutes = 1;
   int _round = 0;
-  double _sliderRound = 0;
+
   Timer _timer = Timer(Duration(milliseconds: 1), () {});
+  double progress = 1.0;
 
   @override
   void initState() {
     super.initState();
     _exercice.resttime = 0;
     _exercice.serie = 1;
+    _exercice.color = 0;
     getExercice();
   }
 
@@ -60,9 +63,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       _round++;
     });
 
-    if (_round % 2 == 0) {
-      _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
-    }
     if (_round / 2 == _exercice.serie) {
       Navigator.pop(context);
     }
@@ -82,9 +82,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       setState(() {
         _round--;
       });
-      if (_round % 2 == 0) {
-        _sliderRound = (0.5 * _round).round() * (1 / _exercice.serie!.toInt());
-      }
     }
   }
 
@@ -199,7 +196,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                                 width: 10,
                               ),
                               Text(
-                                _round.toString() +
+                                ((_round + 2) ~/ 2).toString() +
                                     "/" +
                                     _exercice.serie.toString(),
                                 style: TextStyle(
@@ -227,97 +224,112 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               ),
             ]),
             SizedBox(height: 50),
-            Conditional.single(
-              context: context,
-              conditionBuilder: (BuildContext context) => _round % 2 == 1,
-              widgetBuilder: (BuildContext context) => Text(
-                "${f.format(_minutes)}:${f.format(_seconds)}",
-                style: TextStyle(
-                    fontSize: 100,
-                    fontFamily: 'BalooBhai',
-                    color: secondaryColor,
-                    letterSpacing: 1,
-                    wordSpacing: 1),
-              ),
-              fallbackBuilder: (BuildContext context) => Text(
-                  _exercice.repetition?.toInt().toString() ?? "",
-                  style: TextStyle(
-                      fontSize: 100,
-                      fontFamily: 'BalooBhai',
-                      color: secondaryColor)),
-            ),
-            SizedBox(height: 50),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            Stack(
+              alignment: Alignment.center,
               children: [
-                SizedBox(width: 50.0),
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible: _round > 0,
-                  child: IconButton(
-                      icon: Icon(Icons.arrow_back_ios_rounded),
-                      color: primaryColor,
-                      iconSize: 50,
-                      onPressed: () => previousRound()
-                      // 2
-                      ),
+                Conditional.single(
+                  context: context,
+                  conditionBuilder: (BuildContext context) => _round % 2 == 1,
+                  widgetBuilder: (BuildContext context) => Text(
+                    "${f.format(_minutes)}:${f.format(_seconds)}",
+                    style: TextStyle(
+                        fontSize: 80,
+                        fontFamily: 'BalooBhai',
+                        color: secondaryColor,
+                        letterSpacing: 1,
+                        wordSpacing: 1),
+                  ),
+                  fallbackBuilder: (BuildContext context) => Text(
+                      _exercice.repetition?.toInt().toString() ?? "",
+                      style: TextStyle(
+                          fontSize: 100,
+                          fontFamily: 'BalooBhai',
+                          color: secondaryColor)),
                 ),
-                Visibility(
-                  maintainSize: true,
-                  maintainAnimation: true,
-                  maintainState: true,
-                  visible: _round % 2 == 1,
-                  child: IconButton(
-                      icon: Icon(_timer.isActive
-                          ? Icons.abc
-                          : Icons.play_arrow_outlined),
-                      color: primaryColor,
-                      iconSize: 70,
-                      onPressed: () {
-                        if (!_timer.isActive) {
-                          ///start
-                          _startTimer();
-                        } else {
-                          ///pause
-                          _pauseTimer();
-                        }
-                        setState(() {
-                          ///change icon
-                        });
-                        // 2
-                      }),
-                ),
-                IconButton(
-                    icon: Icon(Icons.arrow_forward_ios_rounded),
-                    color: primaryColor,
-                    iconSize: 50,
-                    onPressed: () => nextRound()
-                    // 2
+                GestureDetector(
+                  onTap: () => {
+                    if (_round % 2 == 0)
+                      {print("rep"), nextRound()}
+                    else
+                      {print("time")}
+                  },
+                  child: SizedBox(
+                    width: 250,
+                    height: 250,
+                    child: CircularProgressIndicator(
+                      color: Color(_exercice.color!),
+                      value: progress,
+                      strokeWidth: 10,
                     ),
-                const SizedBox(width: 50.0)
+                  ),
+                ),
               ],
             ),
-            SizedBox(height: 100),
-            Container(
-              margin: EdgeInsets.symmetric(horizontal: 30),
-              child: Row(children: [
-                buildSideLabel(0),
-                SizedBox(width: 30),
-                Expanded(
-                    child: LinearProgressIndicator(
-                  backgroundColor: secondaryColor,
-                  color: primaryColor,
-                  value: _sliderRound,
-                )),
-                SizedBox(width: 30),
-                buildSideLabel(0),
-              ]),
-            )
+            SizedBox(height: 50),
+            Row(children: [
+              Expanded(
+                child: Container(
+                  height: 160.0,
+                  color: secondaryColor,
+                  child: ListView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: _exercice.serie! * 2,
+                      itemBuilder: (context, index) {
+                        return buildCard(index: index);
+                      }),
+                ),
+              ),
+            ]),
           ],
         ));
   }
+
+  Widget buildCard({required index}) => Padding(
+        padding: index % 2 == 0
+            ? EdgeInsets.fromLTRB(15, 10, 1, 10)
+            : EdgeInsets.fromLTRB(2, 10, 5, 10),
+        child: SizedBox(
+          width: 140,
+          child: GestureDetector(
+            onTap: () {},
+            child: Card(
+              margin: EdgeInsets.zero,
+              color: _round == index ? Color(_exercice.color!) : Colors.white,
+              shape:
+                  OutlineInputBorder(borderRadius: BorderRadius.circular(20)),
+              child: Column(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Text(index % 2 == 0 ? "Exercice" : "Rest",
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: secondaryColor,
+                            fontFamily: 'Roboto',
+                            fontWeight: FontWeight.w700)),
+                    Text(
+                        index % 2 == 0
+                            ? _exercice.repetition.toString() + " rep"
+                            : _exercice.resttime.toString(),
+                        style: TextStyle(
+                          fontSize: 27,
+                          color: _round == index
+                              ? Colors.white
+                              : Color(_exercice.color!),
+                          fontFamily: 'BalooBhai',
+                        )),
+                    Text("Serie " + ((index + 2) ~/ 2).toString(),
+                        style: TextStyle(
+                            fontSize: 20,
+                            color: secondaryColor,
+                            fontFamily: 'Roboto',
+                            fontStyle: FontStyle.italic,
+                            fontWeight: FontWeight.w400))
+                  ]),
+            ),
+          ),
+        ),
+      );
 
   Widget buildSideLabel(double value) => Text(
         value.round().toString(),
