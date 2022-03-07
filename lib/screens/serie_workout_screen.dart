@@ -5,7 +5,6 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
-import 'package:syncfusion_flutter_sliders/sliders.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
