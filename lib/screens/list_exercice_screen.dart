@@ -69,12 +69,6 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
     });
   }
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
-
   String formatDuration(int totalSeconds) {
     final duration = Duration(seconds: totalSeconds);
     final minutes = duration.inMinutes;
@@ -252,6 +246,39 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
               elevation: 2,
             );
           }),
+      floatingActionButton: SpeedDial(
+        icon: Icons.add,
+        activeIcon: Icons.close,
+        backgroundColor: AppTheme.colors.redColor,
+        spacing: 15,
+        spaceBetweenChildren: 10,
+        children: [
+          SpeedDialChild(
+            child: Icon(MyFlutterApp.noun_number),
+            backgroundColor: AppTheme.colors.redColor,
+            label: 'Repetition',
+            foregroundColor: Colors.white,
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (context) => ExerciceTimeScreen(mode: "rep")))
+                .then((_) {
+              getAllExercices();
+            }),
+          ),
+          SpeedDialChild(
+            child: Icon(MyFlutterApp.noun_time),
+            backgroundColor: AppTheme.colors.redColor,
+            label: 'Timer',
+            foregroundColor: Colors.white,
+            onTap: () => Navigator.of(context)
+                .push(MaterialPageRoute(
+                    builder: (context) => ExerciceTimeScreen(mode: "timer")))
+                .then((_) {
+              getAllExercices();
+            }),
+          )
+        ],
+      ),
     );
   }
 }

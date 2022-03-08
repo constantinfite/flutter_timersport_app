@@ -8,6 +8,7 @@ import 'package:sport_timer/screens/input_exercice_screen_update.dart';
 import 'package:sport_timer/screens/serie_workout_screen.dart';
 import 'package:sport_timer/screens/list_exercice_screen.dart';
 import 'package:sport_timer/screens/stats_screen.dart';
+import 'package:sport_timer/presentation/app_theme.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -17,19 +18,13 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final primaryColor = Color.fromARGB(255, 255, 95, 77);
-  final secondaryColor = Color.fromARGB(255, 60, 60, 60);
-  final backgroundColor = Color.fromARGB(255, 241, 241, 241);
-  final blueColor = Color.fromARGB(255, 173, 200, 243);
-  final cyanColor = Color.fromARGB(255, 87, 203, 214);
-  final orangeColor = Color.fromARGB(255, 254, 143, 63);
-  final redColor = Color.fromARGB(255, 251, 80, 97);
-
   int _selectedIndex = 0;
   final List<Widget> screens = [ListExerciceScreen(), StatsScreen()];
 
   List<Exercice> _exerciceList = <Exercice>[];
   final _exerciceService = ExerciceService();
+
+  String _title = "EXERCICES";
 
   @override
   void initState() {
@@ -83,6 +78,18 @@ class _HomeScreenState extends State<HomeScreen> {
     setState(() {
       _selectedIndex = index;
     });
+    switch (index) {
+      case 0:
+        {
+          _title = 'EXERCICES';
+        }
+        break;
+      case 1:
+        {
+          _title = 'STATS';
+        }
+        break;
+    }
   }
 
   String formatDuration(int totalSeconds) {
@@ -98,15 +105,15 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: redColor,
+      backgroundColor: AppTheme.colors.redColor,
       appBar: AppBar(
         toolbarHeight: 100,
         elevation: 0,
-        backgroundColor: backgroundColor,
+        backgroundColor: AppTheme.colors.backgroundColor,
         title: Text(
-          "EXERCICES",
+          _title,
           style: TextStyle(
-            color: secondaryColor,
+            color: AppTheme.colors.secondaryColor,
             fontSize: 35,
             fontFamily: 'BalooBhai',
           ),
@@ -116,45 +123,13 @@ class _HomeScreenState extends State<HomeScreen> {
           Icon(Icons.more_vert),
         ],
         actionsIconTheme: IconThemeData(
-          color: secondaryColor,
+          color: AppTheme.colors.secondaryColor,
           size: 36,
         ),
       ),
       body: screens[_selectedIndex],
       //drawer: const DrawerNavigation(),
-      floatingActionButton: SpeedDial(
-        icon: Icons.add,
-        activeIcon: Icons.close,
-        backgroundColor: redColor,
-        spacing: 15,
-        spaceBetweenChildren: 10,
-        children: [
-          SpeedDialChild(
-            child: Icon(MyFlutterApp.noun_number),
-            backgroundColor: redColor,
-            label: 'Repetition',
-            foregroundColor: Colors.white,
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(mode: "rep")))
-                .then((_) {
-              getAllExercices();
-            }),
-          ),
-          SpeedDialChild(
-            child: Icon(MyFlutterApp.noun_time),
-            backgroundColor: redColor,
-            label: 'Timer',
-            foregroundColor: Colors.white,
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(mode: "timer")))
-                .then((_) {
-              getAllExercices();
-            }),
-          )
-        ],
-      ),
+
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -167,7 +142,7 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: _selectedIndex,
-        selectedItemColor: redColor,
+        selectedItemColor: AppTheme.colors.redColor,
         onTap: (int index) {
           _onItemTapped(index);
         },
