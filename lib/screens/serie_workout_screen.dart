@@ -22,11 +22,14 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _seconds = 5;
   int _minutes = 1;
   int _round = 0;
+
+  int totalSecond = 0;
   // index start at 0 [0,1  2,3  4,5]
 
   final commentControler = TextEditingController();
 
   Timer _timer = Timer(Duration(milliseconds: 1), () {});
+  Timer _totalTimer = Timer(Duration(milliseconds: 1), () {});
   double progress = 1.0;
 
   @override
@@ -36,6 +39,15 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     _exercice.serie = 1;
     _exercice.color = 0;
     getExercice();
+    startTotalTimer();
+  }
+
+  startTotalTimer() {
+    _totalTimer = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        totalSecond++;
+      });
+    });
   }
 
   getExercice() async {
@@ -123,6 +135,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       onPressed: () {
         Navigator.pop(context);
         _timer.cancel();
+        _totalTimer.cancel();
         Navigator.pop(context);
       },
     );
@@ -149,6 +162,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: AppTheme.colors.backgroundColor,
         appBar: AppBar(
           elevation: 0,
@@ -266,6 +280,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                       {
                         showModalBottomSheet(
                           context: context,
+                          isScrollControlled: true,
                           shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.vertical(
                                   top: Radius.circular(30))),
@@ -441,130 +456,134 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   }
 
   Widget bottomSheet() {
-    return Container(
-      height: 500,
-      padding: EdgeInsets.all(20),
-      width: MediaQuery.of(context).size.width * 0.90,
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              _exercice.name.toString(),
-              style: TextStyle(
-                fontSize: 40,
-                fontFamily: 'BalooBhai',
-                color: AppTheme.colors.secondaryColor,
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "Number of repetition",
-                      style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'BalooBhai2',
-                          color: AppTheme.colors.secondaryColor,
-                          fontWeight: FontWeight.w700),
-                    ),
-                    Text("Number of serie",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700)),
-                    Text("Rest time",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700)),
-                    Text("Total time",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700))
-                  ],
-                ),
-                Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  children: [
-                    Text(_exercice.serie.toString(),
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700)),
-                    Text(_exercice.repetition.toString(),
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700)),
-                    Text(_exercice.resttime.toString(),
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700)),
-                    Text("Total time",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700))
-                  ],
-                )
-              ],
-            ),
-            SizedBox(
-              width: 300,
-              child: TextField(
+    return SingleChildScrollView(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.5,
+        padding: EdgeInsets.all(20),
+        width: MediaQuery.of(context).size.width * 0.90,
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: <Widget>[
+              /* Text(d
+                _exercice.name.toString(),
                 style: TextStyle(
-                  color: AppTheme.colors.secondaryColor,
-                  fontSize: 20,
+                  fontSize: 40,
                   fontFamily: 'BalooBhai',
+                  color: AppTheme.colors.secondaryColor,
                 ),
-                controller: commentControler,
-                decoration: InputDecoration(
-                  hintText: 'Comments of your workout',
-                  filled: true,
-                  fillColor: Colors.white,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Color(_exercice.color!)),
-                    borderRadius: BorderRadius.circular(20.0),
-                  ),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color(_exercice.color!),
-                        width: 2.0,
+              ),*/
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: [
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Number of repetition",
+                        style: TextStyle(
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai2',
+                            color: AppTheme.colors.secondaryColor,
+                            fontWeight: FontWeight.w700),
                       ),
-                      borderRadius: BorderRadius.circular(20.0)),
+                      Text("Number of serie",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
+                      Text("Rest time",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
+                      Text("Total time",
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700))
+                    ],
+                  ),
+                  Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(_exercice.serie.toString(),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
+                      Text(_exercice.repetition.toString(),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
+                      Text(formatDuration(_exercice.resttime!),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
+                      Text(formatDuration(totalSecond),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700))
+                    ],
+                  )
+                ],
+              ),
+              SizedBox(
+                width: 300,
+                child: TextField(
+                  style: TextStyle(
+                    color: AppTheme.colors.secondaryColor,
+                    fontSize: 20,
+                    fontFamily: 'BalooBhai',
+                  ),
+                  controller: commentControler,
+                  decoration: InputDecoration(
+                    hintText: 'Comments of your workout',
+                    filled: true,
+                    fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Color(_exercice.color!)),
+                      borderRadius: BorderRadius.circular(20.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Color(_exercice.color!),
+                          width: 2.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20.0)),
+                  ),
                 ),
               ),
-            ),
-            ElevatedButton(
-              child: Text('Save workout'),
-              style: ElevatedButton.styleFrom(
-                elevation: 2,
-                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                primary: Color(_exercice.color!),
-                textStyle: TextStyle(fontFamily: "BalooBhai", fontSize: 20),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
+              ElevatedButton(
+                child: Text('Save workout'),
+                style: ElevatedButton.styleFrom(
+                  elevation: 2,
+                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                  primary: Color(_exercice.color!),
+                  textStyle: TextStyle(fontFamily: "BalooBhai", fontSize: 20),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(20),
+                  ),
                 ),
+                onPressed: () {},
               ),
-              onPressed: () {},
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
