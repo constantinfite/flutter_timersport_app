@@ -32,6 +32,8 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   Timer _totalTimer = Timer(Duration(milliseconds: 1), () {});
   double progress = 1.0;
 
+  final scrollController = ScrollController();
+
   @override
   void initState() {
     super.initState();
@@ -98,6 +100,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           } else {
             _timer.cancel();
             nextRound();
+            jumpToItem(_round, context);
           }
         }
       });
@@ -157,6 +160,13 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         return alert;
       },
     );
+  }
+
+  jumpToItem(int index, context) {
+    double width = 140;
+
+    scrollController.animateTo(width * index - 140,
+        duration: Duration(seconds: 1), curve: Curves.easeIn);
   }
 
   @override
@@ -275,7 +285,10 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 GestureDetector(
                   onTap: () => {
                     if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
-                      {nextRound()},
+                      {
+                        nextRound(),
+                        jumpToItem(_round, context),
+                      },
                     if (_round == (_exercice.serie! * 2))
                       {
                         showModalBottomSheet(
@@ -318,6 +331,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   height: 140.0,
                   color: AppTheme.colors.secondaryColor,
                   child: ListView.builder(
+                      controller: scrollController,
                       scrollDirection: Axis.horizontal,
                       itemCount: (_exercice.serie! * 2) + 1,
                       itemBuilder: (context, index) {
@@ -339,7 +353,8 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         child: SizedBox(
           width: 120,
           child: GestureDetector(
-            onTap: () {
+            onTap: () async {
+              jumpToItem(index, context);
               setState(() {
                 _timer.cancel();
                 getExercice();
@@ -377,6 +392,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           width: 120,
           child: GestureDetector(
             onTap: () {
+              jumpToItem(index, context);
               setState(() {
                 _timer.cancel();
                 getExercice();
