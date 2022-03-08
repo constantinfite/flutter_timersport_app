@@ -55,6 +55,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
     }
   }
 
+  final _formKey = GlobalKey<FormState>();
+
   @override
   void initState() {
     super.initState();
@@ -113,18 +115,24 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
               onPressed: () async {
                 convert_duration_time(duration_resttime, duration_exercicetime);
 
-                final _exercice = Exercice();
-                _exercice.id = id;
-                _exercice.name = _exerciceNameController.text;
-                _exercice.repetition = _repNumber;
-                _exercice.serie = _serieNumber;
-                _exercice.resttime = _restTime;
-                _exercice.exercicetime = _exerciceTime;
-                _exercice.color = _color.value;
-                _exercice.mode = widget.exercice.mode;
+                if (_formKey.currentState!.validate() &&
+                    _serieNumber != 0 &&
+                    _repNumber != 0 &&
+                    _restTime != 0 &&
+                    _exerciceTime != 0) {
+                  final _exercice = Exercice();
+                  _exercice.id = id;
+                  _exercice.name = _exerciceNameController.text;
+                  _exercice.repetition = _repNumber;
+                  _exercice.serie = _serieNumber;
+                  _exercice.resttime = _restTime;
+                  _exercice.exercicetime = _exerciceTime;
+                  _exercice.color = _color.value;
+                  _exercice.mode = widget.exercice.mode;
 
-                await _exerciceService.updateExercice(_exercice);
-                Navigator.pop(context);
+                  await _exerciceService.updateExercice(_exercice);
+                  Navigator.pop(context);
+                }
               }
               // 2
               ),
@@ -148,255 +156,265 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
         child: SingleChildScrollView(
           child: Padding(
             padding: const EdgeInsets.all(30.0),
-            child: Column(children: <Widget>[
-              TextField(
-                style: TextStyle(
-                  color: AppTheme.colors.secondaryColor,
-                  fontSize: 20,
-                  fontFamily: 'BalooBhai',
-                ),
-                controller: _exerciceNameController,
-                decoration: InputDecoration(
-                  hintText: 'Enter exercice name',
-                  filled: true,
-                  fillColor: Colors.white,
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: BorderSide(color: Colors.transparent),
-                    borderRadius: BorderRadius.circular(20.0),
+            child: Form(
+              key: _formKey,
+              child: Column(children: <Widget>[
+                TextFormField(
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter some text';
+                    }
+                    return null;
+                  },
+                  style: TextStyle(
+                    color: AppTheme.colors.secondaryColor,
+                    fontSize: 20,
+                    fontFamily: 'BalooBhai',
                   ),
-                  enabledBorder: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.transparent,
-                        width: 0.0,
-                      ),
-                      borderRadius: BorderRadius.circular(20.0)),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white,
-                child: Column(children: [
-                  ExpansionTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Number of serie",
-                          style: TextStyle(
-                            color: AppTheme.colors.secondaryColor,
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai',
-                          ),
-                        ),
-                        Text(
-                          _serieNumber.toString(),
-                          style: TextStyle(
-                              color: AppTheme.colors.cyanColor,
-                              fontSize: 25,
-                              fontFamily: 'BalooBhai2',
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
+                  controller: _exerciceNameController,
+                  decoration: InputDecoration(
+                    hintText: 'Enter exercice name',
+                    filled: true,
+                    fillColor: Colors.white,
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: Colors.transparent),
+                      borderRadius: BorderRadius.circular(20.0),
                     ),
-                    children: [
-                      SizedBox(
-                        height: 70,
-                        child: ListTile(
-                          title: NumberPicker(
-                            selectedTextStyle: TextStyle(
+                    enabledBorder: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: Colors.transparent,
+                          width: 0.0,
+                        ),
+                        borderRadius: BorderRadius.circular(20.0)),
+                  ),
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: Colors.white,
+                  child: Column(children: [
+                    ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Number of serie",
+                            style: TextStyle(
+                              color: AppTheme.colors.secondaryColor,
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai',
+                            ),
+                          ),
+                          Text(
+                            _serieNumber.toString(),
+                            style: TextStyle(
                                 color: AppTheme.colors.cyanColor,
-                                fontSize: 30,
-                                fontFamily: "BalooBhai2",
-                                fontWeight: FontWeight.w600),
-                            axis: Axis.horizontal,
-                            value: _serieNumber,
-                            minValue: 0,
-                            maxValue: 20,
-                            onChanged: (value) =>
-                                setState(() => _serieNumber = value),
-                          ),
-                        ),
+                                fontSize: 25,
+                                fontFamily: 'BalooBhai2',
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                ]),
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.transparent)),
-                elevation: 2,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white,
-                child: Column(children: [
-                  ExpansionTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          widget.exercice.mode == "rep"
-                              ? "Number of repetition"
-                              : "Exercice time",
-                          style: TextStyle(
-                            color: AppTheme.colors.secondaryColor,
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai',
+                        SizedBox(
+                          height: 70,
+                          child: ListTile(
+                            title: NumberPicker(
+                              selectedTextStyle: TextStyle(
+                                  color: AppTheme.colors.cyanColor,
+                                  fontSize: 30,
+                                  fontFamily: "BalooBhai2",
+                                  fontWeight: FontWeight.w600),
+                              axis: Axis.horizontal,
+                              value: _serieNumber,
+                              minValue: 0,
+                              maxValue: 20,
+                              onChanged: (value) =>
+                                  setState(() => _serieNumber = value),
+                            ),
                           ),
                         ),
-                        Text(
-                          widget.exercice.mode == "rep"
-                              ? _repNumber.toString()
-                              : _printDuration(duration_exercicetime),
-                          style: TextStyle(
-                              color: AppTheme.colors.redColor,
-                              fontSize: 25,
-                              fontFamily: 'BalooBhai2',
-                              fontWeight: FontWeight.bold),
-                        )
                       ],
                     ),
-                    children: [
-                      SizedBox(
-                        height: 200,
-                        child: ListTile(
-                          title: widget.exercice.mode == "rep"
-                              ? NumberPicker(
-                                  selectedTextStyle: TextStyle(
-                                      color: AppTheme.colors.redColor,
-                                      fontSize: 30,
-                                      fontFamily: "BalooBhai2",
-                                      fontWeight: FontWeight.w600),
-                                  axis: Axis.horizontal,
-                                  value: _repNumber,
-                                  minValue: 0,
-                                  maxValue: 20,
-                                  onChanged: (value) =>
-                                      setState(() => _repNumber = value),
-                                )
-                              : CupertinoTimerPicker(
-                                  initialTimerDuration: duration_exercicetime,
-                                  mode: CupertinoTimerPickerMode.ms,
-                                  onTimerDurationChanged: (duration) =>
-                                      setState(() {
-                                    duration_exercicetime = duration;
-                                  }),
-                                ),
-                        ),
+                  ]),
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent)),
+                  elevation: 2,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: Colors.white,
+                  child: Column(children: [
+                    ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            widget.exercice.mode == "rep"
+                                ? "Number of repetition"
+                                : "Exercice time",
+                            style: TextStyle(
+                              color: AppTheme.colors.secondaryColor,
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai',
+                            ),
+                          ),
+                          Text(
+                            widget.exercice.mode == "rep"
+                                ? _repNumber.toString()
+                                : _printDuration(duration_exercicetime),
+                            style: TextStyle(
+                                color: AppTheme.colors.redColor,
+                                fontSize: 25,
+                                fontFamily: 'BalooBhai2',
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                ]),
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.transparent)),
-                elevation: 2,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white,
-                child: Column(children: [
-                  ExpansionTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Rest time",
-                          style: TextStyle(
-                            color: AppTheme.colors.secondaryColor,
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai',
+                        SizedBox(
+                          height: 70,
+                          child: ListTile(
+                            title: widget.exercice.mode == "rep"
+                                ? NumberPicker(
+                                    selectedTextStyle: TextStyle(
+                                        color: AppTheme.colors.redColor,
+                                        fontSize: 30,
+                                        fontFamily: "BalooBhai2",
+                                        fontWeight: FontWeight.w600),
+                                    axis: Axis.horizontal,
+                                    value: _repNumber,
+                                    minValue: 0,
+                                    maxValue: 20,
+                                    onChanged: (value) =>
+                                        setState(() => _repNumber = value),
+                                  )
+                                : CupertinoTimerPicker(
+                                    initialTimerDuration: duration_exercicetime,
+                                    mode: CupertinoTimerPickerMode.ms,
+                                    onTimerDurationChanged: (duration) =>
+                                        setState(() {
+                                      duration_exercicetime = duration;
+                                    }),
+                                  ),
                           ),
                         ),
-                        Text(
-                          _printDuration(duration_resttime),
-                          style: TextStyle(
-                              color: AppTheme.colors.orangeColor,
-                              fontSize: 25,
-                              fontFamily: 'BalooBhai2',
-                              fontWeight: FontWeight.bold),
-                        )
                       ],
                     ),
-                    children: [
-                      SizedBox(
-                        height: 200,
-                        child: ListTile(
-                          title: CupertinoTimerPicker(
-                            initialTimerDuration: duration_resttime,
-                            mode: CupertinoTimerPickerMode.ms,
-                            onTimerDurationChanged: (duration) => setState(() {
-                              duration_resttime = duration;
-                            }),
+                  ]),
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent)),
+                  elevation: 2,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: Colors.white,
+                  child: Column(children: [
+                    ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Rest time",
+                            style: TextStyle(
+                              color: AppTheme.colors.secondaryColor,
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai',
+                            ),
                           ),
-                        ),
+                          Text(
+                            _printDuration(duration_resttime),
+                            style: TextStyle(
+                                color: AppTheme.colors.orangeColor,
+                                fontSize: 25,
+                                fontFamily: 'BalooBhai2',
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                ]),
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.transparent)),
-                elevation: 2,
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white,
-                child: Column(children: [
-                  ExpansionTile(
-                    title: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text(
-                          "Select color",
-                          style: TextStyle(
-                            color: AppTheme.colors.secondaryColor,
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai',
-                          ),
-                        ),
-                        Container(
-                          width: 30,
-                          height: 30,
-                          decoration: BoxDecoration(
-                              shape: BoxShape.circle, color: _color),
-                        )
-                      ],
-                    ),
-                    children: [
-                      SizedBox(
-                        height: 80,
-                        child: ListTile(
-                            title: MyColorPicker(
-                                onSelectColor: (value) {
+                        SizedBox(
+                          height: 200,
+                          child: ListTile(
+                            title: CupertinoTimerPicker(
+                              initialTimerDuration: duration_resttime,
+                              mode: CupertinoTimerPickerMode.ms,
+                              onTimerDurationChanged: (duration) =>
                                   setState(() {
-                                    _color = value;
-                                  });
-                                },
-                                availableColors: [
-                                  AppTheme.colors.redColor,
-                                  AppTheme.colors.cyanColor,
-                                  AppTheme.colors.orangeColor,
-                                  AppTheme.colors.blueColor
-                                ],
-                                initialColor: Colors.blue)),
+                                duration_resttime = duration;
+                              }),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ]),
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent)),
+                  elevation: 2,
+                ),
+                SizedBox(
+                  height: 20,
+                ),
+                Card(
+                  color: Colors.white,
+                  child: Column(children: [
+                    ExpansionTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Select color",
+                            style: TextStyle(
+                              color: AppTheme.colors.secondaryColor,
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai',
+                            ),
+                          ),
+                          Container(
+                            width: 30,
+                            height: 30,
+                            decoration: BoxDecoration(
+                                shape: BoxShape.circle, color: _color),
+                          )
+                        ],
                       ),
-                    ],
-                  ),
-                ]),
-                shape: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                    borderSide: BorderSide(color: Colors.transparent)),
-                elevation: 2,
-              ),
-            ]),
+                      children: [
+                        SizedBox(
+                          height: 80,
+                          child: ListTile(
+                              title: MyColorPicker(
+                                  onSelectColor: (value) {
+                                    setState(() {
+                                      _color = value;
+                                    });
+                                  },
+                                  availableColors: [
+                                    AppTheme.colors.redColor,
+                                    AppTheme.colors.cyanColor,
+                                    AppTheme.colors.orangeColor,
+                                    AppTheme.colors.blueColor
+                                  ],
+                                  initialColor: Colors.blue)),
+                        ),
+                      ],
+                    ),
+                  ]),
+                  shape: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(20),
+                      borderSide: BorderSide(color: Colors.transparent)),
+                  elevation: 2,
+                ),
+              ]),
+            ),
           ),
         ),
       ),
