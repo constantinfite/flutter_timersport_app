@@ -4,16 +4,20 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sport_timer/widget/my_color_picker.dart';
+import 'package:sport_timer/presentation/app_theme.dart';
 
-class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key, required this.mode}) : super(key: key);
-  final String mode;
+class ExerciceTimeScreenUpdate extends StatefulWidget {
+  const ExerciceTimeScreenUpdate({Key? key, required this.exercice})
+      : super(key: key);
+  final Exercice exercice;
   @override
-  State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
+  State<ExerciceTimeScreenUpdate> createState() =>
+      ExerciceTimeScreenUpdateState();
 }
 
-class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
+class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   final _exerciceNameController = TextEditingController();
+  int id = 0;
   int _serieNumber = 0;
   int _repNumber = 0;
   int _restTime = 0;
@@ -22,14 +26,6 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   Duration duration_resttime = Duration(minutes: 0, seconds: 0);
   Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
-
-  final primaryColor = Color.fromARGB(255, 255, 95, 77);
-  final secondaryColor = Color.fromARGB(255, 60, 60, 60);
-  final backgroundColor = Color.fromARGB(255, 241, 241, 241);
-  final blueColor = Color.fromARGB(255, 173, 200, 243);
-  final cyanColor = Color.fromARGB(255, 87, 203, 214);
-  final orangeColor = Color.fromARGB(255, 254, 143, 63);
-  final redColor = Color.fromARGB(255, 251, 80, 97);
 
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
@@ -54,14 +50,39 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   choiceAction(String choice) async {
     if (choice == "delete") {
-      await _exerciceService.deleteExercice(exercice.id);
+      await _exerciceService.deleteExercice(id);
+      Navigator.pop(context);
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    editValue();
+  }
+
+  editValue() async {
+    setState(() {
+      id = widget.exercice.id!;
+      _exerciceNameController.text = widget.exercice.name!;
+      _serieNumber = widget.exercice.serie!;
+      _repNumber = widget.exercice.repetition!;
+
+      _color = Color(widget.exercice.color!);
+
+      duration_resttime = Duration(
+          minutes: widget.exercice.resttime! ~/ 60,
+          seconds: widget.exercice.resttime! % 60);
+      duration_exercicetime = Duration(
+          minutes: widget.exercice.exercicetime! ~/ 60,
+          seconds: widget.exercice.exercicetime! % 60);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: AppTheme.colors.backgroundColor,
       appBar: AppBar(
         elevation: 0,
         toolbarHeight: 100,
@@ -69,7 +90,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             icon: Icon(
               Icons.arrow_back_ios_rounded,
             ),
-            color: secondaryColor,
+            color: AppTheme.colors.secondaryColor,
             iconSize: 40,
             onPressed: () => Navigator.pop(context)
             // 2
@@ -78,7 +99,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         title: Text(
           'Add exercice',
           style: TextStyle(
-            color: secondaryColor,
+            color: AppTheme.colors.secondaryColor,
             fontSize: 30,
             fontFamily: 'BalooBhai',
           ),
@@ -87,37 +108,42 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         actions: [
           IconButton(
               icon: const Icon(Icons.check),
-              color: primaryColor,
+              color: AppTheme.colors.primaryColor,
               iconSize: 50,
               onPressed: () async {
                 convert_duration_time(duration_resttime, duration_exercicetime);
 
                 final _exercice = Exercice();
+                _exercice.id = id;
                 _exercice.name = _exerciceNameController.text;
                 _exercice.repetition = _repNumber;
                 _exercice.serie = _serieNumber;
                 _exercice.resttime = _restTime;
                 _exercice.exercicetime = _exerciceTime;
-                _exercice.mode = widget.mode;
                 _exercice.color = _color.value;
+                _exercice.mode = widget.exercice.mode;
 
-                await _exerciceService.saveExercice(_exercice);
+                await _exerciceService.updateExercice(_exercice);
                 Navigator.pop(context);
               }
               // 2
               ),
-          /* PopupMenuButton(
+          PopupMenuButton(
               itemBuilder: (_) => const <PopupMenuItem<String>>[
                     PopupMenuItem<String>(
                         child: Text('Delete'), value: 'delete'),
                   ],
-              onSelected: choiceAction)*/
+              onSelected: choiceAction)
         ],
-        actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
+        actionsIconTheme:
+            IconThemeData(color: AppTheme.colors.primaryColor, size: 36),
       ),
       body: GestureDetector(
         onTap: () {
-          FocusScope.of(context).unfocus();
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
         },
         child: SingleChildScrollView(
           child: Padding(
@@ -125,7 +151,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             child: Column(children: <Widget>[
               TextField(
                 style: TextStyle(
-                  color: secondaryColor,
+                  color: AppTheme.colors.secondaryColor,
                   fontSize: 20,
                   fontFamily: 'BalooBhai',
                 ),
@@ -159,7 +185,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         Text(
                           "Number of serie",
                           style: TextStyle(
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontSize: 20,
                             fontFamily: 'BalooBhai',
                           ),
@@ -167,7 +193,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         Text(
                           _serieNumber.toString(),
                           style: TextStyle(
-                              color: cyanColor,
+                              color: AppTheme.colors.cyanColor,
                               fontSize: 25,
                               fontFamily: 'BalooBhai2',
                               fontWeight: FontWeight.bold),
@@ -180,7 +206,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         child: ListTile(
                           title: NumberPicker(
                             selectedTextStyle: TextStyle(
-                                color: cyanColor,
+                                color: AppTheme.colors.cyanColor,
                                 fontSize: 30,
                                 fontFamily: "BalooBhai2",
                                 fontWeight: FontWeight.w600),
@@ -212,21 +238,21 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          widget.mode == "rep"
+                          widget.exercice.mode == "rep"
                               ? "Number of repetition"
                               : "Exercice time",
                           style: TextStyle(
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontSize: 20,
                             fontFamily: 'BalooBhai',
                           ),
                         ),
                         Text(
-                          widget.mode == "rep"
+                          widget.exercice.mode == "rep"
                               ? _repNumber.toString()
                               : _printDuration(duration_exercicetime),
                           style: TextStyle(
-                              color: redColor,
+                              color: AppTheme.colors.redColor,
                               fontSize: 25,
                               fontFamily: 'BalooBhai2',
                               fontWeight: FontWeight.bold),
@@ -235,12 +261,12 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     ),
                     children: [
                       SizedBox(
-                        height: widget.mode == "rep" ? 70 : 200,
+                        height: 200,
                         child: ListTile(
-                          title: widget.mode == "rep"
+                          title: widget.exercice.mode == "rep"
                               ? NumberPicker(
                                   selectedTextStyle: TextStyle(
-                                      color: redColor,
+                                      color: AppTheme.colors.redColor,
                                       fontSize: 30,
                                       fontFamily: "BalooBhai2",
                                       fontWeight: FontWeight.w600),
@@ -282,7 +308,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         Text(
                           "Rest time",
                           style: TextStyle(
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontSize: 20,
                             fontFamily: 'BalooBhai',
                           ),
@@ -290,7 +316,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         Text(
                           _printDuration(duration_resttime),
                           style: TextStyle(
-                              color: orangeColor,
+                              color: AppTheme.colors.orangeColor,
                               fontSize: 25,
                               fontFamily: 'BalooBhai2',
                               fontWeight: FontWeight.bold),
@@ -331,7 +357,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                         Text(
                           "Select color",
                           style: TextStyle(
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontSize: 20,
                             fontFamily: 'BalooBhai',
                           ),
@@ -355,10 +381,10 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                                   });
                                 },
                                 availableColors: [
-                                  redColor,
-                                  cyanColor,
-                                  orangeColor,
-                                  blueColor
+                                  AppTheme.colors.redColor,
+                                  AppTheme.colors.cyanColor,
+                                  AppTheme.colors.orangeColor,
+                                  AppTheme.colors.blueColor
                                 ],
                                 initialColor: Colors.blue)),
                       ),

@@ -40,6 +40,7 @@ dependencies:
   flutter_slidable: ^1.2.0
   numberpicker: ^2.1.1
   intl: ^0.17.0
+  table_calendar: ^3.0.4
 
 dev_dependencies:
   flutter_test:

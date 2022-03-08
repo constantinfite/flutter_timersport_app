@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/icons.dart';
-import 'package:sport_timer/screens/exercice_screen.dart';
+import 'package:sport_timer/screens/input_exercice_screen.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:sport_timer/screens/exercice_screen_update.dart';
+import 'package:sport_timer/screens/input_exercice_screen_update.dart';
 import 'package:sport_timer/screens/serie_workout_screen.dart';
+import 'package:sport_timer/screens/list_exercice_screen.dart';
+import 'package:sport_timer/screens/stats_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
@@ -24,6 +26,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final redColor = Color.fromARGB(255, 251, 80, 97);
 
   int _selectedIndex = 0;
+  final List<Widget> screens = [ListExerciceScreen(), StatsScreen()];
 
   List<Exercice> _exerciceList = <Exercice>[];
   final _exerciceService = ExerciceService();
@@ -95,11 +98,11 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: backgroundColor,
+      backgroundColor: redColor,
       appBar: AppBar(
         toolbarHeight: 100,
         elevation: 0,
-        backgroundColor: Colors.transparent,
+        backgroundColor: backgroundColor,
         title: Text(
           "EXERCICES",
           style: TextStyle(
@@ -117,169 +120,7 @@ class _HomeScreenState extends State<HomeScreen> {
           size: 36,
         ),
       ),
-      body: ListView.builder(
-          itemCount: _exerciceList.length,
-          itemBuilder: (context, index) {
-            // remove slider when expanded
-            final theme = Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-                unselectedWidgetColor: secondaryColor,
-                colorScheme: ColorScheme.fromSwatch()
-                    .copyWith(secondary: secondaryColor));
-            return Card(
-              color: Color(_exerciceList[index].color!),
-              child: Column(children: [
-                Theme(
-                  data: theme,
-                  child: ExpansionTile(
-                    title: Text(
-                      _exerciceList[index].name.toString(),
-                      style: TextStyle(
-                          color: Colors.white,
-                          fontFamily: "BalooBhai",
-                          fontSize: 25),
-                    ),
-                    leading: Icon(
-                      _exerciceList[index].mode == "timer"
-                          ? MyFlutterApp.noun_time
-                          : MyFlutterApp.noun_number,
-                      size: 50,
-                      color: Colors.white,
-                    ),
-                    children: <Widget>[
-                      SizedBox(
-                        height: 30,
-                        child: ListTile(
-                          trailing: Text(
-                            _exerciceList[index].serie!.toInt().toString(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20),
-                          ),
-                          title: Text(
-                            "Number of serie",
-                            style: TextStyle(
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                        child: ListTile(
-                          trailing: Text(
-                            _exerciceList[index].mode == "timer"
-                                ? formatDuration(
-                                    _exerciceList[index].exercicetime!)
-                                : _exerciceList[index]
-                                    .repetition!
-                                    .toInt()
-                                    .toString(),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20),
-                          ),
-                          title: Text(
-                            _exerciceList[index].mode == "timer"
-                                ? "Exercice time"
-                                : "Number of repetition",
-                            style: TextStyle(
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                        child: ListTile(
-                          trailing: Text(
-                            formatDuration(_exerciceList[index].resttime!),
-                            style: TextStyle(
-                                color: Colors.white,
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20),
-                          ),
-                          title: Text(
-                            "Rest time ",
-                            style: TextStyle(
-                                fontFamily: "BalooBhai2",
-                                fontSize: 20,
-                                color: Colors.white),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                        height: 30,
-                      ),
-                      SizedBox(
-                        height: 70,
-                        child: ListTile(
-                          leading: SizedBox(
-                            width: 130,
-                            child: ElevatedButton(
-                              child: Text('Start'),
-                              style: ElevatedButton.styleFrom(
-                                elevation: 2,
-                                primary: secondaryColor,
-                                textStyle: TextStyle(
-                                    fontFamily: "BalooBhai", fontSize: 30),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    side:
-                                        BorderSide(color: Colors.transparent)),
-                              ),
-                              onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => SerieWorkoutScreen(
-                                        id: _exerciceList[index].id!)));
-                              },
-                            ),
-                          ),
-                          trailing: SizedBox(
-                            width: 130,
-                            child: ElevatedButton(
-                              child: Text('Edit'),
-                              style: ElevatedButton.styleFrom(
-                                elevation: 2,
-                                onPrimary: Color(_exerciceList[index].color!),
-                                primary: Colors.white,
-                                textStyle: TextStyle(
-                                    fontFamily: "BalooBhai", fontSize: 30),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(20),
-                                    side:
-                                        BorderSide(color: Colors.transparent)),
-                              ),
-                              onPressed: () {
-                                editExercice(context, _exerciceList[index].id);
-                                Navigator.of(context)
-                                    .push(MaterialPageRoute(
-                                        builder: (context) =>
-                                            ExerciceTimeScreenUpdate(
-                                                exercice: _exercice)))
-                                    .then((_) {
-                                  getAllExercices();
-                                });
-                              },
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                )
-              ]),
-              margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
-              shape: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                  borderSide: BorderSide(color: Colors.transparent)),
-              elevation: 2,
-            );
-          }),
+      body: screens[_selectedIndex],
       //drawer: const DrawerNavigation(),
       floatingActionButton: SpeedDial(
         icon: Icons.add,
@@ -325,9 +166,11 @@ class _HomeScreenState extends State<HomeScreen> {
             label: 'Stats',
           ),
         ],
-        currentIndex: 0,
-        selectedItemColor: Colors.amber[800],
-        onTap: _onItemTapped,
+        currentIndex: _selectedIndex,
+        selectedItemColor: redColor,
+        onTap: (int index) {
+          _onItemTapped(index);
+        },
       ),
     );
   }
