@@ -100,6 +100,9 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                   child: ExpansionTile(
                     title: Text(
                       _exerciceList[index].name.toString(),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: "BalooBhai",

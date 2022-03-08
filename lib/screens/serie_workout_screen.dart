@@ -190,93 +190,118 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             SizedBox(height: 10),
-            Row(mainAxisAlignment: MainAxisAlignment.center, children: [
-              Card(
+            SizedBox(
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: Card(
                 color: Colors.white,
                 elevation: 2.0,
                 shape: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(20),
                     borderSide: BorderSide(color: Colors.white)),
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 20, horizontal: 20),
+                child: Padding(
+                  padding: EdgeInsets.only(
+                    left: 15,
+                    right: 10,
+                    top: 10,
+                    bottom: 10,
+                  ),
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      Column(
-                        children: [
-                          Row(
+                      Expanded(
+                          flex: 4,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            // crossAxisAlignment: CrossAxisAlignment.center,
                             children: [
-                              Icon(
-                                MyFlutterApp.noun_workout,
-                                color: Color(_exercice.color!),
-                                size: 35,
-                              ),
-                              SizedBox(
-                                width: 10,
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Icon(
+                                    MyFlutterApp.noun_workout,
+                                    color: Color(_exercice.color!),
+                                    size: 30,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Expanded(
+                                    child: Column(
+                                      children: [
+                                        Text(
+                                          _exercice.name.toString(),
+                                          overflow: TextOverflow.fade,
+                                          maxLines: 1,
+                                          softWrap: false,
+                                          style: TextStyle(
+                                            fontSize: 25,
+                                            fontFamily: 'BalooBhai',
+                                            color:
+                                                AppTheme.colors.secondaryColor,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ],
                               ),
                               Text(
-                                _exercice.name.toString(),
+                                "Exercice",
                                 style: TextStyle(
-                                  fontSize: 25,
-                                  fontFamily: 'BalooBhai',
-                                  color: AppTheme.colors.secondaryColor,
-                                ),
+                                    fontSize: 15,
+                                    color: AppTheme.colors.secondaryColor,
+                                    fontFamily: 'Roboto',
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w400),
                               )
                             ],
-                          ),
-                          Text(
-                            "Exercice",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: AppTheme.colors.secondaryColor,
-                                fontFamily: 'Roboto',
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w400),
-                          )
-                        ],
-                      ),
+                          )),
                       SizedBox(
-                        width: 30,
+                        width: 20,
                       ),
-                      Column(
-                        children: [
-                          Row(
+                      Expanded(
+                          flex: 3,
+                          child: Column(
                             children: [
-                              Icon(
-                                MyFlutterApp.noun_repetition,
-                                color: Color(_exercice.color!),
-                                size: 30,
-                              ),
-                              SizedBox(
-                                width: 10,
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    MyFlutterApp.noun_repetition,
+                                    color: Color(_exercice.color!),
+                                    size: 30,
+                                  ),
+                                  SizedBox(
+                                    width: 10,
+                                  ),
+                                  Text(
+                                    actualSerie(_round),
+                                    style: TextStyle(
+                                      fontSize: 25,
+                                      fontFamily: 'BalooBhai',
+                                      color: AppTheme.colors.secondaryColor,
+                                    ),
+                                  ),
+                                ],
                               ),
                               Text(
-                                actualSerie(_round),
+                                "Serie",
                                 style: TextStyle(
-                                  fontSize: 25,
-                                  fontFamily: 'BalooBhai',
-                                  color: AppTheme.colors.secondaryColor,
-                                ),
+                                    fontSize: 15,
+                                    color: AppTheme.colors.secondaryColor,
+                                    fontFamily: 'Roboto',
+                                    fontStyle: FontStyle.italic,
+                                    fontWeight: FontWeight.w400),
                               )
                             ],
-                          ),
-                          Text(
-                            "Serie",
-                            style: TextStyle(
-                                fontSize: 15,
-                                color: AppTheme.colors.secondaryColor,
-                                fontFamily: 'Roboto',
-                                fontStyle: FontStyle.italic,
-                                fontWeight: FontWeight.w400),
-                          )
-                        ],
-                      ),
+                          )),
                     ],
                   ),
                 ),
               ),
-            ]),
+            ),
             SizedBox(height: 50),
             Stack(
               alignment: Alignment.center,
@@ -370,7 +395,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Text("Finish",
+                    Text("End",
                         style: TextStyle(
                           fontSize: 27,
                           color: _round == index
