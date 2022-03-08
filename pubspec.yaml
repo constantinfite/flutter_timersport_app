@@ -41,6 +41,7 @@ dependencies:
   numberpicker: ^2.1.1
   intl: ^0.17.0
   table_calendar: ^3.0.4
+  holding_gesture: ^1.1.0
 
 dev_dependencies:
   flutter_test:

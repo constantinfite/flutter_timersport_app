@@ -5,6 +5,8 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
+import 'package:holding_gesture/holding_gesture.dart';
+import 'package:numberpicker/numberpicker.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -22,6 +24,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _seconds = 5;
   int _minutes = 1;
   int _round = 0;
+
+  List<int> actualRepetition = [];
+  int currentRepetition = 0;
 
   int totalSecond = 0;
   // index start at 0 [0,1  2,3  4,5]
@@ -42,6 +47,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     _exercice.color = 0;
     getExercice();
     startTotalTimer();
+    //actualRepetition.fillRange(_exercice.serie!, 0);
   }
 
   startTotalTimer() {
@@ -200,7 +206,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     borderSide: BorderSide(color: Colors.white)),
                 child: Padding(
                   padding: EdgeInsets.only(
-                    left: 15,
+                    left: 20,
                     right: 10,
                     top: 10,
                     bottom: 10,
@@ -210,7 +216,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       Expanded(
-                          flex: 4,
+                          flex: 8,
                           child: Column(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             // crossAxisAlignment: CrossAxisAlignment.center,
@@ -262,7 +268,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         width: 20,
                       ),
                       Expanded(
-                          flex: 3,
+                          flex: 5,
                           child: Column(
                             children: [
                               Row(
@@ -303,51 +309,58 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               ),
             ),
             SizedBox(height: 50),
-            Stack(
-              alignment: Alignment.center,
-              children: [
-                textCercle(),
-                GestureDetector(
-                  onTap: () => {
-                    if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
-                      {
-                        nextRound(),
-                        jumpToItem(_round, context),
-                      },
-                    if (_round == (_exercice.serie! * 2))
-                      {
-                        showModalBottomSheet(
-                          context: context,
-                          isScrollControlled: true,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.vertical(
-                                  top: Radius.circular(30))),
-                          constraints: BoxConstraints(),
-                          builder: (BuildContext context) {
-                            return bottomSheet();
-                          },
-                        )
-                      }
-                    else
-                      {
-                        if (!_timer.isActive)
-                          {_startTimer()}
-                        else
-                          {_timer.cancel()}
-                      }
-                  },
-                  child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: CircularProgressIndicator(
-                      color: Color(_exercice.color!),
-                      value: (_seconds + _minutes * 60) / _exercice.resttime!,
-                      strokeWidth: 10,
-                      backgroundColor: Colors.white,
+            HoldDetector(
+              holdTimeout: Duration(milliseconds: 200),
+              onHold: () {
+                //_showIntegerDialog();
+                print(actualRepetition);
+              },
+              child: Stack(
+                alignment: Alignment.center,
+                children: [
+                  textCercle(),
+                  GestureDetector(
+                    onTap: () => {
+                      if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
+                        {
+                          nextRound(),
+                          jumpToItem(_round, context),
+                        },
+                      if (_round == (_exercice.serie! * 2))
+                        {
+                          showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.vertical(
+                                    top: Radius.circular(30))),
+                            constraints: BoxConstraints(),
+                            builder: (BuildContext context) {
+                              return bottomSheet();
+                            },
+                          )
+                        }
+                      else
+                        {
+                          if (!_timer.isActive)
+                            {_startTimer()}
+                          else
+                            {_timer.cancel()}
+                        }
+                    },
+                    child: SizedBox(
+                      width: 300,
+                      height: 300,
+                      child: CircularProgressIndicator(
+                        color: Color(_exercice.color!),
+                        value: (_seconds + _minutes * 60) / _exercice.resttime!,
+                        strokeWidth: 10,
+                        backgroundColor: Colors.white,
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
             SizedBox(height: 50),
             Row(children: [
