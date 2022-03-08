@@ -299,8 +299,8 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                       }
                   },
                   child: SizedBox(
-                    width: 280,
-                    height: 280,
+                    width: 300,
+                    height: 300,
                     child: CircularProgressIndicator(
                       color: Color(_exercice.color!),
                       value: (_seconds + _minutes * 60) / _exercice.resttime!,
@@ -315,7 +315,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             Row(children: [
               Expanded(
                 child: Container(
-                  height: 160.0,
+                  height: 140.0,
                   color: AppTheme.colors.secondaryColor,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
@@ -335,9 +335,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   Widget buildCard({required index, numberElement}) {
     if (index + 1 == numberElement) {
       return Padding(
-        padding: EdgeInsets.fromLTRB(10, 10, 5, 10),
+        padding: EdgeInsets.fromLTRB(10, 10, 10, 10),
         child: SizedBox(
-          width: 140,
+          width: 120,
           child: GestureDetector(
             onTap: () {
               setState(() {
@@ -371,10 +371,10 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     } else {
       return Padding(
         padding: index % 2 == 0
-            ? EdgeInsets.fromLTRB(15, 10, 1, 10)
-            : EdgeInsets.fromLTRB(2, 10, 5, 10),
+            ? EdgeInsets.fromLTRB(5, 10, 1, 10)
+            : EdgeInsets.fromLTRB(2, 10, 20, 10),
         child: SizedBox(
-          width: 140,
+          width: 120,
           child: GestureDetector(
             onTap: () {
               setState(() {
