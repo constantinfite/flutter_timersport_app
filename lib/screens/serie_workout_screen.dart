@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/models/exercice.dart';
-import 'package:flutter_conditional_rendering/flutter_conditional_rendering.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
+import 'package:sport_timer/presentation/app_theme.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -18,9 +18,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   final _exerciceService = ExerciceService();
   final _exercice = Exercice();
 
-  final primaryColor = Color.fromARGB(255, 255, 95, 77);
-  final secondaryColor = Color.fromARGB(255, 60, 60, 60);
-  final backgroundColor = Color.fromARGB(255, 241, 241, 241);
   var f = NumberFormat("00");
   int _seconds = 5;
   int _minutes = 1;
@@ -152,19 +149,18 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: backgroundColor,
+        backgroundColor: AppTheme.colors.backgroundColor,
         appBar: AppBar(
           elevation: 0,
           leading: IconButton(
               icon: const Icon(Icons.clear),
-              color: secondaryColor,
+              color: AppTheme.colors.secondaryColor,
               iconSize: 40,
               onPressed: () => {showAlertDialog(context)}
 
               // 2
               ),
           backgroundColor: Colors.transparent,
-          actionsIconTheme: IconThemeData(color: primaryColor, size: 36),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -200,7 +196,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai',
-                                  color: secondaryColor,
+                                  color: AppTheme.colors.secondaryColor,
                                 ),
                               )
                             ],
@@ -209,7 +205,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                             "Exercice",
                             style: TextStyle(
                                 fontSize: 15,
-                                color: secondaryColor,
+                                color: AppTheme.colors.secondaryColor,
                                 fontFamily: 'Roboto',
                                 fontStyle: FontStyle.italic,
                                 fontWeight: FontWeight.w400),
@@ -236,7 +232,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                                 style: TextStyle(
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai',
-                                  color: secondaryColor,
+                                  color: AppTheme.colors.secondaryColor,
                                 ),
                               )
                             ],
@@ -245,7 +241,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                             "Serie",
                             style: TextStyle(
                                 fontSize: 15,
-                                color: secondaryColor,
+                                color: AppTheme.colors.secondaryColor,
                                 fontFamily: 'Roboto',
                                 fontStyle: FontStyle.italic,
                                 fontWeight: FontWeight.w400),
@@ -305,7 +301,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               Expanded(
                 child: Container(
                   height: 160.0,
-                  color: secondaryColor,
+                  color: AppTheme.colors.secondaryColor,
                   child: ListView.builder(
                       scrollDirection: Axis.horizontal,
                       itemCount: (_exercice.serie! * 2) + 1,
@@ -384,7 +380,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     Text(index % 2 == 0 ? "Exercice" : "Rest",
                         style: TextStyle(
                             fontSize: 20,
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontFamily: 'Roboto',
                             fontWeight: FontWeight.w700)),
                     Text(
@@ -401,7 +397,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     Text("Serie " + ((index + 2) ~/ 2).toString(),
                         style: TextStyle(
                             fontSize: 20,
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontFamily: 'Roboto',
                             fontStyle: FontStyle.italic,
                             fontWeight: FontWeight.w400))
@@ -420,7 +416,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         style: TextStyle(
             fontSize: 80,
             fontFamily: 'BalooBhai',
-            color: secondaryColor,
+            color: AppTheme.colors.secondaryColor,
             letterSpacing: 1,
             wordSpacing: 1),
       );
@@ -431,21 +427,19 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         style: TextStyle(
             fontSize: 80,
             fontFamily: 'BalooBhai',
-            color: secondaryColor,
+            color: AppTheme.colors.secondaryColor,
             letterSpacing: 1,
             wordSpacing: 1),
       );
     } else {
       return Text(_exercice.repetition?.toInt().toString() ?? "",
           style: TextStyle(
-              fontSize: 100, fontFamily: 'BalooBhai', color: secondaryColor));
+              fontSize: 100,
+              fontFamily: 'BalooBhai',
+              color: AppTheme.colors.secondaryColor));
     }
   }
 
-  Widget buildSideLabel(double value) => Text(
-        value.round().toString(),
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-      );
   Widget bottomSheet() {
     return Container(
       height: 500,
@@ -461,7 +455,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               style: TextStyle(
                 fontSize: 40,
                 fontFamily: 'BalooBhai',
-                color: secondaryColor,
+                color: AppTheme.colors.secondaryColor,
               ),
             ),
             Row(
@@ -476,26 +470,26 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                       style: TextStyle(
                           fontSize: 20,
                           fontFamily: 'BalooBhai2',
-                          color: secondaryColor,
+                          color: AppTheme.colors.secondaryColor,
                           fontWeight: FontWeight.w700),
                     ),
                     Text("Number of serie",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700)),
                     Text("Rest time",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700)),
                     Text("Total time",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700))
                   ],
                 ),
@@ -507,25 +501,25 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700)),
                     Text(_exercice.repetition.toString(),
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700)),
                     Text(_exercice.resttime.toString(),
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700)),
                     Text("Total time",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
-                            color: secondaryColor,
+                            color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700))
                   ],
                 )
@@ -535,7 +529,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               width: 300,
               child: TextField(
                 style: TextStyle(
-                  color: secondaryColor,
+                  color: AppTheme.colors.secondaryColor,
                   fontSize: 20,
                   fontFamily: 'BalooBhai',
                 ),
