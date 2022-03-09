@@ -5,6 +5,7 @@ import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sport_timer/widget/my_color_picker.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
   const ExerciceTimeScreen({Key? key, required this.mode}) : super(key: key);
@@ -21,9 +22,46 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   int _exerciceTime = 0;
   Color _color = Colors.blue;
 
+  late FToast fToast;
+
   @override
   void initState() {
     super.initState();
+    fToast = FToast();
+    fToast.init(context);
+  }
+
+  _showToast(_text, color) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: color,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'BalooBhai2',
+            ),
+          ),
+        ],
+      ),
+    );
+    // Custom Toast Position
+    fToast.showToast(
+        child: toast,
+        toastDuration: Duration(seconds: 2),
+        positionedToastBuilder: (context, child) {
+          return Stack(alignment: Alignment.centerRight, children: <Widget>[
+            Positioned.fill(
+                top: MediaQuery.of(context).size.height * 0.75, child: child)
+          ]);
+        });
   }
 
   final _formKey = GlobalKey<FormState>();
@@ -112,7 +150,11 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                   _exercice.color = _color.value;
 
                   await _exerciceService.saveExercice(_exercice);
+                  _showToast("Exercice created", Color(_exercice.color!));
                   Navigator.pop(context);
+                } else {
+                  fToast.removeQueuedCustomToasts();
+                  _showToast("Empty value", AppTheme.colors.redColor);
                 }
               }
               // 2
@@ -132,7 +174,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return '';
                     }
                     return null;
                   },

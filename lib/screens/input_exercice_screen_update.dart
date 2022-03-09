@@ -5,6 +5,7 @@ import 'package:sport_timer/services/exercice_service.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sport_timer/widget/my_color_picker.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class ExerciceTimeScreenUpdate extends StatefulWidget {
   const ExerciceTimeScreenUpdate({Key? key, required this.exercice})
@@ -27,6 +28,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   Duration duration_resttime = Duration(minutes: 0, seconds: 0);
   Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
 
+  late FToast fToast;
+
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
 
@@ -36,6 +39,40 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
     String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
 
     return "$twoDigitMinutes min $twoDigitSeconds s";
+  }
+
+  _showToast(_text, color) {
+    Widget toast = Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(25.0),
+        color: color,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            _text,
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 20,
+              fontFamily: 'BalooBhai2',
+            ),
+          ),
+        ],
+      ),
+    );
+
+    // Custom Toast Position
+    fToast.showToast(
+        child: toast,
+        toastDuration: Duration(seconds: 2),
+        positionedToastBuilder: (context, child) {
+          return Stack(alignment: Alignment.centerRight, children: <Widget>[
+            Positioned.fill(
+                top: MediaQuery.of(context).size.height * 0.75, child: child)
+          ]);
+        });
   }
 
   convert_duration_time(Duration durationRest, Duration durationExercice) {
@@ -52,6 +89,7 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
     if (choice == "delete") {
       await _exerciceService.deleteExercice(id);
       Navigator.pop(context);
+      _showToast("Exercice delete", AppTheme.colors.redColor);
     }
   }
 
@@ -61,6 +99,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   void initState() {
     super.initState();
     editValue();
+    fToast = FToast();
+    fToast.init(context);
   }
 
   editValue() async {
@@ -132,6 +172,9 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
 
                   await _exerciceService.updateExercice(_exercice);
                   Navigator.pop(context);
+                  _showToast("Exercice modified", Color(_exercice.color!));
+                } else {
+                  _showToast("Empty value", AppTheme.colors.redColor);
                 }
               }
               // 2
@@ -162,7 +205,7 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
                 TextFormField(
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter some text';
+                      return '';
                     }
                     return null;
                   },
