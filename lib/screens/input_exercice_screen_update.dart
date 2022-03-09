@@ -33,6 +33,8 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
 
+  final _formKey = GlobalKey<FormState>();
+
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(1, "0");
     String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
@@ -41,12 +43,12 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
     return "$twoDigitMinutes min $twoDigitSeconds s";
   }
 
-  _showToast(_text, color) {
+  _showToast(_text) {
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: color,
+        color: AppTheme.colors.secondaryColor,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -89,11 +91,10 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
     if (choice == "delete") {
       await _exerciceService.deleteExercice(id);
       Navigator.pop(context);
-      _showToast("Exercice delete", AppTheme.colors.redColor);
+      _showToast("Exercice delete");
     }
   }
 
-  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -172,9 +173,9 @@ class ExerciceTimeScreenUpdateState extends State<ExerciceTimeScreenUpdate> {
 
                   await _exerciceService.updateExercice(_exercice);
                   Navigator.pop(context);
-                  _showToast("Exercice modified", Color(_exercice.color!));
+                  _showToast("Exercice modified");
                 } else {
-                  _showToast("Empty value", AppTheme.colors.redColor);
+                  _showToast("Empty value");
                 }
               }
               // 2

@@ -31,12 +31,38 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
     fToast.init(context);
   }
 
-  _showToast(_text, color) {
+  final _formKey = GlobalKey<FormState>();
+
+  Duration duration_resttime = Duration(minutes: 0, seconds: 0);
+  Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
+
+  final exercice = Exercice();
+  final _exerciceService = ExerciceService();
+
+  String _printDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(1, "0");
+    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
+    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return "$twoDigitMinutes min $twoDigitSeconds s";
+  }
+
+  convert_duration_time(Duration durationRest, Duration durationExercice) {
+    var minuteRest = durationRest.inMinutes.remainder(60);
+    var secondRest = durationRest.inSeconds.remainder(60);
+    var minuteExercice = durationExercice.inMinutes.remainder(60);
+    var secondExercice = durationExercice.inSeconds.remainder(60);
+
+    _exerciceTime = minuteExercice * 60 + secondExercice;
+    _restTime = minuteRest * 60 + secondRest;
+  }
+
+  _showToast(_text) {
     Widget toast = Container(
       padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 12.0),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(25.0),
-        color: color,
+        color: AppTheme.colors.secondaryColor,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -62,32 +88,6 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 top: MediaQuery.of(context).size.height * 0.75, child: child)
           ]);
         });
-  }
-
-  final _formKey = GlobalKey<FormState>();
-
-  Duration duration_resttime = Duration(minutes: 0, seconds: 0);
-  Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
-
-  final exercice = Exercice();
-  final _exerciceService = ExerciceService();
-
-  String _printDuration(Duration duration) {
-    String twoDigits(int n) => n.toString().padLeft(1, "0");
-    String twoDigitMinutes = twoDigits(duration.inMinutes.remainder(60));
-    String twoDigitSeconds = twoDigits(duration.inSeconds.remainder(60));
-
-    return "$twoDigitMinutes min $twoDigitSeconds s";
-  }
-
-  convert_duration_time(Duration durationRest, Duration durationExercice) {
-    var minuteRest = durationRest.inMinutes.remainder(60);
-    var secondRest = durationRest.inSeconds.remainder(60);
-    var minuteExercice = durationExercice.inMinutes.remainder(60);
-    var secondExercice = durationExercice.inSeconds.remainder(60);
-
-    _exerciceTime = minuteExercice * 60 + secondExercice;
-    _restTime = minuteRest * 60 + secondRest;
   }
 
   @override
@@ -150,11 +150,11 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                   _exercice.color = _color.value;
 
                   await _exerciceService.saveExercice(_exercice);
-                  _showToast("Exercice created", Color(_exercice.color!));
+                  _showToast("Exercice created");
                   Navigator.pop(context);
                 } else {
                   fToast.removeQueuedCustomToasts();
-                  _showToast("Empty value", AppTheme.colors.redColor);
+                  _showToast("Empty value");
                 }
               }
               // 2

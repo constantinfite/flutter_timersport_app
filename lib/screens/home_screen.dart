@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/icons.dart';
-import 'package:sport_timer/screens/input_exercice_screen.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:sport_timer/screens/input_exercice_screen_update.dart';
-import 'package:sport_timer/screens/repetition_workout_screen.dart';
 import 'package:sport_timer/screens/list_exercice_screen.dart';
 import 'package:sport_timer/screens/stats_screen.dart';
 import 'package:sport_timer/presentation/app_theme.dart';

@@ -23,20 +23,20 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _minutes = 1;
   int _round = 0;
 
+  final commentControler = TextEditingController();
+
+  final scrollController = ScrollController();
+
+  //Timer
+  Timer _timer = Timer(Duration(milliseconds: 1), () {});
+  Timer _totalTimer = Timer(Duration(milliseconds: 1), () {});
+  int totalSecond = 0;
+  double progress = 1.0;
+
+  //To record number of actual repetition
   List<int?> actualRepetition = [0];
   List<int?> doneRepetition = [];
   int currentRepetition = 0;
-
-  int totalSecond = 0;
-  // index start at 0 [0,1  2,3  4,5]
-
-  final commentControler = TextEditingController();
-
-  Timer _timer = Timer(Duration(milliseconds: 1), () {});
-  Timer _totalTimer = Timer(Duration(milliseconds: 1), () {});
-  double progress = 1.0;
-
-  final scrollController = ScrollController();
 
   @override
   void initState() {
@@ -99,7 +99,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     });
   }
 
-  void _startTimer() {
+  _startTimer() {
     if (_minutes > 0) {
       _seconds = _seconds + _minutes * 60;
     }
@@ -125,24 +125,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     });
   }
 
-  String formatDuration(int totalSeconds) {
-    final duration = Duration(seconds: totalSeconds);
-    final minutes = duration.inMinutes;
-    final seconds = totalSeconds % 60;
-
-    final minutesString = '$minutes'.padLeft(1, '0');
-    final secondsString = '$seconds'.padLeft(2, '0');
-    return '$minutesString m $secondsString s';
-  }
-
-  String actualSerie(int round) {
-    if (round > _exercice.serie!) {
-      return _exercice.serie.toString() + "/" + _exercice.serie.toString();
-    } else {
-      return ((_round + 2) ~/ 2).toString() + "/" + _exercice.serie.toString();
-    }
-  }
-
+  //Dialog if sure to exit workout
   showAlertDialog(BuildContext context) {
     // set up the buttons
     Widget cancelButton = TextButton(
@@ -180,6 +163,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     );
   }
 
+  //Scroll automatically when touch card
   jumpToItem(int index, context) {
     double width = 140;
 
@@ -187,6 +171,26 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         duration: Duration(seconds: 1), curve: Curves.easeIn);
   }
 
+  String formatDuration(int totalSeconds) {
+    final duration = Duration(seconds: totalSeconds);
+    final minutes = duration.inMinutes;
+    final seconds = totalSeconds % 60;
+
+    final minutesString = '$minutes'.padLeft(1, '0');
+    final secondsString = '$seconds'.padLeft(2, '0');
+    return '$minutesString m $secondsString s';
+  }
+
+  //Serie display at the top
+  String actualSerie(int round) {
+    if (round > _exercice.serie!) {
+      return _exercice.serie.toString() + "/" + _exercice.serie.toString();
+    } else {
+      return ((_round + 2) ~/ 2).toString() + "/" + _exercice.serie.toString();
+    }
+  }
+
+  // swipe right +1 / swipe left -1
   void manageRepOnGesture(details) {
     if (details.primaryVelocity > 0) {
       setState(() {
@@ -550,14 +554,6 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              /* Text(d
-                _exercice.name.toString(),
-                style: TextStyle(
-                  fontSize: 40,
-                  fontFamily: 'BalooBhai',
-                  color: AppTheme.colors.secondaryColor,
-                ),
-              ),*/
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
@@ -601,7 +597,10 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         text: TextSpan(children: <InlineSpan>[
                           for (var string in doneRepetition)
                             TextSpan(
-                                text: string.toString() + "-",
+                                text: doneRepetition.indexOf(string) ==
+                                        doneRepetition.length - 1
+                                    ? string.toString()
+                                    : string.toString() + "-",
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontFamily: 'BalooBhai2',
