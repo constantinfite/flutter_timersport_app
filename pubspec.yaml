@@ -37,11 +37,10 @@ dependencies:
   cupertino_icons: ^1.0.2
   flutter_conditional_rendering: ^2.0.0
   flutter_speed_dial: ^5.0.0+1
-  flutter_slidable: ^1.2.0
   numberpicker: ^2.1.1
   intl: ^0.17.0
   table_calendar: ^3.0.4
-  holding_gesture: ^1.1.0
+  direct_select: "^1.0.3"
 
 dev_dependencies:
   flutter_test:

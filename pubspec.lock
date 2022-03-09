@@ -50,6 +50,13 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "1.0.4"
+  direct_select:
+    dependency: "direct main"
+    description:
+      name: direct_select
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "1.1.0"
   fake_async:
     dependency: transitive
     description:
@@ -109,13 +116,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  holding_gesture:
-    dependency: "direct main"
-    description:
-      name: holding_gesture
-      url: "https://pub.dartlang.org"
-    source: hosted
-    version: "1.1.0"
   infinite_listview:
     dependency: transitive
     description:

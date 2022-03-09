@@ -5,8 +5,6 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
-import 'package:holding_gesture/holding_gesture.dart';
-import 'package:numberpicker/numberpicker.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -25,7 +23,8 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _minutes = 1;
   int _round = 0;
 
-  List<int> actualRepetition = [];
+  List<int?> actualRepetition = [0];
+  List<int?> doneRepetition = [];
   int currentRepetition = 0;
 
   int totalSecond = 0;
@@ -42,12 +41,13 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   @override
   void initState() {
     super.initState();
+
     _exercice.resttime = 10;
     _exercice.serie = 1;
     _exercice.color = 0;
+
     getExercice();
     startTotalTimer();
-    //actualRepetition.fillRange(_exercice.serie!, 0);
   }
 
   startTotalTimer() {
@@ -60,6 +60,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
 
   getExercice() async {
     var exercice = await _exerciceService.readExerciceById(widget.id);
+
     setState(() {
       _exercice.id = exercice[0]['id'];
       _exercice.name = exercice[0]['name'] ?? 'No name';
@@ -73,18 +74,29 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       _minutes = _exercice.resttime! ~/ 60;
       _seconds = _exercice.resttime!.toInt() % 60;
     });
+
+    var rep = exercice[0]['repetition'];
+    var serie = exercice[0]['serie'];
+
+    for (var i = 0; i < serie!; i++) {
+      if (i == 0) {
+        actualRepetition[0] = rep;
+      }
+      actualRepetition.add(rep);
+    }
+  }
+
+  reInitializeTime() {
+    _minutes = _exercice.resttime! ~/ 60;
+    _seconds = _exercice.resttime!.toInt() % 60;
   }
 
   nextRound() {
     _timer.cancel();
-    getExercice();
+    reInitializeTime();
     setState(() {
       _round++;
     });
-
-    /*if (_round / 2 == _exercice.serie) {
-      Navigator.pop(context);
-    }*/
   }
 
   void _startTimer() {
@@ -174,6 +186,24 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     scrollController.animateTo(width * index - 140,
         duration: Duration(seconds: 1), curve: Curves.easeIn);
   }
+
+  void manageRepOnGesture(details) {
+    if (details.primaryVelocity > 0) {
+      setState(() {
+        actualRepetition[_round ~/ 2] = actualRepetition[_round ~/ 2]! + 1;
+      });
+    } else if (details.primaryVelocity < 0) {
+      setState(() {
+        actualRepetition[_round ~/ 2] = actualRepetition[_round ~/ 2]! - 1;
+      });
+    }
+  }
+
+  /*populateArray() async {
+    var exercice = await _exerciceService.readExerciceById(widget.id);
+
+    
+  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -309,58 +339,56 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               ),
             ),
             SizedBox(height: 50),
-            HoldDetector(
-              holdTimeout: Duration(milliseconds: 200),
-              onHold: () {
-                //_showIntegerDialog();
-                print(actualRepetition);
-              },
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  textCercle(),
-                  GestureDetector(
-                    onTap: () => {
-                      if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
-                        {
-                          nextRound(),
-                          jumpToItem(_round, context),
-                        },
-                      if (_round == (_exercice.serie! * 2))
-                        {
-                          showModalBottomSheet(
-                            context: context,
-                            isScrollControlled: true,
-                            shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.vertical(
-                                    top: Radius.circular(30))),
-                            constraints: BoxConstraints(),
-                            builder: (BuildContext context) {
-                              return bottomSheet();
-                            },
-                          )
-                        }
-                      else
-                        {
-                          if (!_timer.isActive)
-                            {_startTimer()}
-                          else
-                            {_timer.cancel()}
-                        }
-                    },
-                    child: SizedBox(
-                      width: 300,
-                      height: 300,
-                      child: CircularProgressIndicator(
-                        color: Color(_exercice.color!),
-                        value: (_seconds + _minutes * 60) / _exercice.resttime!,
-                        strokeWidth: 10,
-                        backgroundColor: Colors.white,
-                      ),
+            Stack(
+              alignment: Alignment.center,
+              children: [
+                textCercle(),
+                //Text(currentRepetition.toString()),
+                GestureDetector(
+                  onHorizontalDragEnd: (DragEndDetails details) {
+                    manageRepOnGesture(details);
+                  },
+                  onTap: () => {
+                    if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
+                      {
+                        nextRound(),
+                        doneRepetition.add(actualRepetition[_round ~/ 2]),
+                        jumpToItem(_round, context),
+                      },
+                    if (_round == (_exercice.serie! * 2))
+                      {
+                        showModalBottomSheet(
+                          context: context,
+                          isScrollControlled: true,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.vertical(
+                                  top: Radius.circular(30))),
+                          constraints: BoxConstraints(),
+                          builder: (BuildContext context) {
+                            return bottomSheet();
+                          },
+                        )
+                      }
+                    else
+                      {
+                        if (!_timer.isActive)
+                          {_startTimer()}
+                        else
+                          {_timer.cancel()}
+                      }
+                  },
+                  child: SizedBox(
+                    width: 300,
+                    height: 300,
+                    child: CircularProgressIndicator(
+                      color: Color(_exercice.color!),
+                      value: (_seconds + _minutes * 60) / _exercice.resttime!,
+                      strokeWidth: 10,
+                      backgroundColor: Colors.white,
                     ),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             SizedBox(height: 50),
             Row(children: [
@@ -395,7 +423,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               jumpToItem(index, context);
               setState(() {
                 _timer.cancel();
-                getExercice();
+                reInitializeTime();
                 _round = index;
               });
             },
@@ -433,7 +461,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               jumpToItem(index, context);
               setState(() {
                 _timer.cancel();
-                getExercice();
+                reInitializeTime();
                 _round = index;
               });
             },
@@ -501,7 +529,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             wordSpacing: 1),
       );
     } else {
-      return Text(_exercice.repetition?.toInt().toString() ?? "",
+      return Text(actualRepetition[_round ~/ 2].toString(),
           style: TextStyle(
               fontSize: 100,
               fontFamily: 'BalooBhai',
@@ -538,20 +566,14 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        "Number of repetition",
+                        "Exercice",
                         style: TextStyle(
                             fontSize: 20,
                             fontFamily: 'BalooBhai2',
                             color: AppTheme.colors.secondaryColor,
                             fontWeight: FontWeight.w700),
                       ),
-                      Text("Number of serie",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700)),
-                      Text("Rest time",
+                      Text("Repetition made",
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'BalooBhai2',
@@ -569,24 +591,24 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
-                      Text(_exercice.serie.toString(),
+                      Text(_exercice.name.toString(),
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'BalooBhai2',
                               color: AppTheme.colors.secondaryColor,
                               fontWeight: FontWeight.w700)),
-                      Text(_exercice.repetition.toString(),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700)),
-                      Text(formatDuration(_exercice.resttime!),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700)),
+                      RichText(
+                        text: TextSpan(children: <InlineSpan>[
+                          for (var string in doneRepetition)
+                            TextSpan(
+                                text: string.toString() + "-",
+                                style: TextStyle(
+                                    fontSize: 20,
+                                    fontFamily: 'BalooBhai2',
+                                    color: AppTheme.colors.secondaryColor,
+                                    fontWeight: FontWeight.w700)),
+                        ]),
+                      ),
                       Text(formatDuration(totalSecond),
                           style: TextStyle(
                               fontSize: 20,
