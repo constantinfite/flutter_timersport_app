@@ -493,6 +493,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
               jumpToItem(index, context);
               setState(() {
                 _timerRest.cancel();
+                _timerExercice.cancel();
                 reInitializeTime();
                 _round = index;
               });

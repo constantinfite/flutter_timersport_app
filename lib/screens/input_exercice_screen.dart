@@ -195,11 +195,12 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                   }
 
                   if (_formKey.currentState!.validate() &&
-                      _serieNumber != 0 &&
-                      _repNumber != 0 &&
-                      _restTime != 0 &&
-                      _exerciceTime != 0 &&
-                      _preparationTime != 0) {
+                          _serieNumber != 0 &&
+                          _repNumber != 0 &&
+                          _restTime != 0 &&
+                          _exerciceTime != 0
+                      //&& _preparationTime != 0
+                      ) {
                     final _exercice = Exercice();
                     _exercice.name = _exerciceNameController.text;
                     _exercice.repetition = _repNumber;
@@ -223,11 +224,12 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       durationPreparationTime);
 
                   if (_formKey.currentState!.validate() &&
-                      _serieNumber != 0 &&
-                      _repNumber != 0 &&
-                      _restTime != 0 &&
-                      _exerciceTime != 0 &&
-                      _preparationTime != 0) {
+                          _serieNumber != 0 &&
+                          _repNumber != 0 &&
+                          _restTime != 0 &&
+                          _exerciceTime != 0
+                      //&& _preparationTime != 0
+                      ) {
                     final _exercice = Exercice();
                     _exercice.id = id;
                     _exercice.name = _exerciceNameController.text;
@@ -433,6 +435,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 SizedBox(
                   height: 20,
                 ),
+                /*
                 Visibility(
                   visible: widget.mode == "timer",
                   child: Column(
@@ -480,7 +483,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       ),
                     ],
                   ),
-                ),
+                ),*/
                 Card(
                   color: Colors.white,
                   child: Column(children: [
@@ -624,7 +627,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
           initialTimerDuration: durationPreparationTime,
           mode: CupertinoTimerPickerMode.ms,
           minuteInterval: 1,
-          secondInterval:1,
+          secondInterval: 1,
           onTimerDurationChanged: (duration) =>
               setState(() => durationPreparationTime = duration),
         ),

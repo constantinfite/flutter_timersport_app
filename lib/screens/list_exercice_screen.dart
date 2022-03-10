@@ -145,7 +145,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                           ),
                         ),
                       ),
-                      Visibility(
+                      /*Visibility(
                         visible: _exerciceList[index].mode == "timer",
                         child: SizedBox(
                           height: 30,
@@ -167,7 +167,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                             ),
                           ),
                         ),
-                      ),
+                      ),*/
                       SizedBox(
                         height: 30,
                         child: ListTile(
