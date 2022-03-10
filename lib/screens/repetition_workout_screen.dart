@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:flutter/services.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -354,6 +355,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     manageRepOnGesture(details);
                   },
                   onTap: () => {
+                    HapticFeedback.mediumImpact(),
                     if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
                       {
                         nextRound(),
@@ -441,6 +443,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           width: 120,
           child: GestureDetector(
             onTap: () async {
+              HapticFeedback.mediumImpact();
               jumpToItem(index, context);
               setState(() {
                 _timer.cancel();
@@ -479,6 +482,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
           width: 120,
           child: GestureDetector(
             onTap: () {
+              HapticFeedback.mediumImpact();
               jumpToItem(index, context);
               setState(() {
                 _timer.cancel();

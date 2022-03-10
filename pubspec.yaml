@@ -43,6 +43,7 @@ dependencies:
   direct_select: "^1.0.3"
   fluttertoast: ^8.0.9
   liquid_progress_indicator: ^0.4.0
+  flutter_colorpicker: ^1.0.3
 
 dev_dependencies:
   flutter_test:

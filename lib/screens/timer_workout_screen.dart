@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
+import 'package:flutter/services.dart';
 
 class TimerWorkoutScreen extends StatefulWidget {
   const TimerWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -363,6 +364,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                 //Text(currentRepetition.toString()),
                 GestureDetector(
                   onTap: () => {
+                    HapticFeedback.mediumImpact(),
                     // on exercice Card
                     if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
                       {
@@ -415,8 +417,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                         direction: Axis
                             .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
                         center: textCercle(),
-                      )
-                      ),
+                      )),
                 ),
               ],
             ),
@@ -450,6 +451,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
           width: 120,
           child: GestureDetector(
             onTap: () async {
+              HapticFeedback.mediumImpact();
               jumpToItem(index, context);
               setState(() {
                 _timerRest.cancel();
@@ -490,6 +492,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
           width: 120,
           child: GestureDetector(
             onTap: () {
+              HapticFeedback.mediumImpact();
               jumpToItem(index, context);
               setState(() {
                 _timerRest.cancel();

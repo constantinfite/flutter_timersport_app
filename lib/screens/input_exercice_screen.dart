@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:sport_timer/widget/my_color_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sport_timer/utils.dart';
+import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
   const ExerciceTimeScreen(
@@ -333,7 +333,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             Text(
                               _serieNumber.toString(),
                               style: TextStyle(
-                                  color: AppTheme.colors.cyanColor,
+                                  color: Colors.blue,
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai2',
                                   fontWeight: FontWeight.bold),
@@ -487,39 +487,97 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 Card(
                   color: Colors.white,
                   child: Column(children: [
-                    ListTile(
-                      title: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            "Select color",
-                            style: TextStyle(
-                              color: AppTheme.colors.secondaryColor,
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai',
+                    GestureDetector(
+                      onTap: () {
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return AlertDialog(
+                                title: Text(
+                                  'Pick a color!',
+                                  style: TextStyle(
+                                    color: AppTheme.colors.secondaryColor,
+                                    fontSize: 20,
+                                    fontFamily: 'BalooBhai',
+                                  ),
+                                ),
+                                content: SingleChildScrollView(
+                                  child: BlockPicker(
+                                    pickerColor: _color, //default color
+                                    onColorChanged: (Color color) {
+                                      //on color picked
+                                      setState(() {
+                                        _color = color;
+                                      });
+                                    },
+                                  ),
+                                ),
+                                actions: <Widget>[
+                                  ElevatedButton(
+                                    style: ElevatedButton.styleFrom(
+                                      elevation: 2,
+                                      primary: AppTheme.colors.secondaryColor,
+                                      textStyle: TextStyle(
+                                          fontFamily: "BalooBhai",
+                                          fontSize: 30),
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius:
+                                              BorderRadius.circular(20),
+                                          side: BorderSide(
+                                              color: Colors.transparent)),
+                                    ),
+                                    child: Text(
+                                      'Save',
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 20,
+                                        fontFamily: 'BalooBhai',
+                                      ),
+                                    ),
+                                    onPressed: () {
+                                      Navigator.of(context)
+                                          .pop(); //dismiss the color picker
+                                    },
+                                  ),
+                                ],
+                              );
+                            });
+                      },
+                      child: ListTile(
+                        title: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Select color",
+                              style: TextStyle(
+                                color: AppTheme.colors.secondaryColor,
+                                fontSize: 20,
+                                fontFamily: 'BalooBhai',
+                              ),
                             ),
-                          ),
-                        ],
+                            Container(
+                              width: 30,
+                              height: 30,
+                              decoration: BoxDecoration(
+                                  shape: BoxShape.circle, color: _color),
+                            )
+                          ],
+                        ),
                       ),
                     ),
-                    SizedBox(
-                      height: 80,
+                    /* SizedBox(
+                      height: 150,
                       child: ListTile(
-                          title: MyColorPicker(
-                              onSelectColor: (value) {
-                                setState(() {
-                                  _color = value;
-                                });
-                              },
-                              availableColors: [
-                                AppTheme.colors.redColor,
-                                AppTheme.colors.cyanColor,
-                                AppTheme.colors.orangeColor,
-                                AppTheme.colors.blueColor,
-                                Colors.blue
-                              ],
-                              initialColor: _color)),
-                    ),
+                          title: BlockPicker(
+                        pickerColor: Colors.red, //default color
+                        onColorChanged: (Color color) {
+                          //on color picked
+                          setState(() {
+                            _color = color;
+                          });
+                        },
+                      )),
+                    ),*/
                   ]),
                   shape: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(20),
@@ -540,25 +598,24 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
           scrollController:
               FixedExtentScrollController(initialItem: _serieNumber),
           itemExtent: 64,
-          diameterRatio: 0.7,
+          diameterRatio: 0.85,
           looping: true,
           onSelectedItemChanged: (index) =>
               setState(() => _serieNumber = index),
           // selectionOverlay: Container(),
           selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-            background: AppTheme.colors.cyanColor.withOpacity(0.12),
+            background: Colors.blue.withOpacity(0.12),
           ),
           children: Utils.modelBuilder<String>(
             listNumber,
             (index, value) {
               final isSelected = index == index;
-              final color =
-                  isSelected ? AppTheme.colors.cyanColor : Colors.black;
+              final color = isSelected ? Colors.blue : Colors.black;
 
               return Center(
                 child: Text(
                   value,
-                  style: TextStyle(color: color, fontSize: 24),
+                  style: TextStyle(color: color, fontSize: 30),
                 ),
               );
             },
@@ -569,36 +626,53 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   Widget buildRepPicker() => SizedBox(
         height: 300,
         child: CupertinoPicker(
-          scrollController:
-              FixedExtentScrollController(initialItem: _repNumber),
-          itemExtent: 64,
-          diameterRatio: 0.7,
-          looping: true,
-          onSelectedItemChanged: (index) => setState(() => _repNumber = index),
-          // selectionOverlay: Container(),
-          selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-            background: AppTheme.colors.redColor.withOpacity(0.12),
-          ),
-          children: Utils.modelBuilder<String>(
+            scrollController:
+                FixedExtentScrollController(initialItem: _repNumber),
+            itemExtent: 64,
+            diameterRatio: 0.85,
+            looping: true,
+            onSelectedItemChanged: (index) {
+              setState(() => _repNumber = index);
+            },
+            // selectionOverlay: Container(),
+            selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+              background: AppTheme.colors.redColor.withOpacity(0.12),
+            ),
+            children: List.generate(listNumber.length, (index) {
+              final item = listNumber[index];
+              final isSelected = index == index;
+
+              return Center(
+                child: Text(item,
+                    style: TextStyle(
+                        color: isSelected
+                            ? AppTheme.colors.redColor
+                            : Colors.black,
+                        fontSize: 30)),
+              );
+            })
+
+            /*Utils.modelBuilder<String>(
             listNumber,
             (index, value) {
               final isSelected = index == index;
-              final color =
-                  isSelected ? AppTheme.colors.redColor : Colors.black;
 
               return Center(
                 child: Text(
                   value,
-                  style: TextStyle(color: color, fontSize: 24),
+                  style: TextStyle(
+                      color:
+                          isSelected ? AppTheme.colors.redColor : Colors.black,
+                      fontSize: 30),
                 ),
               );
             },
-          ),
-        ),
+          ),*/
+            ),
       );
 
   Widget buildExerciceTimePicker() => SizedBox(
-        height: 180,
+        height: 300,
         child: CupertinoTimerPicker(
           initialTimerDuration: durationExerciceTime,
           mode: CupertinoTimerPickerMode.ms,
@@ -610,7 +684,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       );
 
   Widget buildRestTimePicker() => SizedBox(
-        height: 180,
+        height: 300,
         child: CupertinoTimerPicker(
           initialTimerDuration: durationRestTime,
           mode: CupertinoTimerPickerMode.ms,
@@ -622,7 +696,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       );
 
   Widget buildPreparationTimePicker() => SizedBox(
-        height: 180,
+        height: 300,
         child: CupertinoTimerPicker(
           initialTimerDuration: durationPreparationTime,
           mode: CupertinoTimerPickerMode.ms,
