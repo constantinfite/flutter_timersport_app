@@ -612,12 +612,11 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                               fontWeight: FontWeight.w700)),
                       RichText(
                         text: TextSpan(children: <InlineSpan>[
-                          for (var string in doneRepetition)
+                          for (var i = 0; i < doneRepetition.length; i++)
                             TextSpan(
-                                text: doneRepetition.indexOf(string) ==
-                                        doneRepetition.length - 1
-                                    ? string.toString()
-                                    : string.toString() + "-",
+                                text: i == doneRepetition.length - 1
+                                    ? doneRepetition[i].toString()
+                                    : doneRepetition[i].toString() + "-",
                                 style: TextStyle(
                                     fontSize: 20,
                                     fontFamily: 'BalooBhai2',
