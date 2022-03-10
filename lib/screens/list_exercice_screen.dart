@@ -4,7 +4,6 @@ import 'package:sport_timer/screens/input_exercice_screen.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:sport_timer/screens/input_exercice_screen_update.dart';
 import 'package:sport_timer/screens/repetition_workout_screen.dart';
 import 'package:sport_timer/screens/timer_workout_screen.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
@@ -34,6 +33,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
     _exercice.mode = "";
     _exercice.repetition = 0;
     _exercice.color = 0;
+    _exercice.preparationtime = 0;
   }
 
   late var _exercice = Exercice();
@@ -54,6 +54,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
         exerciceModel.exercicetime = exercice['exercicetime'];
         exerciceModel.mode = exercice['mode'];
         exerciceModel.color = exercice['color'];
+        exerciceModel.preparationtime = exercice['preparationtime'];
         _exerciceList.add(exerciceModel);
       });
     });
@@ -141,6 +142,29 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                                 fontFamily: "BalooBhai2",
                                 fontSize: 20,
                                 color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      Visibility(
+                        visible: _exerciceList[index].mode == "timer",
+                        child: SizedBox(
+                          height: 30,
+                          child: ListTile(
+                            trailing: Text(
+                              formatDuration(
+                                  _exerciceList[index].preparationtime!),
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: "BalooBhai2",
+                                  fontSize: 20),
+                            ),
+                            title: Text(
+                              "Preparation time ",
+                              style: TextStyle(
+                                  fontFamily: "BalooBhai2",
+                                  fontSize: 20,
+                                  color: Colors.white),
+                            ),
                           ),
                         ),
                       ),

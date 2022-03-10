@@ -7,6 +7,7 @@ class Exercice {
   int? exercicetime;
   String? mode;
   int? color;
+  int? preparationtime;
 
   exerciceMap() {
     var mapping = Map<String, dynamic>();
@@ -18,8 +19,8 @@ class Exercice {
     mapping['exercicetime'] = exercicetime;
     mapping['mode'] = mode;
     mapping['color'] = color;
+    mapping['preparationtime'] = preparationtime;
 
     return mapping;
   }
 }
-

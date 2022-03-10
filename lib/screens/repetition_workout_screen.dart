@@ -5,6 +5,7 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -382,17 +383,31 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                       }
                   },
                   child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: CircularProgressIndicator(
+                      width: 300,
+                      height: 300,
+                      child: LiquidCircularProgressIndicator(
+                        value: (_seconds + _minutes * 60) /
+                            _exercice.resttime!, // Defaults to 0.5.
+                        valueColor: AlwaysStoppedAnimation(Color(_exercice
+                            .color!)), // Defaults to the current Theme's accentColor.
+                        backgroundColor: Colors
+                            .white, // Defaults to the current Theme's backgroundColor.
+                        borderColor: Colors.transparent,
+                        borderWidth: 5.0,
+                        direction: Axis
+                            .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+                        center: textCercle(),
+                      )
+
+                      /*CircularProgressIndicator(
                       value: (_seconds + _minutes * 60) / _exercice.resttime!,
                       color: _round % 2 == 0
                           ? Color(_exercice.color!)
                           : AppTheme.colors.secondaryColor,
                       strokeWidth: _round % 2 == 0 ? 20 : 15,
                       backgroundColor: Colors.white,
-                    ),
-                  ),
+                    ),*/
+                      ),
                 ),
               ],
             ),

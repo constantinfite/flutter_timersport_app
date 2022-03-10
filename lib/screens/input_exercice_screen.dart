@@ -28,6 +28,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   int _repNumber = 0;
   int _restTime = 0;
   int _exerciceTime = 0;
+  int _preparationTime = 0;
   Color _color = Colors.blue;
 
   late FToast fToast;
@@ -66,6 +67,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       durationExerciceTime = Duration(
           minutes: widget.exercice.exercicetime! ~/ 60,
           seconds: widget.exercice.exercicetime! % 60);
+      durationPreparationTime = Duration(
+          minutes: widget.exercice.exercicetime! ~/ 60,
+          seconds: widget.exercice.exercicetime! % 60);
     });
   }
 
@@ -77,14 +81,18 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
     return "$twoDigitMinutes min $twoDigitSeconds s";
   }
 
-  convert_duration_time(Duration durationRest, Duration durationExercice) {
+  convertDurationToTime(Duration durationRest, Duration durationExercice,
+      Duration durationPreparation) {
     var minuteRest = durationRest.inMinutes.remainder(60);
     var secondRest = durationRest.inSeconds.remainder(60);
     var minuteExercice = durationExercice.inMinutes.remainder(60);
     var secondExercice = durationExercice.inSeconds.remainder(60);
+    var minutePreparation = durationPreparation.inMinutes.remainder(60);
+    var secondPreparation = durationPreparation.inSeconds.remainder(60);
 
     _exerciceTime = minuteExercice * 60 + secondExercice;
     _restTime = minuteRest * 60 + secondRest;
+    _preparationTime = minutePreparation * 60 + secondPreparation;
   }
 
   _showToast(_text) {
@@ -175,10 +183,13 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               color: AppTheme.colors.primaryColor,
               iconSize: 50,
               onPressed: () async {
+                // creation of exercice
                 if (widget.creation) {
-                  convert_duration_time(durationRestTime, durationExerciceTime);
+                  convertDurationToTime(durationRestTime, durationExerciceTime,
+                      durationPreparationTime);
                   if (widget.mode == "rep") {
                     _exerciceTime = 1;
+                    _preparationTime = 1;
                   } else {
                     _repNumber = 1;
                   }
@@ -187,13 +198,15 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       _serieNumber != 0 &&
                       _repNumber != 0 &&
                       _restTime != 0 &&
-                      _exerciceTime != 0) {
+                      _exerciceTime != 0 &&
+                      _preparationTime != 0) {
                     final _exercice = Exercice();
                     _exercice.name = _exerciceNameController.text;
                     _exercice.repetition = _repNumber;
                     _exercice.serie = _serieNumber;
                     _exercice.resttime = _restTime;
                     _exercice.exercicetime = _exerciceTime;
+                    _exercice.preparationtime = _preparationTime;
                     _exercice.mode = widget.mode;
                     _exercice.color = _color.value;
 
@@ -204,14 +217,17 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     fToast.removeQueuedCustomToasts();
                     _showToast("Empty value");
                   }
+                  // modification of exercice
                 } else {
-                  convert_duration_time(durationRestTime, durationExerciceTime);
+                  convertDurationToTime(durationRestTime, durationExerciceTime,
+                      durationPreparationTime);
 
                   if (_formKey.currentState!.validate() &&
                       _serieNumber != 0 &&
                       _repNumber != 0 &&
                       _restTime != 0 &&
-                      _exerciceTime != 0) {
+                      _exerciceTime != 0 &&
+                      _preparationTime != 0) {
                     final _exercice = Exercice();
                     _exercice.id = id;
                     _exercice.name = _exerciceNameController.text;
@@ -220,6 +236,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     _exercice.resttime = _restTime;
                     _exercice.exercicetime = _exerciceTime;
                     _exercice.color = _color.value;
+                    _exercice.preparationtime = _preparationTime;
                     _exercice.mode = widget.exercice.mode;
 
                     await _exerciceService.updateExercice(_exercice);
@@ -582,7 +599,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         child: CupertinoTimerPicker(
           initialTimerDuration: durationExerciceTime,
           mode: CupertinoTimerPickerMode.ms,
-          minuteInterval: 3,
+          minuteInterval: 1,
           secondInterval: 1,
           onTimerDurationChanged: (duration) =>
               setState(() => durationExerciceTime = duration),
@@ -594,19 +611,20 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         child: CupertinoTimerPicker(
           initialTimerDuration: durationRestTime,
           mode: CupertinoTimerPickerMode.ms,
-          minuteInterval: 3,
+          minuteInterval: 1,
           secondInterval: 1,
           onTimerDurationChanged: (duration) =>
               setState(() => durationRestTime = duration),
         ),
       );
+
   Widget buildPreparationTimePicker() => SizedBox(
         height: 180,
         child: CupertinoTimerPicker(
           initialTimerDuration: durationPreparationTime,
           mode: CupertinoTimerPickerMode.ms,
-          minuteInterval: 3,
-          secondInterval: 1,
+          minuteInterval: 1,
+          secondInterval:1,
           onTimerDurationChanged: (duration) =>
               setState(() => durationPreparationTime = duration),
         ),

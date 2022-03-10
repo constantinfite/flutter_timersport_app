@@ -5,6 +5,7 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
+import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 
 class TimerWorkoutScreen extends StatefulWidget {
   const TimerWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -359,7 +360,6 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
             Stack(
               alignment: Alignment.center,
               children: [
-                textCercle(),
                 //Text(currentRepetition.toString()),
                 GestureDetector(
                   onTap: () => {
@@ -398,21 +398,25 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                       }
                   },
                   child: SizedBox(
-                    width: 300,
-                    height: 300,
-                    child: CircularProgressIndicator(
-                      color: _round % 2 == 0
-                          ? Color(_exercice.color!)
-                          : AppTheme.colors.secondaryColor,
-                      value: _round % 2 == 0
-                          ? (_secondsExercice + _minutesExercice * 60) /
-                              _exercice.exercicetime!
-                          : (_secondsRest + _minutesRest * 60) /
-                              _exercice.resttime!,
-                      strokeWidth: _round % 2 == 0 ? 20 : 15,
-                      backgroundColor: Colors.white,
-                    ),
-                  ),
+                      width: 300,
+                      height: 300,
+                      child: LiquidCircularProgressIndicator(
+                        value: _round % 2 == 0
+                            ? (_secondsExercice + _minutesExercice * 60) /
+                                _exercice.exercicetime!
+                            : (_secondsRest + _minutesRest * 60) /
+                                _exercice.resttime!, // Defaults to 0.5.
+                        valueColor: AlwaysStoppedAnimation(Color(_exercice
+                            .color!)), // Defaults to the current Theme's accentColor.
+                        backgroundColor: Colors
+                            .white, // Defaults to the current Theme's backgroundColor.
+                        borderColor: Colors.transparent,
+                        borderWidth: 5.0,
+                        direction: Axis
+                            .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right). Defaults to Axis.vertical.
+                        center: textCercle(),
+                      )
+                      ),
                 ),
               ],
             ),
@@ -449,6 +453,8 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
               jumpToItem(index, context);
               setState(() {
                 _timerRest.cancel();
+                _timerExercice.cancel();
+
                 reInitializeTime();
                 _round = index;
               });
