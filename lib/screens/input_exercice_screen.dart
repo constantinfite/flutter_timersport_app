@@ -6,9 +6,13 @@ import 'package:sport_timer/services/exercice_service.dart';
 import 'package:numberpicker/numberpicker.dart';
 import 'package:sport_timer/widget/my_color_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sport_timer/utils.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key, required this.mode, }) : super(key: key);
+  const ExerciceTimeScreen({
+    Key? key,
+    required this.mode,
+  }) : super(key: key);
   final String mode;
   @override
   State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
@@ -33,8 +37,9 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   final _formKey = GlobalKey<FormState>();
 
-  Duration duration_resttime = Duration(minutes: 0, seconds: 0);
-  Duration duration_exercicetime = Duration(minutes: 0, seconds: 0);
+  Duration durationRestTime = Duration(minutes: 0, seconds: 0);
+  Duration durationExerciceTime = Duration(minutes: 0, seconds: 0);
+  Duration durationPreparationTime = Duration(minutes: 0, seconds: 0);
 
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
@@ -90,6 +95,21 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         });
   }
 
+  int index = 0;
+
+  final listNumber = List<String>.generate(21, (i) => "$i");
+
+  Duration duration = Duration(minutes: 6, seconds: 30);
+
+  String formatDuration(Duration duration) {
+    String twoDigits(int n) => n.toString().padLeft(2, '0');
+
+    final minutes = twoDigits(duration.inMinutes.remainder(60));
+    final seconds = twoDigits(duration.inSeconds.remainder(60));
+
+    return '$minutes:$seconds';
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context).copyWith(
@@ -128,7 +148,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               color: AppTheme.colors.primaryColor,
               iconSize: 50,
               onPressed: () async {
-                convert_duration_time(duration_resttime, duration_exercicetime);
+                convert_duration_time(durationRestTime, durationExerciceTime);
                 if (widget.mode == "rep") {
                   _exerciceTime = 1;
                 } else {
@@ -203,12 +223,16 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 SizedBox(
                   height: 20,
                 ),
-                Card(
-                  color: Colors.white,
-                  child: Column(children: [
-                    Theme(
-                      data: theme,
-                      child: ExpansionTile(
+                GestureDetector(
+                  onTap: () {
+                    Utils.showSheet(context,
+                        child: buildSeriePicker(),
+                        onClicked: () => {Navigator.pop(context)});
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    child: Column(children: [
+                      ListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -230,43 +254,28 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             )
                           ],
                         ),
-                        children: [
-                          SizedBox(
-                            height: 70,
-                            child: ListTile(
-                              title: NumberPicker(
-                                selectedTextStyle: TextStyle(
-                                    color: AppTheme.colors.cyanColor,
-                                    fontSize: 30,
-                                    fontFamily: "BalooBhai2",
-                                    fontWeight: FontWeight.w600),
-                                axis: Axis.horizontal,
-                                value: _serieNumber,
-                                minValue: 0,
-                                maxValue: 20,
-                                onChanged: (value) =>
-                                    setState(() => _serieNumber = value),
-                              ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ]),
-                  shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent)),
-                  elevation: 2,
+                    ]),
+                    shape: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(20),
+                        borderSide: BorderSide(color: Colors.transparent)),
+                    elevation: 2,
+                  ),
                 ),
                 SizedBox(
                   height: 20,
                 ),
-                Card(
-                  color: Colors.white,
-                  child: Column(children: [
-                    Theme(
-                      data: theme,
-                      child: ExpansionTile(
+                GestureDetector(
+                    onTap: () {
+                      Utils.showSheet(context,
+                          child: widget.mode == "rep"
+                              ? buildRepPicker()
+                              : buildExerciceTimePicker(),
+                          onClicked: () => {Navigator.pop(context)});
+                    },
+                    child: Card(
+                      color: Colors.white,
+                      child: ListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -283,7 +292,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             Text(
                               widget.mode == "rep"
                                   ? _repNumber.toString()
-                                  : _printDuration(duration_exercicetime),
+                                  : _printDuration(durationExerciceTime),
                               style: TextStyle(
                                   color: AppTheme.colors.redColor,
                                   fontSize: 25,
@@ -292,53 +301,24 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             )
                           ],
                         ),
-                        children: [
-                          SizedBox(
-                            height: widget.mode == "rep" ? 70 : 200,
-                            child: ListTile(
-                              title: widget.mode == "rep"
-                                  ? NumberPicker(
-                                      selectedTextStyle: TextStyle(
-                                          color: AppTheme.colors.redColor,
-                                          fontSize: 30,
-                                          fontFamily: "BalooBhai2",
-                                          fontWeight: FontWeight.w600),
-                                      axis: Axis.horizontal,
-                                      value: _repNumber,
-                                      minValue: 0,
-                                      maxValue: 20,
-                                      onChanged: (value) =>
-                                          setState(() => _repNumber = value),
-                                    )
-                                  : CupertinoTimerPicker(
-                                      initialTimerDuration:
-                                          duration_exercicetime,
-                                      mode: CupertinoTimerPickerMode.ms,
-                                      onTimerDurationChanged: (duration) =>
-                                          setState(() {
-                                        duration_exercicetime = duration;
-                                      }),
-                                    ),
-                            ),
-                          ),
-                        ],
                       ),
-                    ),
-                  ]),
-                  shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent)),
-                  elevation: 2,
-                ),
+                      shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide(color: Colors.transparent)),
+                      elevation: 2,
+                    )),
                 SizedBox(
                   height: 20,
                 ),
-                Card(
-                  color: Colors.white,
-                  child: Column(children: [
-                    Theme(
-                      data: theme,
-                      child: ExpansionTile(
+                GestureDetector(
+                    onTap: () {
+                      Utils.showSheet(context,
+                          child: buildPreparationTimePicker(),
+                          onClicked: () => {Navigator.pop(context)});
+                    },
+                    child: Card(
+                      color: Colors.white,
+                      child: ListTile(
                         title: Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
@@ -351,7 +331,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                               ),
                             ),
                             Text(
-                              _printDuration(duration_resttime),
+                              _printDuration(durationPreparationTime),
                               style: TextStyle(
                                   color: AppTheme.colors.orangeColor,
                                   fontSize: 25,
@@ -360,78 +340,98 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             )
                           ],
                         ),
-                        children: [
-                          SizedBox(
-                            height: 200,
+                      ),
+                      shape: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                          borderSide: BorderSide(color: Colors.transparent)),
+                      elevation: 2,
+                    )),
+                SizedBox(
+                  height: 20,
+                ),
+                Visibility(
+                  visible: widget.mode == "timer",
+                  child: Column(
+                    children: [
+                      GestureDetector(
+                          onTap: () {
+                            Utils.showSheet(context,
+                                child: buildRestTimePicker(),
+                                onClicked: () => {Navigator.pop(context)});
+                          },
+                          child: Card(
+                            color: Colors.white,
                             child: ListTile(
-                              title: CupertinoTimerPicker(
-                                initialTimerDuration: duration_resttime,
-                                mode: CupertinoTimerPickerMode.ms,
-                                onTimerDurationChanged: (duration) =>
-                                    setState(() {
-                                  duration_resttime = duration;
-                                }),
+                              title: Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  Text(
+                                    "Preparation time",
+                                    style: TextStyle(
+                                      color: AppTheme.colors.secondaryColor,
+                                      fontSize: 20,
+                                      fontFamily: 'BalooBhai',
+                                    ),
+                                  ),
+                                  Text(
+                                    _printDuration(durationRestTime),
+                                    style: TextStyle(
+                                        color: AppTheme.colors.blueColor,
+                                        fontSize: 25,
+                                        fontFamily: 'BalooBhai2',
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
                               ),
+                            ),
+                            shape: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20),
+                                borderSide:
+                                    BorderSide(color: Colors.transparent)),
+                            elevation: 2,
+                          )),
+                      SizedBox(
+                        height: 20,
+                      ),
+                    ],
+                  ),
+                ),
+                Card(
+                  color: Colors.white,
+                  child: Column(children: [
+                    ListTile(
+                      title: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            "Select color",
+                            style: TextStyle(
+                              color: AppTheme.colors.secondaryColor,
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai',
                             ),
                           ),
                         ],
                       ),
                     ),
-                  ]),
-                  shape: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Colors.transparent)),
-                  elevation: 2,
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Card(
-                  color: Colors.white,
-                  child: Column(children: [
-                    Theme(
-                      data: theme,
-                      child: ExpansionTile(
-                        title: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Select color",
-                              style: TextStyle(
-                                color: AppTheme.colors.secondaryColor,
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai',
-                              ),
-                            ),
-                            Container(
-                              width: 30,
-                              height: 30,
-                              decoration: BoxDecoration(
-                                  shape: BoxShape.circle, color: _color),
-                            )
-                          ],
-                        ),
-                        children: [
-                          SizedBox(
-                            height: 80,
-                            child: ListTile(
-                                title: MyColorPicker(
-                                    onSelectColor: (value) {
-                                      setState(() {
-                                        _color = value;
-                                      });
-                                    },
-                                    availableColors: [
-                                      AppTheme.colors.redColor,
-                                      AppTheme.colors.cyanColor,
-                                      AppTheme.colors.orangeColor,
-                                      AppTheme.colors.blueColor,
-                                      Colors.blue
-                                    ],
-                                    initialColor: Colors.blue)),
-                          ),
-                        ],
-                      ),
+                    SizedBox(
+                      height: 80,
+                      child: ListTile(
+                          title: MyColorPicker(
+                              onSelectColor: (value) {
+                                setState(() {
+                                  _color = value;
+                                });
+                              },
+                              availableColors: [
+                                AppTheme.colors.redColor,
+                                AppTheme.colors.cyanColor,
+                                AppTheme.colors.orangeColor,
+                                AppTheme.colors.blueColor,
+                                Colors.blue
+                              ],
+                              initialColor: Colors.blue)),
                     ),
                   ]),
                   shape: OutlineInputBorder(
@@ -446,4 +446,102 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       ),
     );
   }
+
+  Widget buildSeriePicker() => SizedBox(
+        height: 300,
+        child: CupertinoPicker(
+          scrollController:
+              FixedExtentScrollController(initialItem: _serieNumber),
+          itemExtent: 64,
+          diameterRatio: 0.7,
+          looping: true,
+          onSelectedItemChanged: (index) =>
+              setState(() => _serieNumber = index),
+          // selectionOverlay: Container(),
+          selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+            background: AppTheme.colors.cyanColor.withOpacity(0.12),
+          ),
+          children: Utils.modelBuilder<String>(
+            listNumber,
+            (index, value) {
+              final isSelected = index == index;
+              final color =
+                  isSelected ? AppTheme.colors.cyanColor : Colors.black;
+
+              return Center(
+                child: Text(
+                  value,
+                  style: TextStyle(color: color, fontSize: 24),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+  Widget buildRepPicker() => SizedBox(
+        height: 300,
+        child: CupertinoPicker(
+          scrollController:
+              FixedExtentScrollController(initialItem: _repNumber),
+          itemExtent: 64,
+          diameterRatio: 0.7,
+          looping: true,
+          onSelectedItemChanged: (index) => setState(() => _repNumber = index),
+          // selectionOverlay: Container(),
+          selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
+            background: AppTheme.colors.redColor.withOpacity(0.12),
+          ),
+          children: Utils.modelBuilder<String>(
+            listNumber,
+            (index, value) {
+              final isSelected = index == index;
+              final color =
+                  isSelected ? AppTheme.colors.redColor : Colors.black;
+
+              return Center(
+                child: Text(
+                  value,
+                  style: TextStyle(color: color, fontSize: 24),
+                ),
+              );
+            },
+          ),
+        ),
+      );
+
+  Widget buildExerciceTimePicker() => SizedBox(
+        height: 180,
+        child: CupertinoTimerPicker(
+          initialTimerDuration: durationExerciceTime,
+          mode: CupertinoTimerPickerMode.ms,
+          minuteInterval: 3,
+          secondInterval: 1,
+          onTimerDurationChanged: (duration) =>
+              setState(() => durationExerciceTime = duration),
+        ),
+      );
+
+  Widget buildRestTimePicker() => SizedBox(
+        height: 180,
+        child: CupertinoTimerPicker(
+          initialTimerDuration: durationRestTime,
+          mode: CupertinoTimerPickerMode.ms,
+          minuteInterval: 3,
+          secondInterval: 1,
+          onTimerDurationChanged: (duration) =>
+              setState(() => durationRestTime = duration),
+        ),
+      );
+  Widget buildPreparationTimePicker() => SizedBox(
+        height: 180,
+        child: CupertinoTimerPicker(
+          initialTimerDuration: durationPreparationTime,
+          mode: CupertinoTimerPickerMode.ms,
+          minuteInterval: 3,
+          secondInterval: 1,
+          onTimerDurationChanged: (duration) =>
+              setState(() => durationPreparationTime = duration),
+        ),
+      );
 }
