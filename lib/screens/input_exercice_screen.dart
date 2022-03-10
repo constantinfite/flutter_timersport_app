@@ -8,7 +8,7 @@ import 'package:sport_timer/widget/my_color_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({Key? key, required this.mode}) : super(key: key);
+  const ExerciceTimeScreen({Key? key, required this.mode, }) : super(key: key);
   final String mode;
   @override
   State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();

@@ -6,21 +6,24 @@ import 'package:intl/intl.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 
-class SerieWorkoutScreen extends StatefulWidget {
-  const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
+class TimerWorkoutScreen extends StatefulWidget {
+  const TimerWorkoutScreen({Key? key, required this.id}) : super(key: key);
   final int id;
 
   @override
-  State<SerieWorkoutScreen> createState() => _SerieWorkoutScreenState();
+  State<TimerWorkoutScreen> createState() => _TimerWorkoutScreenState();
 }
 
-class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
+class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
   final _exerciceService = ExerciceService();
   final _exercice = Exercice();
 
   var f = NumberFormat("00");
-  int _seconds = 5;
-  int _minutes = 1;
+  int _secondsRest = 5;
+  int _minutesRest = 1;
+
+  int _secondsExercice = 5;
+  int _minutesExercice = 1;
   int _round = 0;
 
   final commentControler = TextEditingController();
@@ -28,21 +31,18 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   final scrollController = ScrollController();
 
   //Timer
-  Timer _timer = Timer(Duration(milliseconds: 1), () {});
+  Timer _timerRest = Timer(Duration(milliseconds: 1), () {});
+  Timer _timerExercice = Timer(Duration(milliseconds: 1), () {});
   Timer _totalTimer = Timer(Duration(milliseconds: 1), () {});
   int totalSecond = 0;
   double progress = 1.0;
-
-  //To record number of actual repetition
-  List<int?> actualRepetition = [0];
-  List<int?> doneRepetition = [];
-  int currentRepetition = 0;
 
   @override
   void initState() {
     super.initState();
 
     _exercice.resttime = 10;
+    _exercice.exercicetime = 10;
     _exercice.serie = 1;
     _exercice.color = 0;
 
@@ -70,55 +70,82 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       _exercice.exercicetime = exercice[0]['exercicetime'] ?? 0;
       _exercice.mode = exercice[0]['mode'] ?? "";
       _exercice.color = exercice[0]['color'] ?? 0;
-      //set minute and second for timer
-      _minutes = _exercice.resttime! ~/ 60;
-      _seconds = _exercice.resttime!.toInt() % 60;
+      //set minute and second for timerRest and timerExercice
+      _minutesRest = _exercice.resttime! ~/ 60;
+      _secondsRest = _exercice.resttime!.toInt() % 60;
+
+      _minutesExercice = _exercice.exercicetime! ~/ 60;
+      _secondsExercice = _exercice.exercicetime!.toInt() % 60;
     });
-
-    var rep = exercice[0]['repetition'];
-    var serie = exercice[0]['serie'];
-
-    for (var i = 0; i < serie!; i++) {
-      if (i == 0) {
-        actualRepetition[0] = rep;
-      }
-      actualRepetition.add(rep);
-    }
   }
 
   reInitializeTime() {
-    _minutes = _exercice.resttime! ~/ 60;
-    _seconds = _exercice.resttime!.toInt() % 60;
+    _minutesRest = _exercice.resttime! ~/ 60;
+    _secondsRest = _exercice.resttime!.toInt() % 60;
+
+    _minutesExercice = _exercice.exercicetime! ~/ 60;
+    _secondsExercice = _exercice.exercicetime!.toInt() % 60;
   }
 
   nextRound() {
-    _timer.cancel();
+    _timerRest.cancel();
     reInitializeTime();
     setState(() {
       _round++;
     });
   }
 
-  _startTimer() {
-    if (_minutes > 0) {
-      _seconds = _seconds + _minutes * 60;
+  _startTimerRest() {
+    if (_minutesRest > 0) {
+      _secondsRest = _secondsRest + _minutesRest * 60;
     }
-    if (_seconds > 0) {
-      _minutes = (_seconds / 60).floor();
-      _seconds = _seconds - (_minutes * 60);
+    if (_secondsRest > 0) {
+      _minutesRest = (_secondsRest / 60).floor();
+      _secondsRest = _secondsRest - (_minutesRest * 60);
     }
-    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+    _timerRest = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if (_seconds > 0) {
-          _seconds--;
+        if (_secondsRest > 0) {
+          _secondsRest--;
         } else {
-          if (_minutes > 0) {
-            _seconds = 59;
-            _minutes--;
+          if (_minutesRest > 0) {
+            _secondsRest = 59;
+            _minutesRest--;
           } else {
-            _timer.cancel();
+            _timerRest.cancel();
             nextRound();
             jumpToItem(_round, context);
+            if (_round != (_exercice.serie! * 2)) {
+              _startTimerExercice();
+            }
+          }
+        }
+      });
+    });
+  }
+
+  _startTimerExercice() {
+    if (_minutesExercice > 0) {
+      _secondsExercice = _secondsExercice + _minutesExercice * 60;
+    }
+    if (_secondsExercice > 0) {
+      _minutesExercice = (_secondsExercice / 60).floor();
+      _secondsExercice = _secondsExercice - (_minutesExercice * 60);
+    }
+
+    _timerExercice = Timer.periodic(Duration(seconds: 1), (timer) {
+      setState(() {
+        if (_secondsExercice > 0) {
+          _secondsExercice--;
+        } else {
+          if (_minutesExercice > 0) {
+            _secondsExercice = 59;
+            _minutesExercice--;
+          } else {
+            _timerExercice.cancel();
+            nextRound();
+            jumpToItem(_round, context);
+            _startTimerRest();
           }
         }
       });
@@ -138,7 +165,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
       child: Text("Continue"),
       onPressed: () {
         Navigator.pop(context);
-        _timer.cancel();
+        _timerRest.cancel();
         _totalTimer.cancel();
         Navigator.pop(context);
       },
@@ -184,30 +211,16 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   //Serie display at the top
   String actualSerie() {
     if ((_round + 2) ~/ 2 > _exercice.serie!) {
+      //print("round $_round");
+
       return _exercice.serie.toString() + "/" + _exercice.serie.toString();
     } else {
+      //print("round $_round");
+
+      //print((_round + 2) ~/ 2);
       return ((_round + 2) ~/ 2).toString() + "/" + _exercice.serie.toString();
     }
   }
-
-  // swipe right +1 / swipe left -1
-  void manageRepOnGesture(details) {
-    if (details.primaryVelocity > 0) {
-      setState(() {
-        actualRepetition[_round ~/ 2] = actualRepetition[_round ~/ 2]! + 1;
-      });
-    } else if (details.primaryVelocity < 0) {
-      setState(() {
-        actualRepetition[_round ~/ 2] = actualRepetition[_round ~/ 2]! - 1;
-      });
-    }
-  }
-
-  /*populateArray() async {
-    var exercice = await _exerciceService.readExerciceById(widget.id);
-
-    
-  }*/
 
   @override
   Widget build(BuildContext context) {
@@ -349,16 +362,18 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 textCercle(),
                 //Text(currentRepetition.toString()),
                 GestureDetector(
-                  onHorizontalDragEnd: (DragEndDetails details) {
-                    manageRepOnGesture(details);
-                  },
                   onTap: () => {
+                    // on exercice Card
                     if (_round % 2 == 0 && _round < (_exercice.serie! * 2))
                       {
-                        nextRound(),
-                        doneRepetition.add(actualRepetition[_round ~/ 2]),
-                        jumpToItem(_round, context),
+                        if (!_timerExercice.isActive)
+                          {
+                            _startTimerExercice(),
+                          }
+                        else
+                          {_timerExercice.cancel()}
                       },
+                    //End card
                     if (_round == (_exercice.serie! * 2))
                       {
                         showModalBottomSheet(
@@ -373,22 +388,27 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                           },
                         )
                       }
+                    //on rest card
                     else
                       {
-                        if (!_timer.isActive)
-                          {_startTimer()}
+                        if (!_timerRest.isActive)
+                          {_startTimerRest()}
                         else
-                          {_timer.cancel()}
+                          {_timerRest.cancel()}
                       }
                   },
                   child: SizedBox(
                     width: 300,
                     height: 300,
                     child: CircularProgressIndicator(
-                      value: (_seconds + _minutes * 60) / _exercice.resttime!,
                       color: _round % 2 == 0
                           ? Color(_exercice.color!)
                           : AppTheme.colors.secondaryColor,
+                      value: _round % 2 == 0
+                          ? (_secondsExercice + _minutesExercice * 60) /
+                              _exercice.exercicetime!
+                          : (_secondsRest + _minutesRest * 60) /
+                              _exercice.resttime!,
                       strokeWidth: _round % 2 == 0 ? 20 : 15,
                       backgroundColor: Colors.white,
                     ),
@@ -428,7 +448,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             onTap: () async {
               jumpToItem(index, context);
               setState(() {
-                _timer.cancel();
+                _timerRest.cancel();
                 reInitializeTime();
                 _round = index;
               });
@@ -466,7 +486,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
             onTap: () {
               jumpToItem(index, context);
               setState(() {
-                _timer.cancel();
+                _timerRest.cancel();
                 reInitializeTime();
                 _round = index;
               });
@@ -488,7 +508,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                             fontWeight: FontWeight.w700)),
                     Text(
                         index % 2 == 0
-                            ? _exercice.repetition.toString() + " rep"
+                            ? formatDuration(_exercice.exercicetime!)
                             : formatDuration(_exercice.resttime!),
                         style: TextStyle(
                           fontSize: 27,
@@ -526,18 +546,17 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     }
     if (_round % 2 == 1) {
       return Text(
-        "${f.format(_minutes)}:${f.format(_seconds)}",
+        "${f.format(_minutesRest)}:${f.format(_secondsRest)}",
         style: TextStyle(
-            fontSize: 80,
-            fontFamily: 'BalooBhai',
-            color: AppTheme.colors.secondaryColor,
-            letterSpacing: 1,
-            wordSpacing: 1),
+          fontSize: 80,
+          fontFamily: 'BalooBhai',
+          color: AppTheme.colors.secondaryColor,
+        ),
       );
     } else {
-      return Text(actualRepetition[_round ~/ 2].toString(),
+      return Text("${f.format(_minutesExercice)}:${f.format(_secondsExercice)}",
           style: TextStyle(
-              fontSize: 100,
+              fontSize: 80,
               fontFamily: 'BalooBhai',
               color: AppTheme.colors.secondaryColor));
     }
@@ -595,21 +614,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                               fontFamily: 'BalooBhai2',
                               color: AppTheme.colors.secondaryColor,
                               fontWeight: FontWeight.w700)),
-                      RichText(
-                        text: TextSpan(children: <InlineSpan>[
-                          for (var string in doneRepetition)
-                            TextSpan(
-                                text: doneRepetition.indexOf(string) ==
-                                        doneRepetition.length - 1
-                                    ? string.toString()
-                                    : string.toString() + "-",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'BalooBhai2',
-                                    color: AppTheme.colors.secondaryColor,
-                                    fontWeight: FontWeight.w700)),
-                        ]),
-                      ),
+                      Text("OKK"),
                       Text(formatDuration(totalSecond),
                           style: TextStyle(
                               fontSize: 20,

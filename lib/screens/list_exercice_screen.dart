@@ -6,6 +6,7 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:sport_timer/screens/input_exercice_screen_update.dart';
 import 'package:sport_timer/screens/repetition_workout_screen.dart';
+import 'package:sport_timer/screens/timer_workout_screen.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 
 class ListExerciceScreen extends StatefulWidget {
@@ -202,9 +203,16 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                                         BorderSide(color: Colors.transparent)),
                               ),
                               onPressed: () {
-                                Navigator.of(context).push(MaterialPageRoute(
-                                    builder: (context) => SerieWorkoutScreen(
-                                        id: _exerciceList[index].id!)));
+                                if (_exerciceList[index].mode == "rep") {
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => SerieWorkoutScreen(
+                                          id: _exerciceList[index].id!)));
+                                }
+                                else if (_exerciceList[index].mode == "timer"){
+                                  Navigator.of(context).push(MaterialPageRoute(
+                                      builder: (context) => TimerWorkoutScreen(
+                                          id: _exerciceList[index].id!)));
+                                }
                               },
                             ),
                           ),
