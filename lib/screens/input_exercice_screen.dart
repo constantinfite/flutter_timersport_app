@@ -3,22 +3,26 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/services/exercice_service.dart';
-import 'package:numberpicker/numberpicker.dart';
 import 'package:sport_timer/widget/my_color_picker.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:sport_timer/utils.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
-  const ExerciceTimeScreen({
-    Key? key,
-    required this.mode,
-  }) : super(key: key);
+  const ExerciceTimeScreen(
+      {Key? key,
+      required this.mode,
+      required this.creation,
+      required this.exercice})
+      : super(key: key);
   final String mode;
+  final bool creation;
+  final Exercice exercice;
   @override
   State<ExerciceTimeScreen> createState() => _ExerciceTimeScreenState();
 }
 
 class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
+  int id = 0;
   final _exerciceNameController = TextEditingController();
   int _serieNumber = 0;
   int _repNumber = 0;
@@ -27,14 +31,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   Color _color = Colors.blue;
 
   late FToast fToast;
-
-  @override
-  void initState() {
-    super.initState();
-    fToast = FToast();
-    fToast.init(context);
-  }
-
+  final listNumber = List<String>.generate(21, (i) => "$i");
   final _formKey = GlobalKey<FormState>();
 
   Duration durationRestTime = Duration(minutes: 0, seconds: 0);
@@ -43,6 +40,34 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
 
   final exercice = Exercice();
   final _exerciceService = ExerciceService();
+
+  @override
+  void initState() {
+    super.initState();
+    fToast = FToast();
+    fToast.init(context);
+
+    if (!widget.creation) {
+      editValue();
+    }
+  }
+
+  editValue() async {
+    setState(() {
+      id = widget.exercice.id!;
+      _exerciceNameController.text = widget.exercice.name!;
+      _serieNumber = widget.exercice.serie!;
+      _repNumber = widget.exercice.repetition!;
+      _color = Color(widget.exercice.color!);
+
+      durationRestTime = Duration(
+          minutes: widget.exercice.resttime! ~/ 60,
+          seconds: widget.exercice.resttime! % 60);
+      durationExerciceTime = Duration(
+          minutes: widget.exercice.exercicetime! ~/ 60,
+          seconds: widget.exercice.exercicetime! % 60);
+    });
+  }
 
   String _printDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(1, "0");
@@ -95,12 +120,6 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
         });
   }
 
-  int index = 0;
-
-  final listNumber = List<String>.generate(21, (i) => "$i");
-
-  Duration duration = Duration(minutes: 6, seconds: 30);
-
   String formatDuration(Duration duration) {
     String twoDigits(int n) => n.toString().padLeft(2, '0');
 
@@ -108,6 +127,14 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
     final seconds = twoDigits(duration.inSeconds.remainder(60));
 
     return '$minutes:$seconds';
+  }
+
+  choiceAction(String choice) async {
+    if (choice == "delete") {
+      await _exerciceService.deleteExercice(id);
+      Navigator.pop(context);
+      _showToast("Exercice delete");
+    }
   }
 
   @override
@@ -148,37 +175,77 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               color: AppTheme.colors.primaryColor,
               iconSize: 50,
               onPressed: () async {
-                convert_duration_time(durationRestTime, durationExerciceTime);
-                if (widget.mode == "rep") {
-                  _exerciceTime = 1;
-                } else {
-                  _repNumber = 1;
-                }
+                if (widget.creation) {
+                  convert_duration_time(durationRestTime, durationExerciceTime);
+                  if (widget.mode == "rep") {
+                    _exerciceTime = 1;
+                  } else {
+                    _repNumber = 1;
+                  }
 
-                if (_formKey.currentState!.validate() &&
-                    _serieNumber != 0 &&
-                    _repNumber != 0 &&
-                    _restTime != 0 &&
-                    _exerciceTime != 0) {
-                  final _exercice = Exercice();
-                  _exercice.name = _exerciceNameController.text;
-                  _exercice.repetition = _repNumber;
-                  _exercice.serie = _serieNumber;
-                  _exercice.resttime = _restTime;
-                  _exercice.exercicetime = _exerciceTime;
-                  _exercice.mode = widget.mode;
-                  _exercice.color = _color.value;
+                  if (_formKey.currentState!.validate() &&
+                      _serieNumber != 0 &&
+                      _repNumber != 0 &&
+                      _restTime != 0 &&
+                      _exerciceTime != 0) {
+                    final _exercice = Exercice();
+                    _exercice.name = _exerciceNameController.text;
+                    _exercice.repetition = _repNumber;
+                    _exercice.serie = _serieNumber;
+                    _exercice.resttime = _restTime;
+                    _exercice.exercicetime = _exerciceTime;
+                    _exercice.mode = widget.mode;
+                    _exercice.color = _color.value;
 
-                  await _exerciceService.saveExercice(_exercice);
-                  _showToast("Exercice created");
-                  Navigator.pop(context);
+                    await _exerciceService.saveExercice(_exercice);
+                    _showToast("Exercice created");
+                    Navigator.pop(context);
+                  } else {
+                    fToast.removeQueuedCustomToasts();
+                    _showToast("Empty value");
+                  }
                 } else {
-                  fToast.removeQueuedCustomToasts();
-                  _showToast("Empty value");
+                  convert_duration_time(durationRestTime, durationExerciceTime);
+
+                  if (_formKey.currentState!.validate() &&
+                      _serieNumber != 0 &&
+                      _repNumber != 0 &&
+                      _restTime != 0 &&
+                      _exerciceTime != 0) {
+                    final _exercice = Exercice();
+                    _exercice.id = id;
+                    _exercice.name = _exerciceNameController.text;
+                    _exercice.repetition = _repNumber;
+                    _exercice.serie = _serieNumber;
+                    _exercice.resttime = _restTime;
+                    _exercice.exercicetime = _exerciceTime;
+                    _exercice.color = _color.value;
+                    _exercice.mode = widget.exercice.mode;
+
+                    await _exerciceService.updateExercice(_exercice);
+                    Navigator.pop(context);
+                    _showToast("Exercice modified");
+                  } else {
+                    _showToast("Empty value");
+                  }
                 }
               }
               // 2
               ),
+          Visibility(
+            visible: !widget.creation,
+            child: PopupMenuButton(
+                icon: Icon(
+                  Icons.more_vert,
+                  size: 40,
+                  color: AppTheme.colors.secondaryColor,
+                ),
+                itemBuilder: (_) => const <PopupMenuItem<String>>[
+                      PopupMenuItem<String>(
+                          child: Text('Delete'), value: 'delete'),
+                    ],
+                onSelected: choiceAction),
+          )
         ],
       ),
       body: GestureDetector(
@@ -313,7 +380,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 GestureDetector(
                     onTap: () {
                       Utils.showSheet(context,
-                          child: buildPreparationTimePicker(),
+                          child: buildRestTimePicker(),
                           onClicked: () => {Navigator.pop(context)});
                     },
                     child: Card(
@@ -331,7 +398,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                               ),
                             ),
                             Text(
-                              _printDuration(durationPreparationTime),
+                              _printDuration(durationRestTime),
                               style: TextStyle(
                                   color: AppTheme.colors.orangeColor,
                                   fontSize: 25,
@@ -356,7 +423,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                       GestureDetector(
                           onTap: () {
                             Utils.showSheet(context,
-                                child: buildRestTimePicker(),
+                                child: buildPreparationTimePicker(),
                                 onClicked: () => {Navigator.pop(context)});
                           },
                           child: Card(
@@ -375,7 +442,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                                     ),
                                   ),
                                   Text(
-                                    _printDuration(durationRestTime),
+                                    _printDuration(durationPreparationTime),
                                     style: TextStyle(
                                         color: AppTheme.colors.blueColor,
                                         fontSize: 25,
@@ -431,7 +498,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                                 AppTheme.colors.blueColor,
                                 Colors.blue
                               ],
-                              initialColor: Colors.blue)),
+                              initialColor: _color)),
                     ),
                   ]),
                   shape: OutlineInputBorder(

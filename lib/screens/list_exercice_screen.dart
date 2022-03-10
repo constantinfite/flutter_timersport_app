@@ -26,6 +26,14 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
   void initState() {
     super.initState();
     getAllExercices();
+    _exercice.id = 0;
+    _exercice.name = '';
+    _exercice.exercicetime = 0;
+    _exercice.resttime = 0;
+    _exercice.serie = 0;
+    _exercice.mode = "";
+    _exercice.repetition = 0;
+    _exercice.color = 0;
   }
 
   late var _exercice = Exercice();
@@ -207,8 +215,8 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => SerieWorkoutScreen(
                                           id: _exerciceList[index].id!)));
-                                }
-                                else if (_exerciceList[index].mode == "timer"){
+                                } else if (_exerciceList[index].mode ==
+                                    "timer") {
                                   Navigator.of(context).push(MaterialPageRoute(
                                       builder: (context) => TimerWorkoutScreen(
                                           id: _exerciceList[index].id!)));
@@ -236,7 +244,10 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                                 Navigator.of(context)
                                     .push(MaterialPageRoute(
                                         builder: (context) =>
-                                            ExerciceTimeScreenUpdate(
+                                            ExerciceTimeScreen(
+                                                mode:
+                                                    _exerciceList[index].mode!,
+                                                creation: false,
                                                 exercice: _exercice)))
                                     .then((_) {
                                   getAllExercices();
@@ -271,7 +282,8 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
             foregroundColor: Colors.white,
             onTap: () => Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(mode: "rep")))
+                    builder: (context) => ExerciceTimeScreen(
+                        mode: "rep", creation: true, exercice: _exercice)))
                 .then((_) {
               getAllExercices();
             }),
@@ -283,7 +295,8 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
             foregroundColor: Colors.white,
             onTap: () => Navigator.of(context)
                 .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(mode: "timer")))
+                    builder: (context) => ExerciceTimeScreen(
+                        mode: "timer", creation: true, exercice: _exercice)))
                 .then((_) {
               getAllExercices();
             }),
