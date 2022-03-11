@@ -43,7 +43,7 @@ dependencies:
   fluttertoast: ^8.0.9
   liquid_progress_indicator: ^0.4.0
   flutter_colorpicker: ^1.0.3
-  flutter_calendar_carousel: ^2.1.0
+  table_calendar: ^3.0.0
 
 dev_dependencies:
   flutter_test:
