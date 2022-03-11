@@ -1,5 +1,5 @@
 import 'package:sport_timer/models/exercice.dart';
-import 'package:sport_timer/repositories/repository.dart';
+import 'package:sport_timer/repositories/repository_exercice.dart';
 
 class ExerciceService {
   late Repository _repository;

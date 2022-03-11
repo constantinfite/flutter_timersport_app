@@ -13,7 +13,7 @@ class Repository {
 
   Future<Database> get database async {
     if (_database != null) return _database!;
-    _database = await _dataBaseConnection?.setDatabase();
+    _database = await _dataBaseConnection?.setDatabaseExercice();
     return _database!;
   }
 

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/presentation/icons.dart';
+import 'package:sport_timer/services/event_service.dart';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
@@ -19,10 +20,14 @@ class _StatsScreenState extends State<StatsScreen> {
 
   TextEditingController _eventController = TextEditingController();
 
+  List<Event> _eventList = <Event>[];
+  final _eventService = EventService();
+
   @override
   void initState() {
     selectedEvents = {};
     super.initState();
+    getAllEvents();
   }
 
   List<Event> _getEventsfromDay(DateTime date) {
@@ -33,6 +38,27 @@ class _StatsScreenState extends State<StatsScreen> {
   void dispose() {
     _eventController.dispose();
     super.dispose();
+  }
+
+  getAllEvents() async {
+    var events = await _eventService.readEvents();
+    events.forEach((event) {
+      setState(() {
+        var eventModel = Event();
+        eventModel.name = event['name'];
+        eventModel.id = event['id'];
+        eventModel.resttime = event['resttime'];
+        eventModel.totaltime = event['totaltime'];
+        eventModel.datetime = event['datetime'];
+
+        _eventList.add(eventModel);
+      });
+    });
+    if (events.isEmpty) {
+      setState(() {
+        print("nothing");
+      });
+    }
   }
 
   @override
@@ -105,9 +131,9 @@ class _StatsScreenState extends State<StatsScreen> {
           ),
           Expanded(
             child: ListView.builder(
-                itemCount: 3,
+                itemCount: _eventList.length,
                 itemBuilder: (context, index) {
-                  return cardExercice();
+                  return cardExercice(_eventList[index], index);
                 }),
           )
         ],
@@ -156,7 +182,7 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 }
 
-Widget cardExercice() {
+Widget cardExercice(event, index) {
   return Card(
     margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
     color: AppTheme.colors.redColor,
@@ -181,7 +207,7 @@ Widget cardExercice() {
                     size: 20,
                   ),
                   Text(
-                    "TEXT",
+                    event.name,
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,
@@ -229,7 +255,8 @@ Widget cardExercice() {
                     size: 20,
                   ),
                   Text(
-                    "2 m 15 s",
+                    DateTime.fromMillisecondsSinceEpoch(event.datetime)
+                        .toString(),
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,
