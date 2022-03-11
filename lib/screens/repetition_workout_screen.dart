@@ -675,7 +675,10 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onPressed: () {},
+                onPressed: () {
+
+                  
+                },
               ),
             ],
           ),

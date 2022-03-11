@@ -4,7 +4,7 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:sport_timer/utils.dart';
+import 'package:sport_timer/widget/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
