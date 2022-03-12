@@ -15,28 +15,25 @@ class StatsScreen extends StatefulWidget {
 }
 
 class _StatsScreenState extends State<StatsScreen> {
-  List<Event> _eventList = <Event>[];
+  List<Event> _selectedEvents = <Event>[];
+
+  final List<Event> _eventList = <Event>[];
   final _eventService = EventService();
 
-  late Map<DateTime, List<Event>> selectedEvents;
   CalendarFormat format = CalendarFormat.month;
-  DateTime selectedDay = DateTime.now();
-  DateTime focusedDay = DateTime.now();
 
-  final Map<DateTime, List<Event>> _events = LinkedHashMap(
+  DateTime _focusedDay = DateTime.now().toUtc();
+  DateTime? _selectedDay;
+
+  Map<DateTime, List<Event>> _events = LinkedHashMap(
     equals: isSameDay,
   );
 
   List<Event> _getEventsFromDay(DateTime date) {
-    return _events[date] ?? [];
-  }
-
-  void addEvent(DateTime day, Event newEvent) {
-    if (_events[day] != null) {
-      _events[day]?.add(newEvent);
-    } else {
-      _events[day] = [newEvent];
+    if (date == _selectedDay) {
+      print(_events[date]);
     }
+    return _events[date] ?? [];
   }
 
   @override
@@ -45,11 +42,24 @@ class _StatsScreenState extends State<StatsScreen> {
     _events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks 1')];*/
 
     super.initState();
-    getAllEvents();
-    selectedDay = focusedDay;
+
+    _selectedDay = _focusedDay;
+
+    getTask1().then((val) => setState(() {
+          _events = val;
+
+          var _correctDate = DateTime.utc(
+              _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
+          _selectedEvents = _getEventsFromDay(_correctDate);
+        }));
   }
 
-  getAllEvents() async {
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  Future<List<Event>> getAllEvents() async {
     var events = await _eventService.readEvents();
     events.forEach((event) {
       setState(() {
@@ -60,14 +70,43 @@ class _StatsScreenState extends State<StatsScreen> {
         eventModel.totaltime = event['totaltime'];
         eventModel.datetime = event['datetime'];
 
-        var date = DateTime.fromMillisecondsSinceEpoch(eventModel.datetime!);
-        var goodformat = new DateTime(date.year, date.month, date.day);
-
-        addEvent(goodformat, eventModel);
-
-        //_eventList.add(eventModel);
+        _eventList.add(eventModel);
       });
     });
+
+    return _eventList;
+  }
+
+  Future<Map<DateTime, List<Event>>> getTask1() async {
+    Map<DateTime, List<Event>> mapFetch = {};
+    List<Event> event = await getAllEvents();
+    for (int i = 0; i < event.length; i++) {
+      var date = DateTime.fromMillisecondsSinceEpoch(event[i].datetime!);
+      var createTime = DateTime(date.year, date.month, date.day).toUtc();
+
+      var original = mapFetch[createTime];
+
+      if (original == null) {
+        //print("null");
+        mapFetch[createTime] = [event[i]];
+      } else {
+        //print(event[i]);
+        mapFetch[createTime] = List.from(original)..addAll([event[i]]);
+      }
+    }
+    //print(mapFetch);
+    return mapFetch;
+  }
+
+  void _onDaySelected(DateTime selectedDay, DateTime focusedDay) {
+    if (!isSameDay(_selectedDay, selectedDay)) {
+      setState(() {
+        _selectedDay = selectedDay;
+        _focusedDay = focusedDay;
+      });
+
+      _selectedEvents = _getEventsFromDay(selectedDay);
+    }
   }
 
   @override
@@ -76,7 +115,7 @@ class _StatsScreenState extends State<StatsScreen> {
       body: Column(
         children: [
           TableCalendar(
-            focusedDay: selectedDay,
+            focusedDay: _selectedDay!,
             firstDay: DateTime(1990),
             lastDay: DateTime(2050),
             calendarFormat: format,
@@ -92,17 +131,14 @@ class _StatsScreenState extends State<StatsScreen> {
             },
 
             //Day Changed
-            onDaySelected: (DateTime selectDay, DateTime focusDay) {
-              setState(() {
-                selectedDay = selectDay;
-                focusedDay = focusDay;
-              });
-            },
+            onDaySelected: _onDaySelected,
             selectedDayPredicate: (DateTime date) {
-              return isSameDay(selectedDay, date);
+              return isSameDay(_selectedDay, date);
             },
 
-            eventLoader: _getEventsFromDay,
+            eventLoader: (day) {
+              return _getEventsFromDay(day);
+            },
 
             //To style the Calendar
             calendarStyle: CalendarStyle(
@@ -143,12 +179,11 @@ class _StatsScreenState extends State<StatsScreen> {
           /* ..._getEventsFromDay(selectedDay)
               .map((Event event) => cardExercice(event)),*/
           Expanded(
-            child: ListView.builder(
-                itemCount: _getEventsFromDay(selectedDay).length,
-                itemBuilder: (context, index) {
-                  return cardExercice(_getEventsFromDay(selectedDay)[index]);
-                }),
-          )
+              child: ListView.builder(
+                  itemCount: _selectedEvents.length,
+                  itemBuilder: (context, index) {
+                    return cardExercice(_selectedEvents[index]);
+                  }))
         ],
       ),
     );
