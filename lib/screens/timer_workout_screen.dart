@@ -33,6 +33,8 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
   int _minutesExercice = 1;
   int _round = 0;
 
+  int serieDone = 0;
+
   final commentControler = TextEditingController();
 
   final scrollController = ScrollController();
@@ -149,6 +151,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
             _secondsExercice = 59;
             _minutesExercice--;
           } else {
+            serieDone++;
             _timerExercice.cancel();
             nextRound();
             jumpToItem(_round, context);
@@ -173,6 +176,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
       onPressed: () {
         Navigator.pop(context);
         _timerRest.cancel();
+        _timerExercice.cancel();
         _totalTimer.cancel();
         Navigator.pop(context);
       },
@@ -218,13 +222,8 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
   //Serie display at the top
   String actualSerie() {
     if ((_round + 2) ~/ 2 > _exercice.serie!) {
-      //print("round $_round");
-
       return _exercice.serie.toString() + "/" + _exercice.serie.toString();
     } else {
-      //print("round $_round");
-
-      //print((_round + 2) ~/ 2);
       return ((_round + 2) ~/ 2).toString() + "/" + _exercice.serie.toString();
     }
   }
@@ -396,7 +395,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                         )
                       }
                     //on rest card
-                    else
+                    else if (_round % 2 == 1 && _round < (_exercice.serie! * 2))
                       {
                         if (!_timerRest.isActive)
                           {_startTimerRest()}
@@ -629,7 +628,15 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                               fontFamily: 'BalooBhai2',
                               color: AppTheme.colors.secondaryColor,
                               fontWeight: FontWeight.w700)),
-                      Text("OKK"),
+                      Text(
+                          serieDone.toString() +
+                              " x " +
+                              formatDuration(_exercice.exercicetime!),
+                          style: TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'BalooBhai2',
+                              color: AppTheme.colors.secondaryColor,
+                              fontWeight: FontWeight.w700)),
                       Text(formatDuration(totalSecond),
                           style: TextStyle(
                               fontSize: 20,
@@ -682,6 +689,11 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                   _event.name = _exercice.name;
                   _event.totaltime = totalSecond;
                   _event.resttime = _exercice.resttime;
+                  _event.exercicetime = _exercice.exercicetime;
+                  _event.arrayrepetition = "";
+                  _event.serie = serieDone;
+                  _event.mode = "timer";
+                  _event.description = commentControler.text;
                   _event.datetime = nowDate.millisecondsSinceEpoch;
 
                   await _eventService.saveEvent(_event);

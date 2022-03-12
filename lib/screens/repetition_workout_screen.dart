@@ -7,6 +7,9 @@ import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:flutter/services.dart';
+import 'package:sport_timer/services/event_service.dart';
+import 'package:sport_timer/models/events.dart';
+import 'dart:convert';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -17,8 +20,11 @@ class SerieWorkoutScreen extends StatefulWidget {
 }
 
 class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
+  final _eventService = EventService();
   final _exerciceService = ExerciceService();
   final _exercice = Exercice();
+
+  var nowDate = DateTime.now().toUtc();
 
   var f = NumberFormat("00");
   int _seconds = 5;
@@ -675,9 +681,21 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                     borderRadius: BorderRadius.circular(20),
                   ),
                 ),
-                onPressed: () {
+                onPressed: () async {
+                  final _event = Event();
+                  _event.name = _exercice.name;
+                  _event.totaltime = totalSecond;
+                  _event.resttime = _exercice.resttime;
+                  _event.exercicetime = _exercice.exercicetime;
+                  _event.arrayrepetition = jsonEncode(doneRepetition);
+                  _event.serie = 0;
+                  _event.mode = "rep";
+                  _event.description = commentControler.text;
+                  _event.datetime = nowDate.millisecondsSinceEpoch;
 
-                  
+                  await _eventService.saveEvent(_event);
+
+                  Navigator.pop(context);
                 },
               ),
             ],

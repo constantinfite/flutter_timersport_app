@@ -1,5 +1,5 @@
 import 'dart:collection';
-
+import 'dart:convert';
 import 'package:sport_timer/models/events.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
@@ -30,19 +30,12 @@ class _StatsScreenState extends State<StatsScreen> {
   );
 
   List<Event> _getEventsFromDay(DateTime date) {
-    if (date == _selectedDay) {
-      print(_events[date]);
-    }
     return _events[date] ?? [];
   }
 
   @override
   void initState() {
-    /*_events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks',)];
-    _events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks 1')];*/
-
     super.initState();
-
     _selectedDay = _focusedDay;
 
     getTask1().then((val) => setState(() {
@@ -64,9 +57,14 @@ class _StatsScreenState extends State<StatsScreen> {
     events.forEach((event) {
       setState(() {
         var eventModel = Event();
-        eventModel.name = event['name'];
         eventModel.id = event['id'];
+        eventModel.name = event['name'];
+        eventModel.description = event['description'];
+        eventModel.mode = event['mode'];
         eventModel.resttime = event['resttime'];
+        eventModel.arrayrepetition = event['arrayrepetition'];
+        eventModel.serie = event['serie'];
+        eventModel.exercicetime = event['exercicetime'];
         eventModel.totaltime = event['totaltime'];
         eventModel.datetime = event['datetime'];
 
@@ -190,6 +188,15 @@ class _StatsScreenState extends State<StatsScreen> {
   }
 }
 
+String decodeJsonToText(event) {
+  var serie = jsonDecode(event);
+  String text = "";
+  for (var i = 0; i < serie.length; i++) {
+    text = text + serie[i].toString() + "-";
+  }
+  return text.substring(0, text.length - 1);
+}
+
 String formatDuration(int totalSeconds) {
   final duration = Duration(seconds: totalSeconds);
   final minutes = duration.inMinutes;
@@ -218,7 +225,9 @@ Widget cardExercice(event) {
         borderSide: BorderSide(color: Colors.transparent)),
     child: ExpansionTile(
       leading: Icon(
-        MyFlutterApp.noun_time,
+        event.mode == "timer"
+            ? MyFlutterApp.noun_time
+            : MyFlutterApp.noun_workout,
         color: Colors.white,
         size: 20,
       ),
@@ -239,8 +248,7 @@ Widget cardExercice(event) {
             width: 50,
           ),
           Text(
-            "rr",
-            //datesecondToMinuteHour(event.datetime),
+            datesecondToMinuteHour(event.datetime),
             overflow: TextOverflow.fade,
             maxLines: 1,
             softWrap: false,
@@ -263,7 +271,11 @@ Widget cardExercice(event) {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "10-10-10-10-10",
+                    event.mode == "timer"
+                        ? event.serie.toString() +
+                            " x " +
+                            formatDuration(event.exercicetime)
+                        : decodeJsonToText(event.arrayrepetition),
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,
@@ -282,8 +294,7 @@ Widget cardExercice(event) {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    "gf",
-                    //formatDuration(event.totaltime),
+                    formatDuration(event.totaltime),
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,
@@ -308,7 +319,7 @@ Widget cardExercice(event) {
               size: 40,
             ),
             Text(
-              "J’ai fait une bonne séance malgré le fit ",
+              event.description,
               overflow: TextOverflow.fade,
               maxLines: 1,
               softWrap: false,

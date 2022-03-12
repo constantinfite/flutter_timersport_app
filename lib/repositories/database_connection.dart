@@ -26,6 +26,6 @@ class DataBaseConnection {
 
   _onCreatingDatabaseEvent(Database database, int version) async {
     await database.execute(
-        "CREATE TABLE events(id INTEGER PRIMARY KEY, name TEXT, datetime INTEGER, resttime INTEGER, exercicetime INTEGER, totaltime INTEGER)");
+        "CREATE TABLE events(id INTEGER PRIMARY KEY, name TEXT, datetime INTEGER, resttime INTEGER, exercicetime INTEGER, totaltime INTEGER, description TEXT, arrayrepetition TEXT, mode TEXT, serie INTEGER)");
   }
 }
