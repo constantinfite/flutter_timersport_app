@@ -98,7 +98,6 @@ class _StatsScreenState extends State<StatsScreen> {
                 selectedDay = selectDay;
                 focusedDay = focusDay;
               });
-              
             },
             selectedDayPredicate: (DateTime date) {
               return isSameDay(selectedDay, date);
@@ -142,19 +141,37 @@ class _StatsScreenState extends State<StatsScreen> {
               ),
             ),
           ),
-          ..._getEventsFromDay(selectedDay)
-              .map((Event event) => cardExercice(event)),
-          /*Expanded(
+          /* ..._getEventsFromDay(selectedDay)
+              .map((Event event) => cardExercice(event)),*/
+          Expanded(
             child: ListView.builder(
                 itemCount: _getEventsFromDay(selectedDay).length,
                 itemBuilder: (context, index) {
-                  return cardExercice(_eventList[index]);
+                  return cardExercice(_getEventsFromDay(selectedDay)[index]);
                 }),
-          )*/
+          )
         ],
       ),
     );
   }
+}
+
+String formatDuration(int totalSeconds) {
+  final duration = Duration(seconds: totalSeconds);
+  final minutes = duration.inMinutes;
+  final seconds = totalSeconds % 60;
+
+  final minutesString = '$minutes'.padLeft(1, '0');
+  final secondsString = '$seconds'.padLeft(2, '0');
+  return '$minutesString m $secondsString s';
+}
+
+String datesecondToMinuteHour(int dateSecond) {
+  var date = DateTime.fromMillisecondsSinceEpoch(dateSecond).toLocal();
+  var hour = date.hour;
+  var minute = date.minute;
+
+  return '$hour h $minute m';
 }
 
 Widget cardExercice(event) {
@@ -164,47 +181,52 @@ Widget cardExercice(event) {
     elevation: 2.0,
     shape: OutlineInputBorder(
         borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.white)),
+        borderSide: BorderSide(color: Colors.transparent)),
     child: ExpansionTile(
+      leading: Icon(
+        MyFlutterApp.noun_time,
+        color: Colors.white,
+        size: 20,
+      ),
       title: Row(
+        children: [
+          Text(
+            event.name,
+            overflow: TextOverflow.fade,
+            maxLines: 1,
+            softWrap: false,
+            style: TextStyle(
+              fontSize: 15,
+              fontFamily: 'BalooBhai',
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            width: 50,
+          ),
+          Text(
+            datesecondToMinuteHour(event.datetime),
+            overflow: TextOverflow.fade,
+            maxLines: 1,
+            softWrap: false,
+            style: TextStyle(
+              fontSize: 15,
+              fontFamily: 'BalooBhai',
+              color: Colors.white,
+            ),
+          ),
+        ],
+      ),
+      subtitle: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Expanded(
               flex: 2,
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    MyFlutterApp.noun_workout,
-                    color: Colors.white,
-                    size: 20,
-                  ),
-                  Text(
-                    event.name,
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'BalooBhai',
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              )),
-          Expanded(
-              flex: 2,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    MyFlutterApp.noun_repetition,
-                    color: Colors.white,
-                    size: 20,
-                  ),
                   Text(
                     "10-10-10-10-10",
                     overflow: TextOverflow.fade,
@@ -220,18 +242,12 @@ Widget cardExercice(event) {
               )),
           Expanded(
               flex: 2,
-              child: Column(
+              child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceAround,
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Icon(
-                    MyFlutterApp.noun_time,
-                    color: Colors.white,
-                    size: 20,
-                  ),
                   Text(
-                    DateTime.fromMillisecondsSinceEpoch(event.datetime)
-                        .toString(),
+                    formatDuration(event.totaltime),
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,

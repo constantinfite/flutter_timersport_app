@@ -10,7 +10,6 @@ import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:flutter/services.dart';
 
-
 class TimerWorkoutScreen extends StatefulWidget {
   const TimerWorkoutScreen({Key? key, required this.id}) : super(key: key);
   final int id;
@@ -20,12 +19,11 @@ class TimerWorkoutScreen extends StatefulWidget {
 }
 
 class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
-
   final _eventService = EventService();
   final _exerciceService = ExerciceService();
   final _exercice = Exercice();
 
-  var nowDate = DateTime.now();
+  var nowDate = DateTime.now().toUtc();
 
   var f = NumberFormat("00");
   int _secondsRest = 5;
@@ -681,16 +679,14 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                 ),
                 onPressed: () async {
                   final _event = Event();
-                    _event.name = _exercice.name;
-                    _event.totaltime = totalSecond;
-                    _event.resttime = _exercice.resttime;
-                    _event.datetime= nowDate.millisecondsSinceEpoch;
-                    
+                  _event.name = _exercice.name;
+                  _event.totaltime = totalSecond;
+                  _event.resttime = _exercice.resttime;
+                  _event.datetime = nowDate.millisecondsSinceEpoch;
 
-                    await _eventService.saveEvent(_event);
-                    
-                    Navigator.pop(context);
+                  await _eventService.saveEvent(_event);
 
+                  Navigator.pop(context);
                 },
               ),
             ],
