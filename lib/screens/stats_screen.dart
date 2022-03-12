@@ -23,9 +23,7 @@ class _StatsScreenState extends State<StatsScreen> {
   DateTime selectedDay = DateTime.now();
   DateTime focusedDay = DateTime.now();
 
-  TextEditingController _eventController = TextEditingController();
-
-  Map<DateTime, List<Event>> _events = LinkedHashMap(
+  final Map<DateTime, List<Event>> _events = LinkedHashMap(
     equals: isSameDay,
   );
 
@@ -39,17 +37,16 @@ class _StatsScreenState extends State<StatsScreen> {
     } else {
       _events[day] = [newEvent];
     }
-    setState(() {});
   }
 
   @override
   void initState() {
-    selectedDay = focusedDay;
-    /*_events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks')];
+    /*_events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks',)];
     _events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks 1')];*/
 
     super.initState();
     getAllEvents();
+    selectedDay = focusedDay;
   }
 
   getAllEvents() async {
@@ -62,10 +59,12 @@ class _StatsScreenState extends State<StatsScreen> {
         eventModel.resttime = event['resttime'];
         eventModel.totaltime = event['totaltime'];
         eventModel.datetime = event['datetime'];
+
         var date = DateTime.fromMillisecondsSinceEpoch(eventModel.datetime!);
         var goodformat = new DateTime(date.year, date.month, date.day);
-        print("date " + goodformat.toString());
+
         addEvent(goodformat, eventModel);
+
         //_eventList.add(eventModel);
       });
     });
@@ -205,7 +204,8 @@ Widget cardExercice(event) {
             width: 50,
           ),
           Text(
-            datesecondToMinuteHour(event.datetime),
+            "rr",
+            //datesecondToMinuteHour(event.datetime),
             overflow: TextOverflow.fade,
             maxLines: 1,
             softWrap: false,
@@ -247,7 +247,8 @@ Widget cardExercice(event) {
                 // crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
-                    formatDuration(event.totaltime),
+                    "gf",
+                    //formatDuration(event.totaltime),
                     overflow: TextOverflow.fade,
                     maxLines: 1,
                     softWrap: false,
