@@ -22,7 +22,7 @@ class _StatsScreenState extends State<StatsScreen> {
 
   CalendarFormat format = CalendarFormat.month;
 
-  DateTime _focusedDay = DateTime.now().toUtc();
+  DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
 
   Map<DateTime, List<Event>> _events = LinkedHashMap(
@@ -40,9 +40,11 @@ class _StatsScreenState extends State<StatsScreen> {
 
     getTask1().then((val) => setState(() {
           _events = val;
-
+          print(_events);
           var _correctDate = DateTime.utc(
               _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
+          print(_correctDate);
+
           _selectedEvents = _getEventsFromDay(_correctDate);
         }));
   }
@@ -67,7 +69,6 @@ class _StatsScreenState extends State<StatsScreen> {
         eventModel.exercicetime = event['exercicetime'];
         eventModel.totaltime = event['totaltime'];
         eventModel.datetime = event['datetime'];
-
         _eventList.add(eventModel);
       });
     });
@@ -80,7 +81,7 @@ class _StatsScreenState extends State<StatsScreen> {
     List<Event> event = await getAllEvents();
     for (int i = 0; i < event.length; i++) {
       var date = DateTime.fromMillisecondsSinceEpoch(event[i].datetime!);
-      var createTime = DateTime(date.year, date.month, date.day).toUtc();
+      var createTime = DateTime.utc(date.year, date.month, date.day);
 
       var original = mapFetch[createTime];
 
@@ -92,7 +93,6 @@ class _StatsScreenState extends State<StatsScreen> {
         mapFetch[createTime] = List.from(original)..addAll([event[i]]);
       }
     }
-    //print(mapFetch);
     return mapFetch;
   }
 
@@ -192,9 +192,13 @@ String decodeJsonToText(event) {
   var serie = jsonDecode(event);
   String text = "";
   for (var i = 0; i < serie.length; i++) {
-    text = text + serie[i].toString() + "-";
+    if (i < serie.length) {
+      text = text + serie[i].toString() + "-";
+    } else {
+      text = text + serie[i].toString();
+    }
   }
-  return text.substring(0, text.length - 1);
+  return text;
 }
 
 String formatDuration(int totalSeconds) {
