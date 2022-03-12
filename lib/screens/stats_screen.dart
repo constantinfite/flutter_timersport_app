@@ -1,3 +1,5 @@
+import 'dart:collection';
+
 import 'package:sport_timer/models/events.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
@@ -23,19 +25,29 @@ class _StatsScreenState extends State<StatsScreen> {
 
   TextEditingController _eventController = TextEditingController();
 
-  List<Event> _getEventsfromDay(DateTime date) {
-    return selectedEvents[date] ?? [];
+  Map<DateTime, List<Event>> _events = LinkedHashMap(
+    equals: isSameDay,
+  );
+
+  List<Event> _getEventsFromDay(DateTime date) {
+    return _events[date] ?? [];
   }
 
-  @override
-  void dispose() {
-    _eventController.dispose();
-    super.dispose();
+  void addEvent(DateTime day, Event newEvent) {
+    if (_events[day] != null) {
+      _events[day]?.add(newEvent);
+    } else {
+      _events[day] = [newEvent];
+    }
+    setState(() {});
   }
 
   @override
   void initState() {
-    selectedEvents = {};
+    selectedDay = focusedDay;
+    /*_events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks')];
+    _events[DateTime.utc(2022, 3, 12)] = [Event(name: 'Do Tasks 1')];*/
+
     super.initState();
     getAllEvents();
   }
@@ -50,15 +62,13 @@ class _StatsScreenState extends State<StatsScreen> {
         eventModel.resttime = event['resttime'];
         eventModel.totaltime = event['totaltime'];
         eventModel.datetime = event['datetime'];
-
-        _eventList.add(eventModel);
+        var date = DateTime.fromMillisecondsSinceEpoch(eventModel.datetime!);
+        var goodformat = new DateTime(date.year, date.month, date.day);
+        print("date " + goodformat.toString());
+        addEvent(goodformat, eventModel);
+        //_eventList.add(eventModel);
       });
     });
-    if (events.isEmpty) {
-      setState(() {
-        print("nothing");
-      });
-    }
   }
 
   @override
@@ -78,6 +88,9 @@ class _StatsScreenState extends State<StatsScreen> {
             },
             startingDayOfWeek: StartingDayOfWeek.sunday,
             daysOfWeekVisible: true,
+            onPageChanged: (focusedDay) {
+              focusedDay = focusedDay;
+            },
 
             //Day Changed
             onDaySelected: (DateTime selectDay, DateTime focusDay) {
@@ -85,13 +98,13 @@ class _StatsScreenState extends State<StatsScreen> {
                 selectedDay = selectDay;
                 focusedDay = focusDay;
               });
-              print(focusedDay);
+              
             },
             selectedDayPredicate: (DateTime date) {
               return isSameDay(selectedDay, date);
             },
 
-            eventLoader: _getEventsfromDay,
+            eventLoader: _getEventsFromDay,
 
             //To style the Calendar
             calendarStyle: CalendarStyle(
@@ -129,27 +142,22 @@ class _StatsScreenState extends State<StatsScreen> {
               ),
             ),
           ),
-          ..._getEventsfromDay(selectedDay).map(
-            (Event event) => ListTile(
-              title: Text(
-                event.name!,
-              ),
-            ),
-          ),
-          Expanded(
+          ..._getEventsFromDay(selectedDay)
+              .map((Event event) => cardExercice(event)),
+          /*Expanded(
             child: ListView.builder(
-                itemCount: _eventList.length,
+                itemCount: _getEventsFromDay(selectedDay).length,
                 itemBuilder: (context, index) {
-                  return cardExercice(_eventList[index], index);
+                  return cardExercice(_eventList[index]);
                 }),
-          )
+          )*/
         ],
       ),
     );
   }
 }
 
-Widget cardExercice(event, index) {
+Widget cardExercice(event) {
   return Card(
     margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
     color: AppTheme.colors.redColor,
