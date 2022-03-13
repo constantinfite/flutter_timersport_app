@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/services/event_service.dart';
+import 'package:sport_timer/src/app.dart';
 import 'package:table_calendar/table_calendar.dart';
 
 class StatsScreen extends StatefulWidget {
@@ -40,10 +41,12 @@ class _StatsScreenState extends State<StatsScreen> {
 
     getTask1().then((val) => setState(() {
           _events = val;
-          print(_events);
+          /* print("_events");
+          print(_events);*/
           var _correctDate = DateTime.utc(
               _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
-          print(_correctDate);
+          /*print("_correctDate");
+          print(_correctDate);*/
 
           _selectedEvents = _getEventsFromDay(_correctDate);
         }));
@@ -81,16 +84,18 @@ class _StatsScreenState extends State<StatsScreen> {
     List<Event> event = await getAllEvents();
     for (int i = 0; i < event.length; i++) {
       var date = DateTime.fromMillisecondsSinceEpoch(event[i].datetime!);
-      var createTime = DateTime.utc(date.year, date.month, date.day);
+      var createDate = DateTime.utc(date.year, date.month, date.day);
+      /*print("createDate");
+      print(createDate);*/
 
-      var original = mapFetch[createTime];
+      var original = mapFetch[createDate];
 
       if (original == null) {
         //print("null");
-        mapFetch[createTime] = [event[i]];
+        mapFetch[createDate] = [event[i]];
       } else {
         //print(event[i]);
-        mapFetch[createTime] = List.from(original)..addAll([event[i]]);
+        mapFetch[createDate] = List.from(original)..addAll([event[i]]);
       }
     }
     return mapFetch;
@@ -112,6 +117,7 @@ class _StatsScreenState extends State<StatsScreen> {
     return Scaffold(
       body: Column(
         children: [
+          //Text(createDate),
           TableCalendar(
             focusedDay: _selectedDay!,
             firstDay: DateTime(1990),
@@ -186,13 +192,261 @@ class _StatsScreenState extends State<StatsScreen> {
       ),
     );
   }
+
+  Widget cardExercice(event) {
+    return GestureDetector(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          isScrollControlled: true,
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.vertical(top: Radius.circular(30))),
+          constraints: BoxConstraints(),
+          builder: (BuildContext context) {
+            return bottomSheet(event);
+          },
+        );
+      },
+      child: Card(
+          margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
+          color: AppTheme.colors.secondaryColor,
+          elevation: 2.0,
+          shape: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(20),
+              borderSide: BorderSide(color: Colors.transparent)),
+          child: Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: ListTile(
+              leading: Icon(
+                event.mode == "timer"
+                    ? MyFlutterApp.noun_number
+                    : MyFlutterApp.noun_timer,
+                color: Colors.white,
+                size: 40,
+              ),
+              title: Row(
+                children: [
+                  Text(
+                    event.name,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 25,
+                      fontFamily: 'BalooBhai',
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
+              trailing: SizedBox(
+                width: 100,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Icon(
+                      MyFlutterApp.noun_time,
+                      color: Colors.white,
+                      size: 30,
+                    ),
+                    Text(
+                      datesecondToMinuteHour(event.datetime),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          )),
+    );
+  }
+
+  Widget bottomSheet(event) {
+    return SingleChildScrollView(
+      padding:
+          EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
+      child: Container(
+        height: MediaQuery.of(context).size.height * 0.4,
+        padding: EdgeInsets.all(20),
+        width: MediaQuery.of(context).size.width * 0.85,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Text(
+                  event.name,
+                  overflow: TextOverflow.fade,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                    fontSize: 25,
+                    fontFamily: 'BalooBhai',
+                    color: AppTheme.colors.secondaryColor,
+                  ),
+                ),
+                SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    children: [
+                      Icon(
+                        MyFlutterApp.noun_time,
+                        color: AppTheme.colors.secondaryColor,
+                        size: 30,
+                      ),
+                      Text(
+                        datesecondToMinuteHour(event.datetime),
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'BalooBhai',
+                          color: AppTheme.colors.secondaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    Text(
+                      event.mode == "timer"
+                          ? event.serie.toString() +
+                              " x " +
+                              formatDuration(event.exercicetime)
+                          : decodeJsonToText(event.arrayrepetition),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
+                      ),
+                    ),
+                    Text(
+                      "Exercice",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      formatDuration(event.resttime),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
+                      ),
+                    ),
+                    Text(
+                      "Rest time",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      formatDuration(event.totaltime),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
+                      ),
+                    ),
+                    Text(
+                      "Total time",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                )
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Icon(
+                  MyFlutterApp.noun_comment,
+                  color: AppTheme.colors.secondaryColor,
+                  size: 80,
+                ),
+                Container(
+                  width: 150,
+                  height: 100,
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(3.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(
+                      Radius.circular(20),
+                    ),
+                    border: Border.all(
+                      width: 2,
+                      color: AppTheme.colors.secondaryColor,
+                      style: BorderStyle.solid,
+                    ),
+                  ),
+                  child: Text(
+                    event.description,
+                    style: TextStyle(
+                      fontSize: 12,
+                      fontFamily: 'BalooBhai2',
+                      color: AppTheme.colors.secondaryColor,
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 }
 
 String decodeJsonToText(event) {
   var serie = jsonDecode(event);
   String text = "";
   for (var i = 0; i < serie.length; i++) {
-    if (i < serie.length) {
+    if (i < serie.length - 1) {
       text = text + serie[i].toString() + "-";
     } else {
       text = text + serie[i].toString();
@@ -217,125 +471,4 @@ String datesecondToMinuteHour(int dateSecond) {
   var minute = date.minute;
 
   return '$hour h $minute m';
-}
-
-Widget cardExercice(event) {
-  return Card(
-    margin: EdgeInsets.fromLTRB(30, 20, 30, 0),
-    color: AppTheme.colors.redColor,
-    elevation: 2.0,
-    shape: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(10),
-        borderSide: BorderSide(color: Colors.transparent)),
-    child: ExpansionTile(
-      leading: Icon(
-        event.mode == "timer"
-            ? MyFlutterApp.noun_time
-            : MyFlutterApp.noun_workout,
-        color: Colors.white,
-        size: 20,
-      ),
-      title: Row(
-        children: [
-          Text(
-            event.name,
-            overflow: TextOverflow.fade,
-            maxLines: 1,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 15,
-              fontFamily: 'BalooBhai',
-              color: Colors.white,
-            ),
-          ),
-          SizedBox(
-            width: 50,
-          ),
-          Text(
-            datesecondToMinuteHour(event.datetime),
-            overflow: TextOverflow.fade,
-            maxLines: 1,
-            softWrap: false,
-            style: TextStyle(
-              fontSize: 15,
-              fontFamily: 'BalooBhai',
-              color: Colors.white,
-            ),
-          ),
-        ],
-      ),
-      subtitle: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    event.mode == "timer"
-                        ? event.serie.toString() +
-                            " x " +
-                            formatDuration(event.exercicetime)
-                        : decodeJsonToText(event.arrayrepetition),
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'BalooBhai',
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              )),
-          Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                // crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Text(
-                    formatDuration(event.totaltime),
-                    overflow: TextOverflow.fade,
-                    maxLines: 1,
-                    softWrap: false,
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontFamily: 'BalooBhai',
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              )),
-        ],
-      ),
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Icon(
-              MyFlutterApp.noun_time,
-              color: Colors.white,
-              size: 40,
-            ),
-            Text(
-              event.description,
-              overflow: TextOverflow.fade,
-              maxLines: 1,
-              softWrap: false,
-              style: TextStyle(
-                fontSize: 15,
-                fontFamily: 'BalooBhai',
-                color: Colors.white,
-              ),
-            ),
-          ],
-        )
-      ],
-    ),
-  );
 }

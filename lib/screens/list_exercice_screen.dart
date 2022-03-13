@@ -59,9 +59,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
       });
     });
     if (exercices.isEmpty) {
-      setState(() {
-        print("nothing");
-      });
+      setState(() {});
     }
   }
 
@@ -120,7 +118,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                     ),
                     leading: Icon(
                       _exerciceList[index].mode == "timer"
-                          ? MyFlutterApp.noun_time
+                          ? MyFlutterApp.noun_timer
                           : MyFlutterApp.noun_number,
                       size: 50,
                       color: Colors.white,
@@ -313,7 +311,10 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
             }),
           ),
           SpeedDialChild(
-            child: Icon(MyFlutterApp.noun_time),
+            child: Icon(
+              MyFlutterApp.noun_timer,
+              size: 30,
+            ),
             backgroundColor: AppTheme.colors.redColor,
             label: 'Timer',
             foregroundColor: Colors.white,
