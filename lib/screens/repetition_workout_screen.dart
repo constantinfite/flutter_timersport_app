@@ -584,63 +584,78 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Exercice",
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai2',
-                            color: AppTheme.colors.secondaryColor,
-                            fontWeight: FontWeight.w700),
-                      ),
-                      Text("Repetition made",
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Exercice",
                           style: TextStyle(
                               fontSize: 20,
                               fontFamily: 'BalooBhai2',
                               color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700)),
-                      Text("Total time",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700))
-                    ],
+                              fontWeight: FontWeight.w700),
+                        ),
+                        Text("Repetition made",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'BalooBhai2',
+                                color: AppTheme.colors.secondaryColor,
+                                fontWeight: FontWeight.w700)),
+                        Text("Total time",
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'BalooBhai2',
+                                color: AppTheme.colors.secondaryColor,
+                                fontWeight: FontWeight.w700))
+                      ],
+                    ),
                   ),
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(_exercice.name.toString(),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700)),
-                      RichText(
-                        text: TextSpan(children: <InlineSpan>[
-                          for (var i = 0; i < doneRepetition.length; i++)
-                            TextSpan(
-                                text: i == doneRepetition.length - 1
-                                    ? doneRepetition[i].toString()
-                                    : doneRepetition[i].toString() + "-",
-                                style: TextStyle(
-                                    fontSize: 20,
-                                    fontFamily: 'BalooBhai2',
-                                    color: AppTheme.colors.secondaryColor,
-                                    fontWeight: FontWeight.w700)),
-                        ]),
-                      ),
-                      Text(formatDuration(totalSecond),
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
-                              color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700))
-                    ],
+                  Expanded(
+                    flex: 2,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(_exercice.name.toString(),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'BalooBhai2',
+                                color: AppTheme.colors.secondaryColor,
+                                fontWeight: FontWeight.w700)),
+                        RichText(
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
+                          text: TextSpan(children: <InlineSpan>[
+                            for (var i = 0; i < doneRepetition.length; i++)
+                              TextSpan(
+                                  text: i == doneRepetition.length - 1
+                                      ? doneRepetition[i].toString()
+                                      : doneRepetition[i].toString() + "-",
+                                  style: TextStyle(
+                                      fontSize: 20,
+                                      fontFamily: 'BalooBhai2',
+                                      color: AppTheme.colors.secondaryColor,
+                                      fontWeight: FontWeight.w700)),
+                          ]),
+                        ),
+                        Text(formatDuration(totalSecond),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontFamily: 'BalooBhai2',
+                                color: AppTheme.colors.secondaryColor,
+                                fontWeight: FontWeight.w700))
+                      ],
+                    ),
                   )
                 ],
               ),
