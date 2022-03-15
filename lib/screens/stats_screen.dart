@@ -1,6 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
-
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_timer/main.dart';
 import 'package:sport_timer/models/events.dart';
@@ -8,6 +8,7 @@ import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/services/event_service.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'dart:developer';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
@@ -147,6 +148,36 @@ class _StatsScreenState extends State<StatsScreen> {
                   format = _format;
                 });
               },
+              calendarBuilders: CalendarBuilders(
+                singleMarkerBuilder: (context, date, event) {
+                  (event as Event);
+                  //print(event);
+                  inspect(event.datetime);
+                  //print(event);
+                  return Container(
+                    height: 8.0,
+                    width: 8.0,
+                    margin: const EdgeInsets.all(0.5),
+                    decoration: BoxDecoration(
+                      // provide your own condition here
+                      color: event.mode == "rep" ? Colors.red : Colors.black,
+                      shape: BoxShape.circle,
+                    ),
+                  );
+                },
+                dowBuilder: (context, day) {
+                  if (day.weekday == DateTime.sunday) {
+                    final text = DateFormat.E().format(day);
+
+                    return Center(
+                      child: Text(
+                        text,
+                        style: TextStyle(color: Colors.red),
+                      ),
+                    );
+                  }
+                },
+              ),
               startingDayOfWeek: StartingDayOfWeek.monday,
               daysOfWeekVisible: true,
               onPageChanged: (focusedDay) {
