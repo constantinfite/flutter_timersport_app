@@ -114,7 +114,7 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
                       style: TextStyle(
                           color: Colors.white,
                           fontFamily: "BalooBhai",
-                          fontSize: 25),
+                          fontSize: 20),
                     ),
                     leading: Icon(
                       _exerciceList[index].mode == "timer"

@@ -7,6 +7,7 @@ import 'package:sport_timer/models/events.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/services/event_service.dart';
+import 'package:sport_timer/src/app.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'dart:developer';
 
@@ -43,12 +44,9 @@ class _StatsScreenState extends State<StatsScreen> {
 
     getTask1().then((val) => setState(() {
           _events = val;
-          /* print("_events");
-          print(_events);*/
+
           var _correctDate = DateTime.utc(
               _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
-          /*print("_correctDate");
-          print(_correctDate);*/
 
           _selectedEvents = _getEventsFromDay(_correctDate);
         }));
@@ -151,9 +149,6 @@ class _StatsScreenState extends State<StatsScreen> {
               calendarBuilders: CalendarBuilders(
                 singleMarkerBuilder: (context, date, event) {
                   (event as Event);
-                  //print(event);
-                  inspect(event.datetime);
-                  //print(event);
                   return Container(
                     height: 8.0,
                     width: 8.0,
@@ -244,6 +239,97 @@ class _StatsScreenState extends State<StatsScreen> {
                   }))
         ],
       ),
+      floatingActionButton: FloatingActionButton(
+        backgroundColor: Colors.redAccent,
+        onPressed: () => _create(context),
+        child: Icon(
+          Icons.add,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  void _addEvent(String event) async {
+    final _event = Event();
+
+    await _eventService.saveEvent(_event);
+
+    getTask1().then((val) => setState(() {
+          _events = val;
+
+          var _correctDate = DateTime.utc(
+              _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
+
+          _selectedEvents = _getEventsFromDay(_correctDate);
+        }));
+
+    Navigator.pop(context);
+  }
+
+  void _create(BuildContext context) {
+    String _name = "";
+    var content = TextField(
+      autofocus: true,
+      decoration: InputDecoration(
+        labelText: 'Workout Name',
+      ),
+      onChanged: (value) {
+        _name = value;
+      },
+    );
+    var btn = FlatButton(
+      child: Text(
+        'Save',
+      ),
+      onPressed: () => _addEvent(_name),
+    );
+    var cancelButton = ElevatedButton(
+        child: Text(
+          'Cancel',
+        ),
+        onPressed: () => Navigator.of(context).pop(false));
+    showDialog(
+      context: context,
+      builder: (BuildContext context) => Dialog(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(6),
+        ),
+        elevation: 0.0,
+        backgroundColor: Colors.transparent,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              padding: EdgeInsets.all(6),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                shape: BoxShape.rectangle,
+                borderRadius: BorderRadius.circular(6),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black26,
+                    blurRadius: 10.0,
+                    offset: const Offset(0.0, 10.0),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // To make the card compact
+                children: <Widget>[
+                  SizedBox(height: 16.0),
+                  Text(
+                    "Add Event",
+                  ),
+                  Container(padding: EdgeInsets.all(20), child: content),
+                  Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: <Widget>[btn, cancelButton]),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -267,17 +353,10 @@ class _StatsScreenState extends State<StatsScreen> {
           shape: OutlineInputBorder(
               borderRadius: BorderRadius.circular(10),
               borderSide: BorderSide(color: Colors.transparent)),
-          elevation: 2,
+          elevation: 0,
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: ListTile(
-              leading: Icon(
-                event.mode == "timer"
-                    ? MyFlutterApp.noun_number
-                    : MyFlutterApp.noun_timer,
-                color: AppTheme.colors.secondaryColor,
-                size: 50,
-              ),
               title: SizedBox(
                 width: 50,
                 child: Text(
@@ -286,9 +365,9 @@ class _StatsScreenState extends State<StatsScreen> {
                   maxLines: 1,
                   softWrap: false,
                   style: TextStyle(
-                    fontSize: 25,
+                    fontSize: 20,
                     fontFamily: 'BalooBhai',
-                    color: AppTheme.colors.secondaryColor,
+                    color: AppTheme.colors.newBlueColor,
                   ),
                 ),
               ),
@@ -304,8 +383,8 @@ class _StatsScreenState extends State<StatsScreen> {
                       softWrap: false,
                       style: TextStyle(
                         fontSize: 15,
-                        fontFamily: 'BalooBhai',
-                        color: AppTheme.colors.secondaryColor,
+                        fontFamily: 'BalooBhai2',
+                        color: AppTheme.colors.newBlueColor,
                       ),
                     ),
                   ],
