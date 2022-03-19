@@ -711,6 +711,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                   await _eventService.saveEvent(_event);
 
                   Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
             ],

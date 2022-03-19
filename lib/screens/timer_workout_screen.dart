@@ -714,6 +714,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                   await _eventService.saveEvent(_event);
 
                   Navigator.pop(context);
+                  Navigator.pop(context);
                 },
               ),
             ],
