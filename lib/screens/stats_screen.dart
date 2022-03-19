@@ -155,7 +155,9 @@ class _StatsScreenState extends State<StatsScreen> {
                     margin: const EdgeInsets.all(0.5),
                     decoration: BoxDecoration(
                       // provide your own condition here
-                      color: event.mode == "rep" ? Colors.red : Colors.black,
+                      color: event.mode == "rep"
+                          ? AppTheme.colors.secondaryColor
+                          : AppTheme.colors.secondaryColor,
                       shape: BoxShape.circle,
                     ),
                   );
@@ -197,12 +199,14 @@ class _StatsScreenState extends State<StatsScreen> {
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(5.0),
                 ),
-                selectedTextStyle: TextStyle(color: Colors.white),
+                selectedTextStyle:
+                    TextStyle(color: Color.fromARGB(255, 231, 231, 231)),
                 todayDecoration: BoxDecoration(
-                  color: Colors.purpleAccent,
+                  color: AppTheme.colors.greenColor,
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(5.0),
                 ),
+                todayTextStyle: TextStyle(color: Colors.white),
                 defaultDecoration: BoxDecoration(
                   shape: BoxShape.rectangle,
                   borderRadius: BorderRadius.circular(5.0),
@@ -239,97 +243,6 @@ class _StatsScreenState extends State<StatsScreen> {
                   }))
         ],
       ),
-      floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.redAccent,
-        onPressed: () => _create(context),
-        child: Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-    );
-  }
-
-  void _addEvent(String event) async {
-    final _event = Event();
-
-    await _eventService.saveEvent(_event);
-
-    getTask1().then((val) => setState(() {
-          _events = val;
-
-          var _correctDate = DateTime.utc(
-              _selectedDay!.year, _selectedDay!.month, _selectedDay!.day);
-
-          _selectedEvents = _getEventsFromDay(_correctDate);
-        }));
-
-    Navigator.pop(context);
-  }
-
-  void _create(BuildContext context) {
-    String _name = "";
-    var content = TextField(
-      autofocus: true,
-      decoration: InputDecoration(
-        labelText: 'Workout Name',
-      ),
-      onChanged: (value) {
-        _name = value;
-      },
-    );
-    var btn = FlatButton(
-      child: Text(
-        'Save',
-      ),
-      onPressed: () => _addEvent(_name),
-    );
-    var cancelButton = ElevatedButton(
-        child: Text(
-          'Cancel',
-        ),
-        onPressed: () => Navigator.of(context).pop(false));
-    showDialog(
-      context: context,
-      builder: (BuildContext context) => Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(6),
-        ),
-        elevation: 0.0,
-        backgroundColor: Colors.transparent,
-        child: Stack(
-          children: <Widget>[
-            Container(
-              padding: EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                shape: BoxShape.rectangle,
-                borderRadius: BorderRadius.circular(6),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black26,
-                    blurRadius: 10.0,
-                    offset: const Offset(0.0, 10.0),
-                  ),
-                ],
-              ),
-              child: Column(
-                mainAxisSize: MainAxisSize.min, // To make the card compact
-                children: <Widget>[
-                  SizedBox(height: 16.0),
-                  Text(
-                    "Add Event",
-                  ),
-                  Container(padding: EdgeInsets.all(20), child: content),
-                  Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: <Widget>[btn, cancelButton]),
-                ],
-              ),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -357,6 +270,15 @@ class _StatsScreenState extends State<StatsScreen> {
           child: Padding(
             padding: const EdgeInsets.all(4.0),
             child: ListTile(
+              leading: Icon(
+                event.mode == "timer"
+                    ? MyFlutterApp.noun_number
+                    : MyFlutterApp.noun_timer,
+                color: event.mode == "timer"
+                    ? AppTheme.colors.greenColor
+                    : AppTheme.colors.redColor,
+                size: 50,
+              ),
               title: SizedBox(
                 width: 50,
                 child: Text(
@@ -367,7 +289,9 @@ class _StatsScreenState extends State<StatsScreen> {
                   style: TextStyle(
                     fontSize: 20,
                     fontFamily: 'BalooBhai',
-                    color: AppTheme.colors.newBlueColor,
+                    color: event.mode == "timer"
+                        ? AppTheme.colors.greenColor
+                        : AppTheme.colors.redColor,
                   ),
                 ),
               ),
@@ -384,7 +308,9 @@ class _StatsScreenState extends State<StatsScreen> {
                       style: TextStyle(
                         fontSize: 15,
                         fontFamily: 'BalooBhai2',
-                        color: AppTheme.colors.newBlueColor,
+                        color: event.mode == "timer"
+                            ? AppTheme.colors.greenColor
+                            : AppTheme.colors.redColor,
                       ),
                     ),
                   ],
@@ -418,7 +344,9 @@ class _StatsScreenState extends State<StatsScreen> {
                       event.mode == "timer"
                           ? MyFlutterApp.noun_number
                           : MyFlutterApp.noun_timer,
-                      color: AppTheme.colors.secondaryColor,
+                      color: event.mode == "timer"
+                          ? AppTheme.colors.greenColor
+                          : AppTheme.colors.redColor,
                       size: 50,
                     ),
                     SizedBox(
@@ -429,10 +357,11 @@ class _StatsScreenState extends State<StatsScreen> {
                         maxLines: 1,
                         softWrap: false,
                         style: TextStyle(
-                          fontSize: 20,
-                          fontFamily: 'BalooBhai',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
+                            fontSize: 20,
+                            fontFamily: 'BalooBhai',
+                            color: event.mode == "timer"
+                                ? AppTheme.colors.greenColor
+                                : AppTheme.colors.redColor),
                       ),
                     ),
                   ]),
@@ -440,7 +369,9 @@ class _StatsScreenState extends State<StatsScreen> {
                     children: [
                       Icon(
                         MyFlutterApp.noun_time,
-                        color: AppTheme.colors.secondaryColor,
+                        color: event.mode == "timer"
+                            ? AppTheme.colors.greenColor
+                            : AppTheme.colors.redColor,
                         size: 30,
                       ),
                       Text(
@@ -449,10 +380,11 @@ class _StatsScreenState extends State<StatsScreen> {
                         maxLines: 1,
                         softWrap: false,
                         style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'BalooBhai',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
+                            fontSize: 15,
+                            fontFamily: 'BalooBhai',
+                            color: event.mode == "timer"
+                                ? AppTheme.colors.greenColor
+                                : AppTheme.colors.redColor),
                       ),
                     ],
                   ),
@@ -605,5 +537,7 @@ String datesecondToMinuteHour(int dateSecond) {
   var hour = date.hour;
   var minute = date.minute;
 
-  return '$hour h $minute';
+  var minuteString = '$minute'.padLeft(2, '0');
+
+  return '$hour h $minuteString';
 }

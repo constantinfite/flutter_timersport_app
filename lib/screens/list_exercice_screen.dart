@@ -96,10 +96,12 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
           itemBuilder: (context, index) {
             // remove slider when expanded
             final theme = Theme.of(context).copyWith(
-                dividerColor: Colors.transparent,
-                unselectedWidgetColor: AppTheme.colors.secondaryColor,
-                colorScheme: ColorScheme.fromSwatch()
-                    .copyWith(secondary: AppTheme.colors.secondaryColor));
+              dividerColor: Colors.transparent,
+              unselectedWidgetColor: AppTheme.colors.secondaryColor,
+              colorScheme: ColorScheme.light(
+                primary: Colors.white,
+              ),
+            );
             return Card(
               color: Color(_exerciceList[index].color!),
               child: Column(children: [

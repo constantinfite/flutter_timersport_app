@@ -169,7 +169,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             ),
         backgroundColor: Colors.transparent,
         title: Text(
-          'Add exercice',
+          !widget.creation ? 'Edit exercice ' : 'Add exercice',
           style: TextStyle(
             color: AppTheme.colors.secondaryColor,
             fontSize: 30,
@@ -333,7 +333,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             Text(
                               _serieNumber.toString(),
                               style: TextStyle(
-                                  color: Colors.blue,
+                                  color: _color,
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai2',
                                   fontWeight: FontWeight.bold),
@@ -380,7 +380,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                                   ? _repNumber.toString()
                                   : _printDuration(durationExerciceTime),
                               style: TextStyle(
-                                  color: AppTheme.colors.redColor,
+                                  color: _color,
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai2',
                                   fontWeight: FontWeight.bold),
@@ -419,7 +419,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                             Text(
                               _printDuration(durationRestTime),
                               style: TextStyle(
-                                  color: AppTheme.colors.orangeColor,
+                                  color: _color,
                                   fontSize: 25,
                                   fontFamily: 'BalooBhai2',
                                   fontWeight: FontWeight.bold),
@@ -604,13 +604,13 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               setState(() => _serieNumber = index),
           // selectionOverlay: Container(),
           selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-            background: Colors.blue.withOpacity(0.12),
+            background: _color.withOpacity(0.12),
           ),
           children: Utils.modelBuilder<String>(
             listNumber,
             (index, value) {
               final isSelected = index == index;
-              final color = isSelected ? Colors.blue : Colors.black;
+              final color = isSelected ? _color : Colors.black;
 
               return Center(
                 child: Text(
@@ -636,7 +636,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
             },
             // selectionOverlay: Container(),
             selectionOverlay: CupertinoPickerDefaultSelectionOverlay(
-              background: AppTheme.colors.redColor.withOpacity(0.12),
+              background: _color.withOpacity(0.12),
             ),
             children: List.generate(listNumber.length, (index) {
               final item = listNumber[index];
@@ -645,9 +645,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
               return Center(
                 child: Text(item,
                     style: TextStyle(
-                        color: isSelected
-                            ? AppTheme.colors.redColor
-                            : Colors.black,
+                        color: isSelected ? _color : Colors.black,
                         fontSize: 30)),
               );
             })
