@@ -298,37 +298,13 @@ class _ListExerciceScreenState extends State<ListExerciceScreen> {
         backgroundColor: AppTheme.colors.redColor,
         spacing: 15,
         spaceBetweenChildren: 10,
-        children: [
-          SpeedDialChild(
-            child: Icon(MyFlutterApp.noun_number),
-            backgroundColor: AppTheme.colors.redColor,
-            label: 'Repetition',
-            foregroundColor: Colors.white,
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(
-                        mode: "rep", creation: true, exercice: _exercice)))
-                .then((_) {
-              getAllExercices();
-            }),
-          ),
-          SpeedDialChild(
-            child: Icon(
-              MyFlutterApp.noun_timer,
-              size: 30,
-            ),
-            backgroundColor: AppTheme.colors.redColor,
-            label: 'Timer',
-            foregroundColor: Colors.white,
-            onTap: () => Navigator.of(context)
-                .push(MaterialPageRoute(
-                    builder: (context) => ExerciceTimeScreen(
-                        mode: "timer", creation: true, exercice: _exercice)))
-                .then((_) {
-              getAllExercices();
-            }),
-          )
-        ],
+        onPress: () => Navigator.of(context)
+            .push(MaterialPageRoute(
+                builder: (context) => ExerciceTimeScreen(
+                    mode: "", creation: true, exercice: _exercice)))
+            .then((_) {
+          getAllExercices();
+        }),
       ),
     );
   }

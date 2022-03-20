@@ -10,6 +10,7 @@ import 'package:flutter/services.dart';
 import 'package:sport_timer/services/event_service.dart';
 import 'package:sport_timer/models/events.dart';
 import 'dart:convert';
+import 'package:audioplayers/audioplayers.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -30,6 +31,9 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
   int _seconds = 5;
   int _minutes = 1;
   int _round = 0;
+
+  //Sound
+  AudioCache audioCache = AudioCache();
 
   final commentControler = TextEditingController();
 
@@ -117,6 +121,10 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     }
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
+        if (_seconds == 4) {
+          audioCache.load('sounds/count_down.wav');
+          audioCache.play('sounds/count_down.wav');
+        }
         if (_seconds > 0) {
           _seconds--;
         } else {

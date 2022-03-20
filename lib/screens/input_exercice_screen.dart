@@ -4,8 +4,11 @@ import 'package:sport_timer/models/exercice.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/services/exercice_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:sport_timer/src/app.dart';
 import 'package:sport_timer/widget/utils.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:toggle_switch/toggle_switch.dart';
+import 'package:sport_timer/presentation/icons.dart';
 
 class ExerciceTimeScreen extends StatefulWidget {
   const ExerciceTimeScreen(
@@ -30,6 +33,8 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
   int _exerciceTime = 0;
   int _preparationTime = 0;
   Color _color = Colors.blue;
+  int indexMode = 0;
+  String _mode = "timer";
 
   late FToast fToast;
   final listNumber = List<String>.generate(21, (i) => "$i");
@@ -60,6 +65,10 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
       _serieNumber = widget.exercice.serie!;
       _repNumber = widget.exercice.repetition!;
       _color = Color(widget.exercice.color!);
+      _mode = widget.exercice.mode!;
+      if (_mode == "rep") {
+        indexMode = 1;
+      }
 
       durationRestTime = Duration(
           minutes: widget.exercice.resttime! ~/ 60,
@@ -187,7 +196,8 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 if (widget.creation) {
                   convertDurationToTime(durationRestTime, durationExerciceTime,
                       durationPreparationTime);
-                  if (widget.mode == "rep") {
+
+                  if (_mode == "rep") {
                     _exerciceTime = 1;
                     _preparationTime = 1;
                   } else {
@@ -208,7 +218,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     _exercice.resttime = _restTime;
                     _exercice.exercicetime = _exerciceTime;
                     _exercice.preparationtime = _preparationTime;
-                    _exercice.mode = widget.mode;
+                    _exercice.mode = _mode;
                     _exercice.color = _color.value;
 
                     await _exerciceService.saveExercice(_exercice);
@@ -239,7 +249,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                     _exercice.exercicetime = _exerciceTime;
                     _exercice.color = _color.value;
                     _exercice.preparationtime = _preparationTime;
-                    _exercice.mode = widget.exercice.mode;
+                    _exercice.mode = _mode;
 
                     await _exerciceService.updateExercice(_exercice);
                     Navigator.pop(context);
@@ -309,6 +319,36 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 SizedBox(
                   height: 20,
                 ),
+                ToggleSwitch(
+                  minWidth: 150.0,
+                  minHeight: 70,
+                  iconSize: 80,
+                  initialLabelIndex: indexMode,
+                  cornerRadius: 20.0,
+                  activeFgColor: Colors.white,
+                  inactiveBgColor: Color.fromARGB(255, 194, 194, 194),
+                  inactiveFgColor: Colors.white,
+                  totalSwitches: 2,
+                  labels: ['Timer', 'Repetition'],
+                  icons: [MyFlutterApp.noun_timer, MyFlutterApp.noun_number],
+                  activeBgColors: [
+                    [_color],
+                    [_color]
+                  ],
+                  onToggle: (index) {
+                    setState(() {
+                      indexMode = index!;
+                      if (indexMode == 0) {
+                        _mode = "timer";
+                      } else {
+                        _mode = "rep";
+                      }
+                    });
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 GestureDetector(
                   onTap: () {
                     Utils.showSheet(context,
@@ -354,7 +394,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                 GestureDetector(
                     onTap: () {
                       Utils.showSheet(context,
-                          child: widget.mode == "rep"
+                          child: indexMode == 1
                               ? buildRepPicker()
                               : buildExerciceTimePicker(),
                           onClicked: () => {Navigator.pop(context)});
@@ -366,7 +406,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              widget.mode == "rep"
+                              indexMode == 1
                                   ? "Number of repetition"
                                   : "Exercice time",
                               style: TextStyle(
@@ -376,7 +416,7 @@ class _ExerciceTimeScreenState extends State<ExerciceTimeScreen> {
                               ),
                             ),
                             Text(
-                              widget.mode == "rep"
+                              indexMode == 1
                                   ? _repNumber.toString()
                                   : _printDuration(durationExerciceTime),
                               style: TextStyle(

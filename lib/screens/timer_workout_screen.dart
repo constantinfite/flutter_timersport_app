@@ -9,6 +9,7 @@ import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:liquid_progress_indicator/liquid_progress_indicator.dart';
 import 'package:flutter/services.dart';
+import 'package:audioplayers/audioplayers.dart';
 
 class TimerWorkoutScreen extends StatefulWidget {
   const TimerWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -38,6 +39,9 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
   final commentControler = TextEditingController();
 
   final scrollController = ScrollController();
+
+  //Sound
+  AudioCache audioCache = AudioCache();
 
   //Timer
   Timer _timerRest = Timer(Duration(milliseconds: 1), () {});
@@ -114,6 +118,11 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
     }
     _timerRest = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
+        if (_secondsRest == 4) {
+         
+          audioCache.load('sounds/count_down.wav');
+          audioCache.play('sounds/count_down.wav');
+        }
         if (_secondsRest > 0) {
           _secondsRest--;
         } else {
@@ -144,6 +153,11 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
 
     _timerExercice = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
+        if (_secondsExercice == 4) {
+          
+          audioCache.load('sounds/count_down.wav');
+          audioCache.play('sounds/count_down.wav');
+        }
         if (_secondsExercice > 0) {
           _secondsExercice--;
         } else {

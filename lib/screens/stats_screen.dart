@@ -2,14 +2,11 @@ import 'dart:collection';
 import 'dart:convert';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:sport_timer/main.dart';
 import 'package:sport_timer/models/events.dart';
 import 'package:sport_timer/presentation/app_theme.dart';
 import 'package:sport_timer/presentation/icons.dart';
 import 'package:sport_timer/services/event_service.dart';
-import 'package:sport_timer/src/app.dart';
 import 'package:table_calendar/table_calendar.dart';
-import 'dart:developer';
 
 class StatsScreen extends StatefulWidget {
   const StatsScreen({Key? key}) : super(key: key);
