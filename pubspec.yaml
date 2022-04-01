@@ -39,7 +39,6 @@ dependencies:
   flutter_speed_dial: ^5.0.0+1
   numberpicker: ^2.1.1
   intl: ^0.17.0
-  direct_select: "^1.0.3"
   fluttertoast: ^8.0.9
   liquid_progress_indicator: ^0.4.0
   flutter_colorpicker: ^1.0.3

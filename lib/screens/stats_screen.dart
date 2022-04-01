@@ -269,8 +269,8 @@ class _StatsScreenState extends State<StatsScreen> {
             child: ListTile(
               leading: Icon(
                 event.mode == "timer"
-                    ? MyFlutterApp.noun_number
-                    : MyFlutterApp.noun_timer,
+                    ? MyFlutterApp.noun_timer
+                    : MyFlutterApp.noun_number,
                 color: event.mode == "timer"
                     ? AppTheme.colors.greenColor
                     : AppTheme.colors.redColor,

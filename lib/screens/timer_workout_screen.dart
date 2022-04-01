@@ -118,10 +118,9 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
     }
     _timerRest = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if (_secondsRest == 4) {
-         
-          audioCache.load('sounds/count_down.wav');
-          audioCache.play('sounds/count_down.wav');
+        if (_secondsRest == 4 && _minutesRest == 0) {
+          audioCache.load('sounds/count_down2.wav');
+          audioCache.play('sounds/count_down2.wav', volume: 5);
         }
         if (_secondsRest > 0) {
           _secondsRest--;
@@ -153,10 +152,9 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
 
     _timerExercice = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if (_secondsExercice == 4) {
-          
-          audioCache.load('sounds/count_down.wav');
-          audioCache.play('sounds/count_down.wav');
+        if (_secondsExercice == 4 && _minutesExercice == 0) {
+          audioCache.load('sounds/count_down2.wav');
+          audioCache.play('sounds/count_down2.wav');
         }
         if (_secondsExercice > 0) {
           _secondsExercice--;
