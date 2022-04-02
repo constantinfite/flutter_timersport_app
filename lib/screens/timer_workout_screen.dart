@@ -226,9 +226,14 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
     final minutes = duration.inMinutes;
     final seconds = totalSeconds % 60;
 
-    final minutesString = '$minutes'.padLeft(1, '0');
     final secondsString = '$seconds'.padLeft(2, '0');
-    return '$minutesString m $secondsString s';
+
+    if (minutes == 0) {
+      return '$secondsString s';
+    } else {
+      final minutesString = '$minutes'.padLeft(1, '0');
+      return '$minutesString m $secondsString s';
+    }
   }
 
   //Serie display at the top
@@ -333,7 +338,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                         width: 20,
                       ),
                       Expanded(
-                          flex: 5,
+                          flex: 6,
                           child: Column(
                             children: [
                               Row(
@@ -594,95 +599,110 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
         height: MediaQuery.of(context).size.height * 0.5,
-        padding: EdgeInsets.all(20),
+        padding: EdgeInsets.fromLTRB(20, 20, 20, 40),
         width: MediaQuery.of(context).size.width * 0.90,
         child: Center(
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: <Widget>[
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Exercice",
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'BalooBhai2',
+              Expanded(
+                flex: 2,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    SizedBox(
+                      width: 80,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            _exercice.name.toString(),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontFamily: 'BalooBhai',
                               color: AppTheme.colors.secondaryColor,
-                              fontWeight: FontWeight.w700),
-                        ),
-                        Text("Repetition made",
+                            ),
+                          ),
+                          Text(
+                            "Exercice",
                             style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai2',
+                                fontSize: 15,
                                 color: AppTheme.colors.secondaryColor,
-                                fontWeight: FontWeight.w700)),
-                        Text("Total time",
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai2',
-                                color: AppTheme.colors.secondaryColor,
-                                fontWeight: FontWeight.w700))
-                      ],
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
                     ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      crossAxisAlignment: CrossAxisAlignment.end,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Text(_exercice.name.toString(),
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai2',
-                                color: AppTheme.colors.secondaryColor,
-                                fontWeight: FontWeight.w700)),
                         Text(
-                            serieDone.toString() +
-                                " x " +
-                                formatDuration(_exercice.exercicetime!),
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai2',
-                                color: AppTheme.colors.secondaryColor,
-                                fontWeight: FontWeight.w700)),
-                        Text(formatDuration(totalSecond),
-                            overflow: TextOverflow.fade,
-                            maxLines: 1,
-                            softWrap: false,
-                            style: TextStyle(
-                                fontSize: 20,
-                                fontFamily: 'BalooBhai2',
-                                color: AppTheme.colors.secondaryColor,
-                                fontWeight: FontWeight.w700))
+                          serieDone.toString() +
+                              " x " +
+                              formatDuration(_exercice.exercicetime!),
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'BalooBhai',
+                            color: AppTheme.colors.secondaryColor,
+                          ),
+                        ),
+                        Text(
+                          "Serie",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: AppTheme.colors.secondaryColor,
+                              fontFamily: 'Roboto',
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w400),
+                        )
                       ],
                     ),
-                  )
-                ],
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text(
+                          formatDuration(totalSecond),
+                          overflow: TextOverflow.fade,
+                          maxLines: 1,
+                          softWrap: false,
+                          style: TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'BalooBhai',
+                            color: AppTheme.colors.secondaryColor,
+                          ),
+                        ),
+                        Text(
+                          "Total time",
+                          style: TextStyle(
+                              fontSize: 15,
+                              color: AppTheme.colors.secondaryColor,
+                              fontFamily: 'Roboto',
+                              fontStyle: FontStyle.italic,
+                              fontWeight: FontWeight.w400),
+                        )
+                      ],
+                    )
+                  ],
+                ),
               ),
-              SizedBox(
-                width: 300,
+              Expanded(
+                flex: 3,
                 child: TextField(
                   style: TextStyle(
                     color: AppTheme.colors.secondaryColor,
-                    fontSize: 20,
-                    fontFamily: 'BalooBhai',
+                    fontSize: 15,
+                    fontFamily: 'BalooBhai2',
                   ),
                   controller: commentControler,
+                  minLines: 4,
+                  maxLines: 5,
+                  keyboardType: TextInputType.multiline,
                   decoration: InputDecoration(
                     hintText: 'Comments of your workout',
                     filled: true,
@@ -700,34 +720,37 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                   ),
                 ),
               ),
-              ElevatedButton(
-                child: Text('Save workout'),
-                style: ElevatedButton.styleFrom(
-                  elevation: 2,
-                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                  primary: Color(_exercice.color!),
-                  textStyle: TextStyle(fontFamily: "BalooBhai", fontSize: 20),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(20),
+              Expanded(
+                flex: 1,
+                child: ElevatedButton(
+                  child: Text('Save workout'),
+                  style: ElevatedButton.styleFrom(
+                    elevation: 2,
+                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                    primary: Color(_exercice.color!),
+                    textStyle: TextStyle(fontFamily: "BalooBhai", fontSize: 20),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
                   ),
+                  onPressed: () async {
+                    final _event = Event();
+                    _event.name = _exercice.name;
+                    _event.totaltime = totalSecond;
+                    _event.resttime = _exercice.resttime;
+                    _event.exercicetime = _exercice.exercicetime;
+                    _event.arrayrepetition = "";
+                    _event.serie = serieDone;
+                    _event.mode = "timer";
+                    _event.description = commentControler.text;
+                    _event.datetime = nowDate.millisecondsSinceEpoch;
+
+                    await _eventService.saveEvent(_event);
+
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                  },
                 ),
-                onPressed: () async {
-                  final _event = Event();
-                  _event.name = _exercice.name;
-                  _event.totaltime = totalSecond;
-                  _event.resttime = _exercice.resttime;
-                  _event.exercicetime = _exercice.exercicetime;
-                  _event.arrayrepetition = "";
-                  _event.serie = serieDone;
-                  _event.mode = "timer";
-                  _event.description = commentControler.text;
-                  _event.datetime = nowDate.millisecondsSinceEpoch;
-
-                  await _eventService.saveEvent(_event);
-
-                  Navigator.pop(context);
-                  Navigator.pop(context);
-                },
               ),
             ],
           ),

@@ -323,181 +323,165 @@ class _StatsScreenState extends State<StatsScreen> {
       padding:
           EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
       child: Container(
-        height: MediaQuery.of(context).size.height * 0.4,
+        //height: MediaQuery.of(context).size.height * 0.4,
         padding: EdgeInsets.all(30),
         width: MediaQuery.of(context).size.width * 0.85,
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Row(children: [
-                    Icon(
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Row(children: [
+                  Icon(
+                    event.mode == "timer"
+                        ? MyFlutterApp.noun_timer
+                        : MyFlutterApp.noun_number,
+                    color: event.mode == "timer"
+                        ? AppTheme.colors.greenColor
+                        : AppTheme.colors.redColor,
+                    size: 50,
+                  ),
+                  SizedBox(
+                    width: MediaQuery.of(context).size.width * 0.3,
+                    child: Text(
+                      event.name,
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                          fontSize: 20,
+                          fontFamily: 'BalooBhai',
+                          color: event.mode == "timer"
+                              ? AppTheme.colors.greenColor
+                              : AppTheme.colors.redColor),
+                    ),
+                  ),
+                ]),
+                Row(
+                  children: [
+                    Text(
+                      datesecondToMinuteHour(event.datetime),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'BalooBhai',
+                          color: event.mode == "timer"
+                              ? AppTheme.colors.greenColor
+                              : AppTheme.colors.redColor),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Column(
+                  children: [
+                    Text(
                       event.mode == "timer"
-                          ? MyFlutterApp.noun_number
-                          : MyFlutterApp.noun_timer,
-                      color: event.mode == "timer"
-                          ? AppTheme.colors.greenColor
-                          : AppTheme.colors.redColor,
-                      size: 50,
-                    ),
-                    SizedBox(
-                      width: MediaQuery.of(context).size.width * 0.3,
-                      child: Text(
-                        event.name,
-                        overflow: TextOverflow.fade,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
-                            fontSize: 20,
-                            fontFamily: 'BalooBhai',
-                            color: event.mode == "timer"
-                                ? AppTheme.colors.greenColor
-                                : AppTheme.colors.redColor),
+                          ? event.serie.toString() +
+                              " x " +
+                              formatDuration(event.exercicetime)
+                          : decodeJsonToText(event.arrayrepetition),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
                       ),
                     ),
-                  ]),
-                  Row(
-                    children: [
-                      Icon(
-                        MyFlutterApp.noun_time,
-                        color: event.mode == "timer"
-                            ? AppTheme.colors.greenColor
-                            : AppTheme.colors.redColor,
-                        size: 30,
+                    Text(
+                      "Exercice",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      formatDuration(event.resttime),
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
                       ),
-                      Text(
-                        datesecondToMinuteHour(event.datetime),
-                        overflow: TextOverflow.fade,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'BalooBhai',
-                            color: event.mode == "timer"
-                                ? AppTheme.colors.greenColor
-                                : AppTheme.colors.redColor),
+                    ),
+                    Text(
+                      "Rest time",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                ),
+                Column(
+                  children: [
+                    Text(
+                      formatDuration(event.totaltime),
+                      overflow: TextOverflow.fade,
+                      maxLines: 1,
+                      softWrap: false,
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'BalooBhai',
+                        color: AppTheme.colors.secondaryColor,
                       ),
-                    ],
-                  ),
-                ],
-              ),
+                    ),
+                    Text(
+                      "Total time",
+                      style: TextStyle(
+                          fontSize: 15,
+                          color: AppTheme.colors.secondaryColor,
+                          fontFamily: 'Roboto',
+                          fontStyle: FontStyle.italic,
+                          fontWeight: FontWeight.w400),
+                    )
+                  ],
+                )
+              ],
             ),
-            Expanded(
-              flex: 2,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Column(
-                    children: [
-                      Text(
-                        event.mode == "timer"
-                            ? event.serie.toString() +
-                                " x " +
-                                formatDuration(event.exercicetime)
-                            : decodeJsonToText(event.arrayrepetition),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'BalooBhai',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Expanded(
+                  child: Container(
+                    padding: const EdgeInsets.all(15),
+                    margin: EdgeInsets.symmetric(vertical: 5),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(
+                        Radius.circular(20),
                       ),
-                      Text(
-                        "Exercice",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: AppTheme.colors.secondaryColor,
-                            fontFamily: 'Roboto',
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w400),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        formatDuration(event.resttime),
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'BalooBhai',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
-                      ),
-                      Text(
-                        "Rest time",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: AppTheme.colors.secondaryColor,
-                            fontFamily: 'Roboto',
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w400),
-                      )
-                    ],
-                  ),
-                  Column(
-                    children: [
-                      Text(
-                        formatDuration(event.totaltime),
-                        overflow: TextOverflow.fade,
-                        maxLines: 1,
-                        softWrap: false,
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'BalooBhai',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
-                      ),
-                      Text(
-                        "Total time",
-                        style: TextStyle(
-                            fontSize: 15,
-                            color: AppTheme.colors.secondaryColor,
-                            fontFamily: 'Roboto',
-                            fontStyle: FontStyle.italic,
-                            fontWeight: FontWeight.w400),
-                      )
-                    ],
-                  )
-                ],
-              ),
-            ),
-            Expanded(
-              flex: 3,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  Expanded(
-                    child: Container(
-                      height: 150,
-                      padding: const EdgeInsets.all(15),
-                      margin: EdgeInsets.symmetric(vertical: 5),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.all(
-                          Radius.circular(20),
-                        ),
-                        border: Border.all(
-                          width: 1,
-                          color: AppTheme.colors.secondaryColor,
-                          style: BorderStyle.solid,
-                        ),
-                      ),
-                      child: Text(
-                        event.description,
-                        style: TextStyle(
-                          fontSize: 12,
-                          fontFamily: 'BalooBhai2',
-                          color: AppTheme.colors.secondaryColor,
-                        ),
+                      border: Border.all(
+                        width: 1,
+                        color: AppTheme.colors.secondaryColor,
+                        style: BorderStyle.solid,
                       ),
                     ),
-                  )
-                ],
-              ),
+                    child: Text(
+                      event.description,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontFamily: 'BalooBhai2',
+                        color: AppTheme.colors.secondaryColor,
+                      ),
+                    ),
+                  ),
+                )
+              ],
             ),
           ],
         ),
@@ -524,17 +508,24 @@ String formatDuration(int totalSeconds) {
   final minutes = duration.inMinutes;
   final seconds = totalSeconds % 60;
 
-  final minutesString = '$minutes'.padLeft(1, '0');
   final secondsString = '$seconds'.padLeft(2, '0');
-  return '$minutesString m $secondsString s';
+
+  if (minutes == 0) {
+    return '$secondsString s';
+  } else {
+    final minutesString = '$minutes'.padLeft(1, '0');
+    return '$minutesString m $secondsString s';
+  }
 }
 
 String datesecondToMinuteHour(int dateSecond) {
   var date = DateTime.fromMillisecondsSinceEpoch(dateSecond).toLocal();
+  var month = DateFormat('MMMM').format(DateTime(0, date.month));
+  var day = date.day;
   var hour = date.hour;
   var minute = date.minute;
 
   var minuteString = '$minute'.padLeft(2, '0');
 
-  return '$hour h $minuteString';
+  return '$day $month, $hour:$minuteString';
 }
