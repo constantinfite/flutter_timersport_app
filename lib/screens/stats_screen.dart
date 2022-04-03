@@ -1,5 +1,6 @@
 import 'dart:collection';
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:sport_timer/models/events.dart';
@@ -379,80 +380,113 @@ class _StatsScreenState extends State<StatsScreen> {
                 ),
               ],
             ),
+            SizedBox(
+              height: 10,
+            ),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.start,
+              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                Column(
-                  children: [
-                    Text(
-                      event.mode == "timer"
-                          ? event.serie.toString() +
-                              " x " +
-                              formatDuration(event.exercicetime)
-                          : decodeJsonToText(event.arrayrepetition),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'BalooBhai',
-                        color: AppTheme.colors.secondaryColor,
-                      ),
+                Expanded(
+                  child: IntrinsicWidth(
+                    child: Column(
+                      //cro
+
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Serie done",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: AppTheme.colors.secondaryColor,
+                                  fontFamily: 'Roboto',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            SizedBox(width: 10),
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: Text(
+                                  event.mode == "timer"
+                                      ? event.serie.toString() +
+                                          " x " +
+                                          formatDuration(event.exercicetime)
+                                      : decodeJsonToText(event.arrayrepetition),
+                                  overflow: TextOverflow.fade,
+                                  maxLines: 1,
+                                  softWrap: false,
+                                  style: TextStyle(
+                                    fontSize: 15,
+                                    fontFamily: 'BalooBhai',
+                                    color: AppTheme.colors.secondaryColor,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Rest time",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: AppTheme.colors.secondaryColor,
+                                  fontFamily: 'Roboto',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              formatDuration(event.resttime),
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'BalooBhai',
+                                color: AppTheme.colors.secondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Total time",
+                              style: TextStyle(
+                                  fontSize: 15,
+                                  color: AppTheme.colors.secondaryColor,
+                                  fontFamily: 'Roboto',
+                                  fontStyle: FontStyle.italic,
+                                  fontWeight: FontWeight.w400),
+                            ),
+                            Text(
+                              formatDuration(event.totaltime),
+                              overflow: TextOverflow.fade,
+                              maxLines: 1,
+                              softWrap: false,
+                              style: TextStyle(
+                                fontSize: 15,
+                                fontFamily: 'BalooBhai',
+                                color: AppTheme.colors.secondaryColor,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
-                    Text(
-                      "Exercice",
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: AppTheme.colors.secondaryColor,
-                          fontFamily: 'Roboto',
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w400),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      formatDuration(event.resttime),
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'BalooBhai',
-                        color: AppTheme.colors.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      "Rest time",
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: AppTheme.colors.secondaryColor,
-                          fontFamily: 'Roboto',
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w400),
-                    )
-                  ],
-                ),
-                Column(
-                  children: [
-                    Text(
-                      formatDuration(event.totaltime),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'BalooBhai',
-                        color: AppTheme.colors.secondaryColor,
-                      ),
-                    ),
-                    Text(
-                      "Total time",
-                      style: TextStyle(
-                          fontSize: 15,
-                          color: AppTheme.colors.secondaryColor,
-                          fontFamily: 'Roboto',
-                          fontStyle: FontStyle.italic,
-                          fontWeight: FontWeight.w400),
-                    )
-                  ],
+                  ),
                 )
               ],
+            ),
+            SizedBox(
+              height: 20,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,

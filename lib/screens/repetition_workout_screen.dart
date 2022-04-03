@@ -599,14 +599,14 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(
-                      width: 80,
+                    Expanded(
+                      flex: 2,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Text(
                             _exercice.name.toString(),
-                            overflow: TextOverflow.fade,
+                            overflow: TextOverflow.ellipsis,
                             maxLines: 1,
                             softWrap: false,
                             style: TextStyle(
@@ -627,61 +627,67 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                         ],
                       ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        RichText(
-                          overflow: TextOverflow.fade,
-                          maxLines: 1,
-                          softWrap: false,
-                          text: TextSpan(children: <InlineSpan>[
-                            for (var i = 0; i < doneRepetition.length; i++)
-                              TextSpan(
-                                  text: i == doneRepetition.length - 1
-                                      ? doneRepetition[i].toString()
-                                      : doneRepetition[i].toString() + "-",
-                                  style: TextStyle(
-                                      fontSize: 20,
-                                      fontFamily: 'BalooBhai2',
-                                      color: AppTheme.colors.secondaryColor,
-                                      fontWeight: FontWeight.w700)),
-                          ]),
-                        ),
-                        Text(
-                          "Serie",
-                          style: TextStyle(
-                              fontSize: 15,
-                              color: AppTheme.colors.secondaryColor,
-                              fontFamily: 'Roboto',
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w400),
-                        )
-                      ],
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          formatDuration(totalSecond),
-                          overflow: TextOverflow.fade,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'BalooBhai',
-                            color: AppTheme.colors.secondaryColor,
+                    Expanded(
+                      flex: 3,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          RichText(
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 1,
+                            softWrap: false,
+                            text: TextSpan(children: <InlineSpan>[
+                              for (var i = 0; i < doneRepetition.length; i++)
+                                TextSpan(
+                                    text: i == doneRepetition.length - 1
+                                        ? doneRepetition[i].toString()
+                                        : doneRepetition[i].toString() + "-",
+                                    style: TextStyle(
+                                        fontSize: 15,
+                                        fontFamily: 'BalooBhai',
+                                        color: AppTheme.colors.secondaryColor,
+                                        fontWeight: FontWeight.w700)),
+                            ]),
                           ),
-                        ),
-                        Text(
-                          "Total time",
-                          style: TextStyle(
+                          Text(
+                            "Serie",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: AppTheme.colors.secondaryColor,
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      flex: 2,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            formatDuration(totalSecond),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
                               fontSize: 15,
+                              fontFamily: 'BalooBhai',
                               color: AppTheme.colors.secondaryColor,
-                              fontFamily: 'Roboto',
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w400),
-                        )
-                      ],
+                            ),
+                          ),
+                          Text(
+                            "Total time",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: AppTheme.colors.secondaryColor,
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),

@@ -611,8 +611,8 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    SizedBox(
-                      width: 80,
+                    Expanded(
+                      flex: 1,
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
@@ -639,54 +639,62 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                         ],
                       ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          serieDone.toString() +
-                              " x " +
-                              formatDuration(_exercice.exercicetime!),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'BalooBhai',
-                            color: AppTheme.colors.secondaryColor,
-                          ),
-                        ),
-                        Text(
-                          "Serie",
-                          style: TextStyle(
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            serieDone.toString() +
+                                " x " +
+                                formatDuration(_exercice.exercicetime!),
+                            style: TextStyle(
                               fontSize: 15,
+                              fontFamily: 'BalooBhai',
                               color: AppTheme.colors.secondaryColor,
-                              fontFamily: 'Roboto',
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w400),
-                        )
-                      ],
+                            ),
+                          ),
+                          Text(
+                            "Serie",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: AppTheme.colors.secondaryColor,
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
                     ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text(
-                          formatDuration(totalSecond),
-                          overflow: TextOverflow.fade,
-                          maxLines: 1,
-                          softWrap: false,
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'BalooBhai',
-                            color: AppTheme.colors.secondaryColor,
-                          ),
-                        ),
-                        Text(
-                          "Total time",
-                          style: TextStyle(
+                    Expanded(
+                      flex: 1,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text(
+                            formatDuration(totalSecond),
+                            overflow: TextOverflow.fade,
+                            maxLines: 1,
+                            softWrap: false,
+                            style: TextStyle(
                               fontSize: 15,
+                              fontFamily: 'BalooBhai',
                               color: AppTheme.colors.secondaryColor,
-                              fontFamily: 'Roboto',
-                              fontStyle: FontStyle.italic,
-                              fontWeight: FontWeight.w400),
-                        )
-                      ],
+                            ),
+                          ),
+                          Text(
+                            "Total time",
+                            style: TextStyle(
+                                fontSize: 15,
+                                color: AppTheme.colors.secondaryColor,
+                                fontFamily: 'Roboto',
+                                fontStyle: FontStyle.italic,
+                                fontWeight: FontWeight.w400),
+                          )
+                        ],
+                      ),
                     )
                   ],
                 ),
