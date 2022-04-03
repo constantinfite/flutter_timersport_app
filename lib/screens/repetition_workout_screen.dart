@@ -11,6 +11,7 @@ import 'package:sport_timer/services/event_service.dart';
 import 'package:sport_timer/models/events.dart';
 import 'dart:convert';
 import 'package:audioplayers/audioplayers.dart';
+import 'package:sport_timer/src/app.dart';
 
 class SerieWorkoutScreen extends StatefulWidget {
   const SerieWorkoutScreen({Key? key, required this.id}) : super(key: key);
@@ -409,8 +410,11 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
                       child: LiquidCircularProgressIndicator(
                         value: (_seconds + _minutes * 60) /
                             _exercice.resttime!, // Defaults to 0.5.
-                        valueColor: AlwaysStoppedAnimation(Color(_exercice
-                            .color!)), // Defaults to the current Theme's accentColor.
+                        valueColor: _round % 2 == 1
+                            ? AlwaysStoppedAnimation(
+                                AppTheme.colors.secondaryColor)
+                            : AlwaysStoppedAnimation(Color(_exercice
+                                .color!)), // Defaults to the current Theme's accentColor.
                         backgroundColor: Colors
                             .white, // Defaults to the current Theme's backgroundColor.
                         borderColor: Colors.transparent,
@@ -568,7 +572,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
         style: TextStyle(
             fontSize: 80,
             fontFamily: 'BalooBhai',
-            color: AppTheme.colors.secondaryColor,
+            color: Color(_exercice.color!),
             letterSpacing: 1,
             wordSpacing: 1),
       );

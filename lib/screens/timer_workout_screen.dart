@@ -429,8 +429,11 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
                                 _exercice.exercicetime!
                             : (_secondsRest + _minutesRest * 60) /
                                 _exercice.resttime!, // Defaults to 0.5.
-                        valueColor: AlwaysStoppedAnimation(Color(_exercice
-                            .color!)), // Defaults to the current Theme's accentColor.
+                        valueColor: _round % 2 == 1
+                            ? AlwaysStoppedAnimation(
+                                AppTheme.colors.secondaryColor)
+                            : AlwaysStoppedAnimation(Color(_exercice
+                                .color!)), // Defaults to the current Theme's accentColor.
                         backgroundColor: Colors
                             .white, // Defaults to the current Theme's backgroundColor.
                         borderColor: Colors.transparent,
@@ -581,7 +584,7 @@ class _TimerWorkoutScreenState extends State<TimerWorkoutScreen> {
         style: TextStyle(
           fontSize: 80,
           fontFamily: 'BalooBhai',
-          color: AppTheme.colors.secondaryColor,
+          color: Color(_exercice.color!),
         ),
       );
     } else {

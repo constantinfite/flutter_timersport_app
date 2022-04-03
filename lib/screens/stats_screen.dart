@@ -350,7 +350,7 @@ class _StatsScreenState extends State<StatsScreen> {
                     width: MediaQuery.of(context).size.width * 0.3,
                     child: Text(
                       event.name,
-                      overflow: TextOverflow.fade,
+                      overflow: TextOverflow.ellipsis,
                       maxLines: 1,
                       softWrap: false,
                       style: TextStyle(
@@ -371,7 +371,7 @@ class _StatsScreenState extends State<StatsScreen> {
                       softWrap: false,
                       style: TextStyle(
                           fontSize: 15,
-                          fontFamily: 'BalooBhai',
+                          fontFamily: 'BalooBhai2',
                           color: event.mode == "timer"
                               ? AppTheme.colors.greenColor
                               : AppTheme.colors.redColor),
