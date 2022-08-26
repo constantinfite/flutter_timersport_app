@@ -19,7 +19,7 @@ class StatsScreen extends StatefulWidget {
 class _StatsScreenState extends State<StatsScreen> {
   List<Event> _selectedEvents = <Event>[];
 
-  final List<Event> _eventList = <Event>[];
+  
   final _eventService = EventService();
 
   CalendarFormat format = CalendarFormat.month;
@@ -57,6 +57,7 @@ class _StatsScreenState extends State<StatsScreen> {
 
   Future<List<Event>> getAllEvents() async {
     var events = await _eventService.readEvents();
+    List<Event> _eventList = <Event>[];
     events.forEach((event) {
       setState(() {
         var eventModel = Event();
@@ -108,6 +109,48 @@ class _StatsScreenState extends State<StatsScreen> {
 
       _selectedEvents = _getEventsFromDay(selectedDay);
     }
+  }
+
+  choiceAction(context, int id, choice) async {
+    Future.delayed(
+        const Duration(seconds: 0),
+        () => showDialog(
+            context: context,
+            builder: (context) => AlertDialog(
+                  title: Text("Are you sure to delete the event"),
+                  actions: [
+                    TextButton(
+                      child: Text("Cancel"),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
+                    TextButton(
+                        child: Text("Continue"),
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          await _eventService.deleteEvent(id);
+                          Navigator.pop(context);
+                          getTask1().then((val) => setState(() {
+                                _events = val;
+                                print("events");
+                                print(_events);
+
+                                var _correctDate = DateTime.utc(
+                                    _selectedDay!.year,
+                                    _selectedDay!.month,
+                                    _selectedDay!.day);
+
+                                _selectedEvents =
+                                    _getEventsFromDay(_correctDate);
+                              }));
+                        }),
+                  ],
+                )));
+    //await _eventService.deleteEvent(id);
+    //Navigator.pop(context);
+
+    //_showToast("Exercice delete");
   }
 
   @override
@@ -266,56 +309,55 @@ class _StatsScreenState extends State<StatsScreen> {
               borderSide: BorderSide(color: Colors.transparent)),
           elevation: 0,
           child: Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: ListTile(
-              leading: Icon(
-                event.mode == "timer"
-                    ? MyFlutterApp.noun_timer
-                    : MyFlutterApp.noun_number,
-                color: event.mode == "timer"
-                    ? AppTheme.colors.greenColor
-                    : AppTheme.colors.redColor,
-                size: 50,
-              ),
-              title: SizedBox(
-                width: 50,
-                child: Text(
-                  event.name,
-                  overflow: TextOverflow.fade,
-                  maxLines: 1,
-                  softWrap: false,
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontFamily: 'BalooBhai',
-                    color: event.mode == "timer"
-                        ? AppTheme.colors.greenColor
-                        : AppTheme.colors.redColor,
+              padding: const EdgeInsets.all(4.0),
+              child: ListTile(
+                leading: Icon(
+                  event.mode == "timer"
+                      ? MyFlutterApp.noun_timer
+                      : MyFlutterApp.noun_number,
+                  color: event.mode == "timer"
+                      ? AppTheme.colors.greenColor
+                      : AppTheme.colors.redColor,
+                  size: 50,
+                ),
+                title: SizedBox(
+                  width: 50,
+                  child: Text(
+                    event.name,
+                    overflow: TextOverflow.fade,
+                    maxLines: 1,
+                    softWrap: false,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontFamily: 'BalooBhai',
+                      color: event.mode == "timer"
+                          ? AppTheme.colors.greenColor
+                          : AppTheme.colors.redColor,
+                    ),
                   ),
                 ),
-              ),
-              subtitle: SizedBox(
-                width: 100,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      datesecondToMinuteHour(event.datetime),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                        fontSize: 15,
-                        fontFamily: 'BalooBhai2',
-                        color: event.mode == "timer"
-                            ? AppTheme.colors.greenColor
-                            : AppTheme.colors.redColor,
+                subtitle: SizedBox(
+                  width: 100,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Text(
+                        datesecondToMinuteHour(event.datetime),
+                        overflow: TextOverflow.fade,
+                        maxLines: 1,
+                        softWrap: false,
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'BalooBhai2',
+                          color: event.mode == "timer"
+                              ? AppTheme.colors.greenColor
+                              : AppTheme.colors.redColor,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ),
-          )),
+              ))),
     );
   }
 
@@ -333,7 +375,7 @@ class _StatsScreenState extends State<StatsScreen> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: <Widget>[
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
                 Row(children: [
@@ -347,7 +389,7 @@ class _StatsScreenState extends State<StatsScreen> {
                     size: 50,
                   ),
                   SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.3,
+                    width: MediaQuery.of(context).size.width * 0.4,
                     child: Text(
                       event.name,
                       overflow: TextOverflow.ellipsis,
@@ -363,20 +405,36 @@ class _StatsScreenState extends State<StatsScreen> {
                   ),
                 ]),
                 Row(
-                  children: [
-                    Text(
-                      datesecondToMinuteHour(event.datetime),
-                      overflow: TextOverflow.fade,
-                      maxLines: 1,
-                      softWrap: false,
-                      style: TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'BalooBhai2',
-                          color: event.mode == "timer"
-                              ? AppTheme.colors.greenColor
-                              : AppTheme.colors.redColor),
-                    ),
+                  children: [],
+                ),
+                PopupMenuButton(
+                  icon: Icon(
+                    Icons.more_vert,
+                    size: 30,
+                    color: Colors.black,
+                  ),
+                  itemBuilder: (_) => const <PopupMenuItem<String>>[
+                    PopupMenuItem(child: Text('Delete'), value: 'delete'),
                   ],
+                  onSelected: (value) {
+                    choiceAction(context, event.id, value as String);
+                  },
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  datesecondToMinuteHour(event.datetime),
+                  overflow: TextOverflow.fade,
+                  maxLines: 1,
+                  softWrap: false,
+                  style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: 'BalooBhai2',
+                      color: event.mode == "timer"
+                          ? AppTheme.colors.greenColor
+                          : AppTheme.colors.redColor),
                 ),
               ],
             ),

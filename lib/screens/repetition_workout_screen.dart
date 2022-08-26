@@ -122,7 +122,7 @@ class _SerieWorkoutScreenState extends State<SerieWorkoutScreen> {
     }
     _timer = Timer.periodic(Duration(seconds: 1), (timer) {
       setState(() {
-        if (_seconds == 4) {
+        if (_seconds == 4 && _minutes == 0) {
           audioCache.load('sounds/count_down.wav');
           audioCache.play('sounds/count_down.wav');
         }
